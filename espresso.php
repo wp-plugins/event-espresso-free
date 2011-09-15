@@ -6,7 +6,7 @@ Description: Out-of-the-box Events Registration integrated with PayPal IPN for y
 
 Reporting features provide a list of events, list of attendees, and excel export.
 
-Version: 3.0.19.L.47
+Version: 3.0.19.48.L
 
 Author: Seth Shoultes
 Author URI: http://www.eventespresso.com
@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 //Define the version of the plugin
 function espresso_version() {
-	return '3.0.19.L.47';
+	return '3.0.19.48.L';
 }
 
 function ee_init_session()
