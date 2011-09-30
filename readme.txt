@@ -5,33 +5,47 @@ Seth Shoultes http://eventespresso.com
 
 Donate link: http://eventespresso.com
 
-Tags: admission, attend, attendance, attendee, attending, authorize.net, boy scout, buddypress, calendar, class, class registration, classes, conference,elearning, entry, event, event calendar, event management, event registration,events, events calendar, gigs, league, leagues, payment, payments, paypal,registration, sports, ticket, ticketing, tickets, WordCamp
+Tags: event registration, events calendar, wordpress events, event ticketing, class registration, conference registration, online registration, event management, buddypress, tickets, ticketing, ticket, registration, wordcamp, event manager
 
-Requires at least: 3.0
+Requires at least: 3.1
 
-Tested up to: 3.1.3
+Tested up to: 3.2.1
 
-Stable tag: 3.0.19.L.47
+Stable tag: 3.1.12.L
 
 == Description ==
 
-This plugin provides a way to take online registrations for events such as conference and seminars that are held live. It uses the PayPal IPN to record payments to a database.
+If your organization offers classes, workshops, events, trainings, conferences or concerts for which participants need to register or buy a ticket in advance, Event Espresso can make you a hero [WordPress event manager](http://eventespresso.com/). Why? Because this online [event registration](http://eventespresso.com/) and ticketing management system will save your organization countless hours of administrative time, create a "green" and paperless [event registration](http://eventespresso.com/) process, reduce costs and be available to take sign-ups 24/7. Everything from custom event registration questions, registration confirmation and reminder emails to payment management, and quite a bit more is all included and automatically handled for you. Install the Event Espresso [WordPress events calendar](http://eventespresso.com/features/event-calendar/) to list your upcoming events in day, week, or month views (including list view).
 
-This WordPress plugin is designed to run on a WordPress webpage and provide registration for an event. It allows you to capture the registering persons contact information to a database and provides an association to an events database. It provides the ability to send the registrant to your PayPal payment page for online collection of event fees. PayPal payments are captured to the database using the PayPal IPN. Events are sorted by date and a short code is provided to display a single event or category of events on a page.
+Event Espresso events are created from within the WordPress admin. The [WordPress events plugin](http://eventespresso.com/) even creates registration forms so attendees can easily sign up right on your website.
+
+Where is the attendee registration or ticketing information stored? Attendee ticket information is stored right in the WordPress database, allowing you to have access to any and all the information you collect from your attendees at any time.
+
+Event Espresso has all the event management tools you need, from accepting payments to reports to promotions.
+
+This version of Event Espresso only uses the PayPal IPN to record payments to a database. A premium support license can be purchased to extend the event management plugin to use Authorize.net and other payment options. This is basically a fully working preview of the pro version. Some advanced functionality has been left out and is only available in the pro version of this event management plugin.
+
+**[Buy a Premium Support License](http://eventespresso.com/download/) to get access to more features (including [recurring events](http://eventespresso.com/download/plugins-and-addons/recurring-events-manager/), [Groupon integration](http://eventespresso.com/download/add-ons/groupon-integration/), [members integration](http://eventespresso.com/download/add-ons/members-integration/), [custom files](http://eventespresso.com/download/add-ons/custom-files-addon/), etc.) and payment options for your WordPress events.**
+
+[Most Comprehensive Event Solution for WordPress](http://s3.amazonaws.com/espresso-site/images/event-solution.jpg "Most Comprehensive Event Solution for WordPress")
+
 
 Reporting features provide a list of events, list of attendees, and excel export.
 
-I have made several changes to this plugin in the last few months. Quite a bit has changed in the code and database tables. If you are upgrading from a previous version of this plugin, be sure to back up your current installation of this plugin. It is also a good idea to backup your WordPress database as well. If you have modified the original code of your current installation you definitely want to make a backup of your existing plugin. I would even suggest installing the plugin on a test version of WordPress.
-
 
 == Support ==
-Please visit the forums http://www.eventespresso.com/forums/
+Please visit the forums http://www.eventespresso.com/forums/ or visit the "Help/Support" menu within the Event Espresso admin
 
-Current Version: 3.0.19.L.47
+Current Version: 3.1.12.L
 
 Author: Seth Shoultes
 Author URI: http://eventespresso.com
 
+== Screenshots ==
+
+[View Sample Screens Here](http://eventespresso.com/features/)
+
+**[Buy a Premium Support License](http://eventespresso.com/download/) to get access to more features (including [recurring events](http://eventespresso.com/download/plugins-and-addons/recurring-events-manager/), [Groupon integration](http://eventespresso.com/download/add-ons/groupon-integration/), [members integration](http://eventespresso.com/download/add-ons/members-integration/), [custom files](http://eventespresso.com/download/add-ons/custom-files-addon/), etc.) and payment options for your WordPress events.**
 
 == Installation ==
 

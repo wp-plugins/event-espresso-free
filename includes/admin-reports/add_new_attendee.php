@@ -1,6 +1,7 @@
 <?php
+if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'); 
 function add_new_attendee($event_id){
-	if ($_REQUEST['regevent_action_admin']== 'post_attendee'){
+	if (isset($_REQUEST['regevent_action_admin']) && $_REQUEST['regevent_action_admin']== 'post_attendee'){
 		$attendee_id = event_espresso_add_attendees_to_db();
 		// SEND CONFIRMATION EMAIL MESSAGES
 		event_espresso_email_confirmations(array('attendee_id' => $attendee_id, 'send_admin_email' => 'true', 'send_attendee_email' => 'true'));
@@ -13,7 +14,9 @@ function add_new_attendee($event_id){
 </div>
 <?php
 	}
-	
+	wp_register_script('reCopy', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/reCopy.js"), false, '1.1.0');
+        wp_print_scripts('reCopy');
+
 	global $wpdb;
 	$sql  = "SELECT * FROM " .EVENTS_DETAIL_TABLE. " WHERE is_active='Y' AND event_status != 'D' AND id = '" . $event_id . "' LIMIT 0,1";
 	
@@ -32,9 +35,9 @@ function add_new_attendee($event_id){
 					$event_zip = $event->zip;
 					$event_description = stripslashes($event->event_desc);
 					$event_identifier = $event->event_identifier;
-					$event_cost = $event->event_cost;
-					$member_only = $event->member_only;
-					$reg_limit = $event->reg_limit;
+					$event_cost = isset($event->event_cost) ? $event->event_cost:'';
+					$member_only = isset($event->member_only) ? $event->member_only:'';
+					$reg_limit = isset($event->reg_limit) ? $event->reg_limit:'';
 					$allow_multiple = $event->allow_multiple;
 					$start_date =  $event->start_date;
 					$end_date =  $event->end_date;
@@ -89,16 +92,49 @@ function add_new_attendee($event_id){
             <?php echo event_date_display($start_date)?></p>
           <p class="event_time">
             <?php 
+					$time_selected ='';
 					//This block of code is used to display the times of an event in either a dropdown or text format.
-					if ($time_selected == true){//If the customer is coming from a page where the time was preselected.
-						event_espresso_display_selected_time($time_id);//Optional parameters start, end, default
+					if (!empty($time_selected) && $time_selected == true){//If the customer is coming from a page where the time was preselected.
+						echo event_espresso_display_selected_time($time_id);//Optional parameters start, end, default
 					}else if ($time_selected == false){
-						event_espresso_time_dropdown($event_id);	
+						echo event_espresso_time_dropdown($event_id);	
 					}//End time selected
 ?>
           </p>
-   
-          <?php 
+          <?php
+					/*
+					 * Added for seating chart addon
+					 */
+					if ( defined('ESPRESSO_SEATING_CHART') )
+					{
+						$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
+						if ( $seating_chart_id !== false )
+						{
+										
+					?>
+								<p class="event_form_field">
+									<label>Select a Seat:</label>
+                                    <input type="text" name="seat_id" value="" class="ee_s_select_seat required" title="Please select a seat." event_id="<?php echo $event_id; ?>" readonly="readonly"  />
+                           <?php
+									$seating_chart = $wpdb->get_row("select * from ".EVENTS_SEATING_CHART_TABLE." where id = $seating_chart_id");
+									if (trim($seating_chart->image_name) != "" && file_exists(EVENT_ESPRESSO_UPLOAD_DIR.'seatingchart/images/'.$seating_chart->image_name) )
+									{
+							?>
+                                    <br/>
+                                    <a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL.'seatingchart/images/'.$seating_chart->image_name; ?>" target="_blank">Seating chart image</a>		
+                            <?php
+									}
+							?>
+                                </p>
+          			<?php
+						}
+					}
+					/*
+					 * End
+					 */
+		  
+		  ?>
+		  <?php 
 					echo event_espresso_add_question_groups($question_groups);
 
 					//Coupons						
@@ -125,11 +161,11 @@ function add_new_attendee($event_id){
           <p class="event_form_submit" id="event_form_submit-<?php echo $event_id;?>">
             <input class="btn_event_form_submit" id="event_form_field-<?php echo $event_id;?>" type="submit" name="Submit" value="<?php _e('Submit','event_espresso');?>" />
           </p>
+          <?php echo event_espresso_additional_attendees($event_id, $additional_limit=5, $available_spaces=999, $label='Add More Attendees'); ?>
         </form>
       </div>
     </div>
   </div>
-</div>
 <?php 	
 event_list_attendees();		
 	}//End Build the registration page

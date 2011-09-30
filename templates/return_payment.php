@@ -21,6 +21,7 @@
 			echo '<div class="event_espresso_attention"><strong class="payment_details payment_pending">'.__('Pending Payment','event_espresso')."</strong><br />Would you like to choose a different payment option?</div>";
 			//We need create the variables for the payment options
 			$registration_id = $registration_id != '' ? $registration_id : $att_registration_id;
+			//echo '$registration_id = '.$registration_id;
 			if ($attendee_id==''||$attendee_id==0) 
 				$attendee_id = espresso_attendee_id($registration_id);
 				
@@ -33,7 +34,7 @@
 		}
 	}
 
-	if ($payment_status == "Incomplete" || $payment_status == "" ){
+	if ($payment_status == "Incomplete" || $payment_status == "Payment Declined" || $payment_status == "" ){
 		//Check the number of available sapce against this registration 
 		if ( get_number_of_attendees_reg_limit($event_id, 'number_available_spaces') < $quantity){ ?>
 			<p class="espesso_event_full"> <?php _e('Sorry, there are not enough spaces available to complete your registration.','event_espresso'); ?></p>
@@ -44,15 +45,13 @@
 		}
 		//Uncomment to check the number of available spaces
 		//echo get_number_of_attendees_reg_limit($event_id, 'number_available_spaces');
-
+		if ($event_cost == '0.00' && $total_cost != '0.00')
+			$event_cost = $total_cost;
 		if($event_cost != '0.00'){
-/*?>	
-            <p class="payment_details payment_amount">
-            <?php _e('Payment will be in the amount of','event_espresso'); ?>
-            <?php echo  $org_options['currency_symbol'].$event_cost;?>.</p>
-            <p class="payment_details payment_options"><?php _e('Payment Options:','event_espresso'); ?></p>
-<?php
-*/			//Show payment options
+			$registration_id = $registration_id != '' ? $registration_id : $att_registration_id;
+			if ($attendee_id==''||$attendee_id==0) 
+				$attendee_id = espresso_attendee_id($registration_id);
+			//Show payment options
 			if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php")){
 				require_once(EVENT_ESPRESSO_GATEWAY_DIR . "gateway_display.php");
 			}else{

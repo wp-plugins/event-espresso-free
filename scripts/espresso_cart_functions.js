@@ -36,6 +36,8 @@ jQuery(document).ready(function() {
                 item_type : params.item_type,
                 id: params.id,
                 name: params.event_name,
+				direct_to_cart: params.direct_to_cart,
+				moving_to_cart: params.moving_to_cart,
                 event_page_id: EEGlobals.event_page_id
             };
 
@@ -102,6 +104,8 @@ jQuery(document).ready(function() {
             item_type: 'event',
             id : jQuery(this).attr('id'),
             event_name : jQuery(this).attr('title'),
+			direct_to_cart : jQuery(this).attr('direct_to_cart'),
+			moving_to_cart : jQuery(this).attr('moving_to_cart'),
             container : jQuery(this).parent()
 
         }
