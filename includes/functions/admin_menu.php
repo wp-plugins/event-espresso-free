@@ -106,6 +106,10 @@ if (!function_exists('add_event_espresso_menus')) {
 
         //Addons
         add_submenu_page('event_espresso', __('Event Espresso - Addons', 'event_espresso'), __('Addons', 'event_espresso'), 'administrator', 'admin_addons', 'event_espresso_addons_mnu');
+		
+		//Test Drive Pro
+		if ($espresso_premium != true)
+			add_submenu_page('event_espresso', __('Event Espresso - Test Drive Pro', 'event_espresso'), __('Test Drive Pro', 'event_espresso'), 'administrator', 'test_drive', 'event_espresso_test_drive');
 
         //Help/Support
         add_submenu_page('event_espresso', __('Event Espresso - Help/Support', 'event_espresso'), __('<span style="color: red;">Help/Support</span>', 'event_espresso'), 'administrator', 'support', 'event_espresso_support');

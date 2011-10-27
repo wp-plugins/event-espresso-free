@@ -6,7 +6,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 3.1.12.L
+  Version: 3.1.13.L
 
   Author: Seth Shoultes
   Author URI: http://www.eventespresso.com
@@ -30,7 +30,7 @@
 
 //Define the version of the plugin
 function espresso_version() {
-    return '3.1.12.L';
+    return '3.1.13.L';
 }
 
 function ee_init_session() {
@@ -365,6 +365,9 @@ if (is_admin()) {
     //New form builder
     require_once("includes/form-builder/index.php");
     require_once("includes/form-builder/groups/index.php");
+	
+	if ($espresso_premium != true)
+		require_once("includes/test_drive_pro.php");
 
     //Install/Update Tables when plugin is activated
     require_once("includes/functions/database_install.php");
@@ -463,11 +466,12 @@ if (is_admin()) {
             'admin_addons',
             'espresso_calendar',
 			'event_tickets',
-							'espresso-mailchimp',
-							'espresso_permissions',
-							'roles',
-							'event_locales',
-							'event_groups'
+			'espresso-mailchimp',
+			'espresso_permissions',
+			'roles',
+			'event_locales',
+			'event_groups',
+			'test_drive'
         );
         if (in_array($_REQUEST['page'], $espresso_pages)) {
             add_action('admin_print_scripts', 'event_espresso_config_page_scripts');
