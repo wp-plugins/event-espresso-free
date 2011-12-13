@@ -1224,6 +1224,7 @@ label {
 	width: auto;
 	margin-right: 5px;
 }
+form.espresso_form .quicktags-toolbar input {width: auto;}
 form.espresso_form {
 	color: #333;
 }
