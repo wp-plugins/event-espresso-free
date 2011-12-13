@@ -210,7 +210,7 @@ function prepare_admin_email($data) {
 
     if ($data->attendee->quantity > 0 && !$data->multi_reg)
         $primary_attendee = $data->primary_attendee == true ? "<p><strong>" . __('Primary Attendee', 'event_espresso') . "</strong></p>" : '';
-		
+
 	$admin_message = "<h3>" . __('Registration Summary:', 'event_espresso') . "</h3>";
 	$admin_email_body = "<tr>
 		<td>$primary_attendee $admin_attendee_link</td>
@@ -219,7 +219,7 @@ function prepare_admin_email($data) {
 		<td>" . event_date_display($data->attendee->start_date) . ' - ' . event_date_display($data->attendee->end_date) . "</td>
 		<td>" . event_date_display($data->attendee->event_time, get_option('time_format')) . " - " . event_date_display($data->attendee->end_time, get_option('time_format')) . "</td> " .
 		($data->attendee->quantity > 0 ? '<td>' . $data->attendee->quantity . __(' attendee(s)', 'event_espresso') . '</td>' : '') . "</tr>";
-   		
+
 		$admin_additional_info = "<h3>" . __('Additional Information:', 'event_espresso') . "</h3>";
 		if (!empty($data->email_questions)) {
 			$admin_additional_info .= $data->email_questions;
@@ -233,7 +233,7 @@ function prepare_admin_email($data) {
 			$admin_additional_info .= $data->invoice_link;
 			$admin_additional_info .= '</p>';
 		}
-		
+
 		$headers = '';
 		return array(
 			'send_to' => $data->event->alt_email == '' ? $org_options['contact_email'] : $data->event->alt_email . ',' . $org_options['contact_email'],
@@ -302,8 +302,8 @@ if (!function_exists('event_espresso_send_email')) {
         extract($params);
         //Define email headers
 		$headers = "MIME-Version: 1.0\r\n";
-		$headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
-        $headers .= "Reply-To: " . $org_options['organization'] . "  <" . $org_options['contact_email'] . ">\r\n";
+		$headers .= "From: " . $org_options['contact_email'] . "\r\n";
+        $headers .= "Reply-To: " . $org_options['contact_email'] . "\r\n";
 		$headers .= "Content-Type: text/html; charset=utf-8\r\n";
 		//Debug
 		/*echo '<hr />';
@@ -453,8 +453,8 @@ if (!function_exists('event_espresso_send_payment_notification')) {
 
         //Define email headers
         $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
-        $headers .= "Reply-To: " . $org_options['organization'] . "  <" . $org_options['contact_email'] . ">\r\n";
+        $headers .= "From: " . $org_options['contact_email'] . "\r\n";
+        $headers .= "Reply-To: " . $org_options['contact_email'] . "\r\n";
         $headers .= "Content-Type: text/html; charset=utf-8\r\n";
         $message_top = "<html><body>";
         $message_bottom = "</html></body>";
@@ -674,8 +674,8 @@ if (!function_exists('event_espresso_send_cancellation_notice')) {
         global $wpdb, $org_options;
         //Define email headers
         $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
-        $headers .= "Reply-To: " . $org_options['organization'] . "  <" . $org_options['contact_email'] . ">\r\n";
+        $headers .= "From: " . $org_options['contact_email'] . "\r\n";
+        $headers .= "Reply-To: " . $org_options['contact_email'] . "\r\n";
         $headers .= "Content-Type: text/html; charset=utf-8\r\n";
         $message_top = "<html><body>";
         $message_bottom = "</html></body>";
@@ -738,13 +738,13 @@ if (!function_exists('event_espresso_send_invoice')) {
         global $wpdb, $org_options;
         //Define email headers
         $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
-        $headers .= "Reply-To: " . $org_options['organization'] . "  <" . $org_options['contact_email'] . ">\r\n";
+        $headers .= "From: " . $org_options['contact_email'] . "\r\n";
+        $headers .= "Reply-To: " . $org_options['contact_email'] . "\r\n";
         $headers .= "Content-Type: text/html; charset=utf-8\r\n";
         $message_top = "<html><body>";
         $message_bottom = "</html></body>";
         $start = 0;
-		
+
         $results = $wpdb->get_results("SELECT a.*, e.event_name, e.event_desc, e.event_code FROM " . EVENTS_ATTENDEE_TABLE . " a
 										LEFT JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = a.event_id
 										WHERE a.registration_id = '" . $registration_id . "' ORDER BY a.id LIMIT 1");
@@ -936,8 +936,8 @@ if (!function_exists('espresso_event_reminder')) {
         global $wpdb, $org_options;
         //Define email headers
         $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "From: " . $org_options['organization'] . " <" . $org_options['contact_email'] . ">\r\n";
-        $headers .= "Reply-To: " . $org_options['organization'] . "  <" . $org_options['contact_email'] . ">\r\n";
+        $headers .= "From: " . $org_options['contact_email'] . "\r\n";
+        $headers .= "Reply-To: " . $org_options['contact_email'] . "\r\n";
         $headers .= "Content-Type: text/html; charset=utf-8\r\n";
         $message_top = "<html><body>";
         $message_bottom = "</html></body>";

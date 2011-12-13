@@ -38,22 +38,22 @@ function event_espresso_config_page_scripts() {
     wp_enqueue_script('post');
     wp_enqueue_script('dataTables', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.dataTables.min.js', array('jquery')); //Events core table script
     wp_enqueue_script('dataTablesColVis', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.ColVis.min.js', array('jquery')); //Events core table column hide/show script
-	
+
 	if ($_REQUEST['page'] == 'events' && isset($_REQUEST['action']) && ($_REQUEST['action']=='edit'||$_REQUEST['action']=='add_new_event') ) {
 		//Load jquery UI stuff
 		wp_enqueue_script('jquery-ui-core');
 		wp_enqueue_script('jquery-ui-tabs');
-		
+
 		//Load datepicker script
 		wp_enqueue_script('jquery-ui-datepicker', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/ui.datepicker.min.js', array('jquery', 'jquery-ui-core'));
 	}
-	
+
     if (isset($_REQUEST['event_admin_reports']) && $_REQUEST['event_admin_reports'] == 'add_new_attendee' || $_REQUEST['page'] == 'form_groups' || $_REQUEST['page'] == 'form_builder' || $_REQUEST['page'] == 'event_staff' || $_REQUEST['page'] == 'event_categories' || $_REQUEST['page'] == 'event_venues' || $_REQUEST['page'] == 'discounts' || $_REQUEST['page'] == 'groupons') {
 		//Load form validation script
 		wp_register_script('jquery.validate.js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js"), false, '1.8.1');
 		wp_enqueue_script('jquery.validate.js');
 	}
-	
+
 	wp_register_script('event_espresso_js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/event_espresso.js"), false);
 	wp_enqueue_script('event_espresso_js');
 
@@ -78,17 +78,18 @@ function espresso_admin_format_content($content='') {
 }
 //This loads the the tinymce script into the header
 function espresso_tiny_mce() {
-   global $wp_version;
-   $wp_min_version = '3.2';
-   //If the version of WordPress is lower than 3.2, then we load the fallback script.
-   if (!version_compare($wp_version, $wp_min_version, '>=')) {
+	global $wp_version;
+	
+	$wp_min_version = '3.2';
+	//If the version of WordPress is lower than 3.2, then we load the fallback script.
+	if (!version_compare($wp_version, $wp_min_version, '>=')) {
        //If this is an older version of WordPress, then we need to load this.
        if (function_exists('wp_tiny_mce_preload_dialogs')) {
            add_action('admin_print_footer_scripts', 'wp_tiny_mce_preload_dialogs', 30);
        }
   	}
 	$show = true;
-	//If thhis is a newer version of wordress and we are the events page, we don't want to load the editor function
+	//If this is a newer version of wordress and we are the events page, we don't want to load the editor function
 	if (version_compare($wp_version, $wp_min_version, '>=')){
 		//If this is the event editor page, we don't want to load the tiny mce editor because it breaks the page
 		if ( isset($_REQUEST['page']) && ($_REQUEST['page']=='events') ){
@@ -483,6 +484,7 @@ function getCountriesArray($lang="en") {
                 array(2, 'Albania', 'AL', 'ALB', 1),
                 array(3, 'Germany', 'DE', 'DEU', 2),
                 array(198, 'Switzerland', 'CH', 'CHE', 1),
+                array(87, 'The Netherlands', 'NL', 'NLD', 2),
                 array(9, 'Netherlands Antilles ', 'AN', 'ANT', 2),
                 array(197, 'Sweden', 'SE', 'SWE', 1),
                 array(4, 'Andorra', 'AD', 'AND', 1),
@@ -531,7 +533,7 @@ function getCountriesArray($lang="en") {
                 array(50, 'Costa Rica', 'CR', 'CRI', 1),
                 array(51, 'Croatia', 'HR', 'HRV', 1),
                 array(52, 'Cuba', 'CU', 'CUB', 1),
-                array(53, 'Denmark', 'DK', 'DNK', 1),
+                array(53, 'Danmark', 'DK', 'DNK', 1),
                 array(54, 'Djibouti', 'DJ', 'DJI', 1),
                 array(55, 'Dominica', 'DM', 'DMA', 1),
                 array(56, 'Ecuador', 'EC', 'ECU', 1),
@@ -562,7 +564,6 @@ function getCountriesArray($lang="en") {
                 array(84, 'Guinea-Bissau', 'GW', 'GNB', 1),
                 array(85, 'Guyana', 'GY', 'GUY', 1),
                 array(86, 'Haiti', 'HT', 'HTI', 1),
-                array(87, 'Holland', 'NL', 'NLD', 2),
                 array(88, 'Honduras', 'HN', 'HND', 1),
                 array(89, 'Hong Kong', 'HK', 'HKG', 1),
                 array(90, 'Hungry', 'HU', 'HUN', 2),
@@ -815,7 +816,7 @@ function events_editor($content, $id = 'content', $prev_id = 'title') {
     ?>
 <div id="quicktags">
   <?php wp_print_scripts('quicktags'); ?>
-  <script type="text/javascript">edToolbar()</script> 
+  <script type="text/javascript">edToolbar()</script>
 </div>
 <?php //if(function_exists('qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage')) $output = qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($output);    ?>
 <?php
@@ -1040,34 +1041,34 @@ function event_espresso_update_attendee_data() {
 
     $sql = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id IS NULL OR registration_id = '' OR registration_id = '0' ";
     $attendees = $wpdb->get_results($sql);
-	
+
 	if ($wpdb->num_rows > 0) {
-		
+
 		//echo $sql;
 		foreach ($attendees as $attendee) {
-	
+
 			/** ********************************
 			 * ******	Update single registrations
 			 * ********************************* */
 			$registration_id = uniqid('', true);
 			$update_attendee = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET registration_id = '" . $registration_id . "' WHERE id = '" . $attendee->id . "'";
 			$wpdb->query($update_attendee);
-			
+
 		}
 	}
-	
+
 	$sql2 = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE quantity IS NULL OR quantity = '' OR quantity = '0' ";
     $attendees2 = $wpdb->get_results($sql2);
     if ($wpdb->num_rows > 0) {
 		//echo $sql;
 		foreach ($attendees2 as $attendee2) {
-	
+
 			/** ********************************
 			 * ******	Update pricing
 			 * ********************************* */
 			$update_attendee2 = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = '1' WHERE id = '" . $attendee2->id . "'";
 			$wpdb->query($update_attendee2);
-			
+
 		}
 	}
 }
@@ -1225,7 +1226,7 @@ function event_espresso_list_categories($event_id = 0) {
     }
 }
 
-//These functions were movedto main.php on 08-30-2011 by Seth 
+//These functions were movedto main.php on 08-30-2011 by Seth
 
 /*//Retrives the attendee count based on an attendee ids
 function espresso_count_attendees_for_registration($attendee_id) {
@@ -1372,7 +1373,7 @@ function espresso_payment_reports($atts) {
     }
 }
 
-//These functions were movedto main.php on 08-30-2011 by Seth 
+//These functions were movedto main.php on 08-30-2011 by Seth
 
 /*function espresso_ticket_links($registration_id, $attendee_id) {
     global $wpdb;

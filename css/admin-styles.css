@@ -396,7 +396,6 @@ div.tablenav {
 }
 .use-ven-manager {
 	width: 50%;
-	vertical-align: top;
 }
 .manual-venue {
 	width: 33.3%;
@@ -417,7 +416,6 @@ div.tablenav {
 }
 #confirmation-email .email-conf-opts {
 	float: left;
-	margin-bottom: -20px;
 	width: 50%;
 }
 /*___ Venue Manager & Staff ___*/
@@ -536,7 +534,7 @@ div.tablenav {
 	margin-top: 5px;
 	width:99.9%;
 }
-textarea#event_desc, textarea#conf_mail, #category_desc_new, textarea#description, textarea#email_text, textarea#category_desc, textarea#ticket_content {
+textarea#event_desc, textarea#conf_mail, #category_desc_new, textarea#description, textarea#email_text, textarea#category_desc {
 	width: 100%;
 	border-color: #dfdfdf;
 }
@@ -722,8 +720,15 @@ table.event-list .re_fr {
 #event-date-time td.a {
 	position: relative;
 }
-#event-date-time td.a, #event-date-time td.b, #event-pricing td.a {
+#event-date-time td.a, #event-date-time td.b {
 	width: 50%;
+}
+#event-pricing td.a ul#dynamicPriceInput {
+	width: 50%;
+}
+#event-pricing .members-active td.a {width: 50%;}
+#event-pricing .members-active td.a ul#dynamicPriceInput {
+	width: auto;
 }
 
 /*___ Venue Manager ___*/
@@ -1319,6 +1324,21 @@ select.wide {width: 175px;}
 #event-pricing ul li p {
 	margin-top: 0;
 }
+#dynamicMetaInput li select,
+#dynamicMetaInput li input {
+	width: 150px;
+}
+p.create-post {
+	width: 200px;
+	overflow: hidden;
+}
+p.create-post span {
+	float: right;
+}
+p.create-post select {
+	width: 100px;
+}
+p.post-tags input {width: 100px;}
 /*___ Questions & Q groups ___*/
 #add-edit-new-group table ul li input[type=checkbox] {
 	margin-right: 10px;

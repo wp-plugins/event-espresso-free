@@ -1,12 +1,13 @@
 <?php
+
 /*
-  Plugin Name: Event Espresso Lite - Event Management and Registration System
+  Plugin Name: Event Espresso Lite - Event Registration and Management
   Plugin URI: http://eventespresso.com/
   Description: Out-of-the-box Events Registration integrated with PayPal IPN for your Wordpress blog/website. <a href="admin.php?page=support" >Support</a>
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 3.1.13.L
+  Version: 3.1.14.L
 
   Author: Seth Shoultes
   Author URI: http://www.eventespresso.com
@@ -30,7 +31,7 @@
 
 //Define the version of the plugin
 function espresso_version() {
-    return '3.1.13.L';
+    return '3.1.14.L';
 }
 
 function ee_init_session() {
@@ -39,21 +40,24 @@ function ee_init_session() {
     if (!isset($_SESSION)) {
         session_start();
     }
-    if ((isset($_REQUEST['page_id']) && ($_REQUEST['page_id'] == $org_options['return_url'] || $_REQUEST['page_id'] == $org_options['notify_url'])) || !isset($_SESSION['espresso_session_id']) || $_SESSION['espresso_session_id'] == '') {
-        session_regenerate_id(true);
-        $_SESSION['espresso_session_id'] = '';
-        $_SESSION['events_in_session'] = '';
-        $_SESSION['event_espresso_pre_discount_total'] = 0;
-        $_SESSION['event_espresso_grand_total'] = 0;
-        $_SESSION['event_espresso_coupon_code'] = '';
-    }
-
-    $_SESSION['espresso_session_id'] = session_id();
+    
+	if ( ( isset($_REQUEST['page_id']) && ($_REQUEST['page_id'] == $org_options['return_url'] || $_REQUEST['page_id'] == $org_options['notify_url'] ) ) 
+		|| !isset($_SESSION['espresso_session']['id']) || $_SESSION['espresso_session']['id'] == array()) {
+		
+		$_SESSION['espresso_session'] = '';
+		//Debug
+		//echo "<pre>espresso_session - ".print_r($_SESSION['espresso_session'],true)."</pre>";
+		$_SESSION['espresso_session'] = array();
+		//Debug
+		//echo "<pre>espresso_session array - ".print_r($_SESSION['espresso_session'],true)."</pre>";
+		$_SESSION['espresso_session']['id'] = session_id().'-'.uniqid('',true);
+		//Debug
+		//echo "<pre>".print_r($_SESSION,true)."</pre>";		
+    }   
 }
 
-if (!session_id() || empty($_SESSION['espresso_session_id'])) {
-    add_action('init', 'ee_init_session', 1);
-}
+add_action('init', 'ee_init_session', 1);
+
 add_action('init', 'ee_check_for_export');
 
 function ee_check_for_export() {
@@ -107,7 +111,10 @@ if (isset($_REQUEST['page_id']) || is_admin())
     $this_is_a_reg_page = TRUE;
 //End
 //regevent_action is only set during the checkout process
-if (isset($_REQUEST['regevent_action']) && isset($org_options['event_ssl_active']) && $org_options['event_ssl_active'] == 'Y' && !is_ssl() && !is_admin()) {
+
+//Removed by Seth 12-6-11
+//SSL Support
+/*if (isset($_REQUEST['regevent_action']) && isset($org_options['event_ssl_active']) && $org_options['event_ssl_active'] == 'Y' && !is_ssl() && !is_admin()) {
     $http_host = 'http://' . parse_url(get_option('home'), PHP_URL_HOST);
     $request_uri = $_SERVER['REQUEST_URI'];
     if (strpos($request_uri, $http_host) === false) {
@@ -138,7 +145,7 @@ if (isset($_REQUEST['regevent_action']) && isset($org_options['event_ssl_active'
     $url = $wp_ssl_url . $_SERVER['REQUEST_URI'];
     header("Location:$url");
     exit;
-}
+}*/
 
 //This will (should) make sure everything is loaded via SSL
 //So that the "..not everything is secure.." message doesn't appear
@@ -365,11 +372,11 @@ if (is_admin()) {
     //New form builder
     require_once("includes/form-builder/index.php");
     require_once("includes/form-builder/groups/index.php");
-	
-	if ($espresso_premium != true)
-		require_once("includes/test_drive_pro.php");
 
-    //Install/Update Tables when plugin is activated
+    if ($espresso_premium != true)
+		require_once("includes/test_drive_pro.php");
+	
+	//Install/Update Tables when plugin is activated
     require_once("includes/functions/database_install.php");
     register_activation_hook(__FILE__, 'events_data_tables_install');
 
@@ -525,7 +532,7 @@ if (!function_exists('add_event_espresso_stylesheet')) {
     function add_event_espresso_stylesheet() {
         global $org_options;
 
-        if ($org_options['enable_default_style'] != 'Y')
+        if (isset($org_options['enable_default_style']) && $org_options['enable_default_style'] != 'Y')
             return;
 
         // for backpat we check options to see if event_espresso_style.css is set if is or no option is set we load it from original folder
@@ -682,7 +689,8 @@ if (is_admin()) {
     }
 }
 
-if (!function_exists('is_ssl')) {
+//Removed by Seth 12-6-11
+/*if (!function_exists('is_ssl')) {
 
     function is_ssl() {
         if (isset($_SERVER['HTTPS'])) {
@@ -696,7 +704,7 @@ if (!function_exists('is_ssl')) {
         return false;
     }
 
-}
+}*/
 
 //Export PDF Ticket (new)
 if (isset($_REQUEST['ticket_launch']) && $_REQUEST['ticket_launch'] == 'true') {

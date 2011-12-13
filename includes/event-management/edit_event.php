@@ -136,7 +136,7 @@ function edit_event($event_id = 0) {
               </div>
             </div>
             <!-- /minor-publishing-actions -->
-            
+
             <div id="misc-publishing-actions">
               <div class="misc-pub-section curtime" id="visibility"> <span id="timestamp">
                 <?php _e('Start Date', 'event_espresso'); ?>
@@ -167,10 +167,10 @@ function edit_event($event_id = 0) {
                                 }
                                 ?>
             </div>
-            <!-- /misc-publishing-actions --> 
+            <!-- /misc-publishing-actions -->
           </div>
           <!-- /minor-publishing -->
-          
+
           <div id="major-publishing-actions" class="clearfix">
             <?php if ($recurrence_id > 0) : ?>
             <div id="delete-action"> &nbsp; <a class="submitdelete deletion" href="admin.php?page=events&amp;action=delete_recurrence_series&recurrence_id=<?php echo $recurrence_id ?>" onclick="return confirm('<?php _e('Are you sure you want to delete ' . $event_name . '?', 'event_espresso'); ?>')">
@@ -184,16 +184,16 @@ function edit_event($event_id = 0) {
             <div id="publishing-action">
               <input class="button-primary" type="submit" name="Submit" value="<?php _e('Update Event', 'event_espresso'); ?>" id="save_event_setting" />
             </div>
-            <!-- /publishing-action --> 
+            <!-- /publishing-action -->
           </div>
-          <!-- /major-publishing-actions --> 
+          <!-- /major-publishing-actions -->
         </div>
-        <!-- /submitpost --> 
+        <!-- /submitpost -->
       </div>
-      <!-- /inside --> 
+      <!-- /inside -->
     </div>
     <!-- /submitdiv -->
-    
+
     <?php
             $advanced_options = '';
             if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/advanced_settings.php')) {
@@ -240,7 +240,7 @@ function edit_event($event_id = 0) {
                                 {
                             ?>
             <option value="<?php echo $seating_chart->id; ?>" <?php if ( $seating_chart_id == $seating_chart->id ) { echo 'selected="selected"'; } ?> ><?php echo $seating_chart->name; ?></option>
-            <?php                        
+            <?php
                                 }
                             ?>
           </select>
@@ -252,8 +252,8 @@ function edit_event($event_id = 0) {
 		/*
 		 * End
 		 */
-		 
-		  
+
+
             ###### Modification by wp-developers to introduce attendee pre-approval requirement ##########
             if ($org_options['use_attendee_pre_approval'] == 'Y' && $espresso_premium == true) {
                 ?>
@@ -328,17 +328,17 @@ function edit_event($event_id = 0) {
       <div class="inside"> <?php echo event_espresso_get_categories($event_id); ?> </div>
     </div>
     <!-- /event-category -->
-    
+
     <?php
             if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
                 require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php');
             }
             ?>
-    <!-- /event-promotions --> 
-    
-    <?php echo espresso_event_question_groups($question_groups, $event_meta['add_attendee_question_groups'], $event_id) ?> 
+    <!-- /event-promotions -->
+
+    <?php echo espresso_event_question_groups($question_groups, $event_meta['add_attendee_question_groups'], $event_id) ?>
     <!-- /event-questions -->
-    
+
     <?php
             if (function_exists('espresso_personnel_cb') && $org_options['use_personnel_manager'] == 'Y' && $espresso_premium == true) {
                 ?>
@@ -368,9 +368,9 @@ function edit_event($event_id = 0) {
     <!-- /groupon-options -->
     <?php } ?>
   </div>
-  <!-- /side-sortables --> 
+  <!-- /side-sortables -->
 </div>
-<!-- /side-info-column --> 
+<!-- /side-info-column -->
 
 <!-- Left Column -->
 <div id="post-body">
@@ -391,26 +391,33 @@ function edit_event($event_id = 0) {
           </strong>
           <input disabled="disabled" type="text" size="30" tabindex="2" name="event_identifier" id="event_identifier" value ="<?php echo $event_identifier; ?>" />
           <?php echo '<a href="#" class="button" onclick="prompt(&#39;Event Shortcode:&#39;, \'[SINGLEEVENT single_event_id=&#34;\' + jQuery(\'#event_identifier\').val() + \'&#34;]\'); return false;">' . __('Shortcode') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Short URL:&#39;, \'' . espresso_reg_url($event_id) . '\'); return false;">' . __('Short URL') . '</a>' ?> <?php echo '<a href="#" class="button" onclick="prompt(&#39;Full URL:&#39;, \'' . home_url() . '/?page_id=' . $org_options['event_page_id'] . '&amp;regevent_action=register&amp;event_id=' . $event_id . '\'); return false;">' . __('Full URL') . '</a>' ?> </div>
-        <!-- /edit-slug-box --> 
+        <!-- /edit-slug-box -->
       </div>
-      <!-- /.inside --> 
+      <!-- /.inside -->
     </div>
     <!-- /titlediv -->
-    
+
     <div id="descriptiondivrich" class="postarea"> <strong>
       <?php _e('Event Description', 'event_espresso'); ?>
       </strong>
       <?php
-                /*
-                  This is the editor used by WordPress. It is very very hard to find documentation for this thing, so I pasted everything I could find below.
-                  param: string $content Textarea content.
-                  param: string $id Optional, default is 'content'. HTML ID attribute value.
-                  param: string $prev_id Optional, default is 'title'. HTML ID name for switching back and forth between visual editors.
-                  param: bool $media_buttons Optional, default is true. Whether to display media buttons.
-                  param: int $tab_index Optional, default is 2. Tabindex for textarea element.
-                 */
-                //the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2)
-                the_editor(espresso_admin_format_content($event_desc), $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
+
+				if (function_exists('wp_editor')){
+					$args = array("textarea_rows" => 5, "textarea_name" => "event_desc", "editor_class" => "my_editor_custom");
+					wp_editor(espresso_admin_format_content($event_desc), "event_desc", $args);
+				}else{
+					/*
+					  This is the editor used by WordPress. It is very very hard to find documentation for this thing, so I pasted everything I could find below.
+					  param: string $content Textarea content.
+					  param: string $id Optional, default is 'content'. HTML ID attribute value.
+					  param: string $prev_id Optional, default is 'title'. HTML ID name for switching back and forth between visual editors.
+					  param: bool $media_buttons Optional, default is true. Whether to display media buttons.
+					  param: int $tab_index Optional, default is 2. Tabindex for textarea element.
+					 */
+					//the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2)
+					//the_editor(espresso_admin_format_content($event_desc), $id = 'event_desc'/* , $prev_id = 'title', $media_buttons = true, $tab_index = 3 */);
+					the_editor(espresso_admin_format_content($event_desc), $id = 'event_desc'/*, $prev_id = 'title', $media_buttons = true, $tab_index = 3*/);
+				}
                 ?>
       <table id="post-status-info" cellspacing="0">
         <tbody>
@@ -422,7 +429,7 @@ function edit_event($event_id = 0) {
       </table>
     </div>
     <!-- /postdivrich -->
-    
+
     <div id="normal-sortables" class="meta-box-sortables ui-sortable">
       <div style="display: block;" id="event-date-time" class="postbox">
         <div class="handlediv" title="Click to toggle"><br>
@@ -504,13 +511,14 @@ function edit_event($event_id = 0) {
                 }
                 ?>
       <div id="event-pricing" class="postbox">
+				<?php (get_option('events_members_active') == 'true')? $members_active = 'class="members-active"' : $members_active = ''; ?>
         <div class="handlediv" title="Click to toggle"><br>
         </div>
         <h3 class="hndle"> <span>
           <?php _e('Event Pricing', 'event_espresso'); ?>
           </span> </h3>
         <div class="inside">
-          <table width="100%" border="0" cellpadding="5">
+          <table <?php echo $members_active ?>width="100%" border="0" cellpadding="5">
             <tr valign="top">
               <td id="standard-pricing" class="a"><?php event_espresso_multi_price_update($event_id); //Standard pricing ?></td>
               <?php
@@ -535,7 +543,7 @@ function edit_event($event_id = 0) {
         <div class="inside">
           <table width="100%" border="0" cellpadding="5">
               <tr valign="top">
-            
+
             <?php
                                 if (function_exists('espresso_venue_dd') && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
                                     $ven_type = 'class="use-ven-manager"';
@@ -601,9 +609,9 @@ function edit_event($event_id = 0) {
                   <?php echo $google_map_link; ?> </p>
               </fieldset></td>
               <td <?php echo $ven_type; ?>>
-            
+
               <fieldset>
-            
+
             <legend>
             <?php _e('Venue Information', 'event_espresso'); ?>
             </legend>
@@ -633,7 +641,7 @@ function edit_event($event_id = 0) {
             </p>
             <?php } ?>
               </td>
-            
+
             <td <?php echo $ven_type ?>><fieldset id="virt-location">
                 <legend>
                 <?php _e('Virtual Location', 'event_espresso'); ?>
@@ -658,7 +666,7 @@ function edit_event($event_id = 0) {
                 </p>
               </fieldset></td>
               </tr>
-            
+
           </table>
         </div>
       </div>
@@ -697,15 +705,18 @@ function edit_event($event_id = 0) {
                 <?php _e('Create a custom email:', 'event_espresso') ?>  <?php echo '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=event_custom_emails"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?>
                 </p>
             </div>
-            <div class="visual-toggle">
-              <p><a class="toggleVisual">
-                <?php _e('Visual', 'event_espresso'); ?>
-                </a> <a class="toggleHTML">
-                <?php _e('HTML', 'event_espresso'); ?>
-                </a></p>
-            </div>
+
             <div class="postbox">
-              <textarea name="conf_mail" class="theEditor" id="conf_mail"><?php echo espresso_admin_format_content($conf_mail); ?></textarea>
+			<?php //echo '<p>version_compare ='.(version_compare($wp_version, $wp_min_version) >= 0).'</p>';
+				if (function_exists('wp_editor')){
+					$args = array("textarea_rows" => 5, "textarea_name" => "conf_mail", "editor_class" => "my_editor_custom");
+					wp_editor(espresso_admin_format_content($conf_mail), "conf_mail", $args);
+				}else{
+					echo  '<textarea name="conf_mail" class="theEditor" id="conf_mail">'.espresso_admin_format_content($conf_mail).'</textarea>';
+					espresso_tiny_mce();
+				}
+			?>
+            <?php /*?>  <textarea name="conf_mail" class="theEditor" id="conf_mail"><?php echo espresso_admin_format_content($conf_mail); ?></textarea><?php */?>
               <table id="email-confirmation-form" cellspacing="0">
                 <tr>
                   <td class="aer-word-count"></td>
@@ -727,7 +738,7 @@ function edit_event($event_id = 0) {
                 }
                 ?>
     </div>
-    <!-- /normal-sortables--> 
+    <!-- /normal-sortables-->
   </div>
   <!-- /post-body-content -->
   <?php include_once('create_events_help.php'); ?>
@@ -756,6 +767,5 @@ function edit_event($event_id = 0) {
         //]]>
     </script>
 <?php
-    espresso_tiny_mce();
 }
 

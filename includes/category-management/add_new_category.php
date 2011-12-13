@@ -38,7 +38,15 @@ function add_new_event_category() {
 												
 												
 												<div class="postbox">		
-												<?php the_editor('', $id = 'category_desc', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
+												<?php 
+												
+												if (function_exists('wp_editor')){
+													$args = array("textarea_rows" => 5, "textarea_name" => "category_desc", "editor_class" => "my_editor_custom");
+													wp_editor("My category content", "category_desc", $args);
+												}else{
+													the_editor('', $id = 'category_desc', $prev_id = 'title', $media_buttons = true, $tab_index = 3);
+												}
+												//the_editor('', $id = 'category_desc', $prev_id = 'title', $media_buttons = true, $tab_index = 3);?>
 												
 												
 												<table id="cat-descr-add-form" cellspacing="0">

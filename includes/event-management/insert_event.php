@@ -71,7 +71,7 @@ function add_event_to_db($recurrence_arr = array()) {
         $phone = esc_html($_REQUEST['phone']);
         $externalURL = esc_html($_REQUEST['externalURL']);
 
-        $post_type = $_REQUEST['post_type'];
+        $post_type = $_REQUEST['espresso_post_type'];
 
         //$event_location = $address . ' ' . $city . ', ' . $state . ' ' . $zip;
         $event_location = ($address != '' ? $address . ' ' : '') . ($address2 != '' ? '<br />' . $address2 : '') . ($city != '' ? '<br />' . $city : '') . ($state != '' ? ', ' . $state : '') . ($zip != '' ? '<br />' . $zip : '') . ($country != '' ? '<br />' . $country : '');
@@ -326,7 +326,7 @@ function add_event_to_db($recurrence_arr = array()) {
 
         // Create Event Post Code Here
         if ($_REQUEST['create_post'] == 'Y') {
-            $post_type = $_REQUEST['post_type'];
+            $post_type = $_REQUEST['espresso_post_type'];
             if ($post_type == 'post') {
                 if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
                     // Load message from template into message post variable

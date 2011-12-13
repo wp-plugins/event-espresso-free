@@ -119,31 +119,31 @@ if (!function_exists('event_espresso_get_event_details')) {
 
             //Venue information
             if ($org_options['use_venue_manager'] == 'Y') {
-                $event_address = $event->venue_address;
-                $event_address2 = $event->venue_address2;
-                $event_city = $event->venue_city;
-                $event_state = $event->venue_state;
-                $event_zip = $event->venue_zip;
-                $event_country = $event->venue_country;
+                $event_address = empty($event->venue_address) ? '' : $event->venue_address;
+                $event_address2 = empty($event->venue_address2) ? '' : $event->venue_address2;
+                $event_city = empty($event->venue_city) ? '' : $event->venue_city;
+                $event_state = empty($event->venue_state) ? '' : $event->venue_state;
+                $event_zip = empty($event->venue_zip) ? '' : $event->venue_zip;
+                $event_country = empty($event->venue_country) ? '' : $event->venue_country;
 
                 //Leaving these variables intact, just in case people want to use them
-                $venue_title = $event->venue_name;
-                $venue_address = $event->venue_address;
-                $venue_address2 = $event->venue_address2;
-                $venue_city = $event->venue_city;
-                $venue_state = $event->venue_state;
-                $venue_zip = $event->venue_zip;
-                $venue_country = $event->venue_country;
+                $venue_title = empty($event->venue_name) ? '' : $event->venue_name;
+                $venue_address = $event_address;
+                $venue_address2 = $event_address2;
+                $venue_city = $event_city;
+                $venue_state = $event_state;
+                $venue_zip = $event_zip;
+                $venue_country = $event_country;
                 global $venue_meta;
                 $add_venue_meta = array(
-                    'venue_title' => $event->venue_name,
-                    'venue_address' => $event->event_address,
-                    'venue_address2' => $event->venue_address2,
-                    'venue_city' => $event->venue_city,
-                    'venue_state' => $event->venue_state,
-                    'venue_country' => $event->venue_country,
+                    'venue_title' => $venue_title,
+                    'venue_address' => $event_address,
+                    'venue_address2' => $event_address2,
+                    'venue_city' => $event_city,
+                    'venue_state' => $event_state,
+                    'venue_country' => $event_country,
                 );
-                $venue_meta = (isset($event->venue_meta) && $event->venue_meta != '') && (isset($add_venue_meta) && $add_venue_meta != '') ? array_merge(unserialize($event->venue_meta), $add_venue_meta) : '';
+                $venue_meta = (!empty($event->venue_meta) && !empty($add_venue_meta)) ? array_merge(unserialize($event->venue_meta), $add_venue_meta) : '';
                 //print_r($venue_meta);
             }
 

@@ -235,7 +235,7 @@ function events_data_tables_install() {
                     break;
 
                 case 'EUR':
-                    $currency_symbol = '&#8364;';
+                    $currency_symbol = 'Euro: ';
                     break;
 
                 case 'JPY':

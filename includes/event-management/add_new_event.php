@@ -2,6 +2,10 @@
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 function add_new_event() {
 	global $wpdb, $org_options, $espresso_premium;
+	
+	if ( empty($event_name) ){
+		$event_name = '';
+	}
 ?>
 <!--New event display-->
 
@@ -205,7 +209,6 @@ function add_new_event() {
         </label>
         <input type="text" name="event" size="30" tabindex="1" value="<?php echo isset($event_name) ? $event_name : ''; ?>" id="title" autocomplete="off" />
       </div>
-      
       <!-- /titlewrap -->
       <div class="inside">
         <div id="edit-slug-box"> <strong>
@@ -236,7 +239,14 @@ function add_new_event() {
 	param: int $tab_index Optional, default is 2. Tabindex for textarea element.
 	*/
 	//the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2)
-                the_editor('', $id = 'event_desc', $prev_id = 'title', $media_buttons = true, $tab_index = 3);
+                //
+				
+				if (function_exists('wp_editor')){
+					$args = array("textarea_rows" => 5, "textarea_name" => "event_desc", "editor_class" => "my_editor_custom");
+					wp_editor("My event content", "event_desc", $args);
+				}else{
+					the_editor('', $id = 'event_desc', $prev_id = 'title', $media_buttons = true, $tab_index = 3);
+				}
                 ?>
       <table id="post-status-info" cellspacing="0">
         <tbody>
@@ -270,6 +280,7 @@ function add_new_event() {
                     <label for="registration_end"> <?php echo __('Registration End:', 'event_espresso') ?></label>
                     <input type="text" size="10" id="registration_end" class="datepicker" name="registration_end" value="" />
                   </p>
+				  <span class="description"><?php _e('All events <strong>require</strong> registration start/end dates and start/end times in order to display properly on your pages.', 'event_espresso'); ?></span>
                 </fieldset>
                 <fieldset id="add-event-dates">
                   <legend>
@@ -287,6 +298,7 @@ function add_new_event() {
                     </label>
                     <input type="text" size="10" id="end_date" class="datepicker" name="end_date" value="" />
                   </p>
+				  <span class="description"><?php _e('All events <strong>require</strong> a start and end date in order to display properly on your pages.', 'event_espresso'); ?> </span>
                 </fieldset>
                 <?php   if (isset($org_options['use_event_timezones']) && $org_options['use_event_timezones'] == 'Y' && $espresso_premium == true) { ?>
                 <fieldset id="event-timezone">
@@ -533,15 +545,18 @@ function add_new_event() {
                 <?php _e('Create a custom email:', 'event_espresso') ?> <?php echo '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=event_custom_emails"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?>
                 </p>
             </div>
-            <div class="visual-toggle">
-              <p><a class="toggleVisual">
-                <?php _e('Visual', 'event_espresso'); ?>
-                </a> <a class="toggleHTML">
-                <?php _e('HTML', 'event_espresso'); ?>
-                </a></p>
-            </div>
+            
             <div class="postbox">
-              <textarea name="conf_mail" class="theEditor" id="conf_mail"></textarea>
+             <?php
+				//echo '<p>version_compare ='.(version_compare($wp_version, $wp_min_version) >= 0).'</p>';
+				if (function_exists('wp_editor')){
+					$args = array("textarea_rows" => 5, "textarea_name" => "conf_mail", "editor_class" => "my_editor_custom");
+					wp_editor("My email content", "conf_mail", $args);
+				}else{
+					echo  '<textarea name="conf_mail" class="theEditor" id="conf_mail"></textarea>';
+					espresso_tiny_mce();
+				}
+			?>
               <table id="email-confirmation-form" cellspacing="0">
                 <tbody>
                   <tr>
@@ -572,8 +587,8 @@ function add_new_event() {
 </div>
 <!-- /post-body -->
 <input type="hidden" name="action" value="add" />
-<?php wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); ?>
-<?php wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false ); ?>
+<?php //wp_nonce_field('closedpostboxes', 'closedpostboxesnonce', false ); ?>
+<?php //wp_nonce_field('meta-box-order', 'meta-box-order-nonce', false ); ?>
 <script type="text/javascript" charset="utf-8">
 	//<![CDATA[
  jQuery(document).ready(function() {
@@ -595,5 +610,4 @@ function add_new_event() {
 	//]]>
 </script>
 <?php
-espresso_tiny_mce();
 }

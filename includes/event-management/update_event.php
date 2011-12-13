@@ -464,7 +464,7 @@ function update_event($recurrence_arr = array()) {
                 break;
 
             case $_REQUEST['create_post'] == 'Y':
-                $post_type = $_REQUEST['post_type'];
+                $post_type = $_REQUEST['espresso_post_type'];
                 if ($post_type == 'post') {
                     if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
                         // Load message from template into message post variable
@@ -494,7 +494,7 @@ function update_event($recurrence_arr = array()) {
                 $post_id = $wpdb->last_result[0]->post_id;
 
 
-                $post_type = $_REQUEST['post_type'];
+                $post_type = $_REQUEST['espresso_post_type'];
 
                 if ($post_id > 0)
                     $my_post['ID'] = $post_id;

@@ -9,9 +9,9 @@ Tags: event registration, events calendar, wordpress events, event ticketing, cl
 
 Requires at least: 3.1
 
-Tested up to: 3.2.1
+Tested up to: 3.3
 
-Stable tag: 3.1.12.L
+Stable tag: 3.1.14.L
 
 == Description ==
 
@@ -36,7 +36,7 @@ Reporting features provide a list of events, list of attendees, and excel export
 == Support ==
 Please visit the forums http://www.eventespresso.com/forums/ or visit the "Help/Support" menu within the Event Espresso admin
 
-Current Version: 3.1.12.L
+Current Version: 3.1.14.L
 
 Author: Seth Shoultes
 Author URI: http://eventespresso.com

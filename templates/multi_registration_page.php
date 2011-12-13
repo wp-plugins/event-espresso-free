@@ -5,7 +5,7 @@ if (!function_exists('multi_register_attendees')) {
     function multi_register_attendees($single_event_id = NULL, $event_id_sc =0, $meta = array()) {
 
         global $wpdb, $org_options;
-        $events_in_session = $_SESSION['events_in_session'];
+        $events_in_session = $_SESSION['espresso_session']['events_in_session'];
         static $event_counter = 1;
         static $attendee_number = 1;
 
