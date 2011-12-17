@@ -20,7 +20,10 @@ if (!function_exists('add_event_espresso_menus')) {
 		if ( defined('ESPRESSO_SEATING_CHART') ){
 			add_submenu_page('event_espresso', __('Event Espresso - Seating Chart','event_espresso'), __('Seating chart','event_espresso'), 'administrator', 'seating_chart', 'event_espresso_manage_seating_chart');
 		}
-	
+		/*
+		 *
+		 */
+		 
         //Venues
         if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
             add_submenu_page('event_espresso', __('Event Espresso - Venue Manager', 'event_espresso'), __('Venue Manager', 'event_espresso'), 'administrator', 'event_venues', 'event_espresso_venue_config_mnu');
@@ -57,7 +60,7 @@ if (!function_exists('add_event_espresso_menus')) {
 		
 		//Event styles & templates
 		if (function_exists('event_espresso_manage_templates') && $espresso_premium == true) {
-       	 	add_submenu_page('event_espresso', __('Event Espresso - Template Settings', 'event_espresso'), __('Template Settings', 'event_espresso'), 'administrator', 'template_confg', 'event_espresso_manage_templates');
+        	add_submenu_page('event_espresso', __('Event Espresso - Template Settings', 'event_espresso'), __('Template Settings', 'event_espresso'), 'administrator', 'template_confg', 'event_espresso_manage_templates');
 		}
 
         //Calendar Settings 

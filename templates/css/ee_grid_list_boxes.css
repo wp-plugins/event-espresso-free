@@ -244,13 +244,13 @@ span.google-map-link a:hover {
 	background: #f9f9f9;
 	border-bottom: 1px solid #ebebeb;
 	font-weight: bold;
-	margin-top: 0;
+	margin:: 0;
 	padding-left: 5px;
 }
 #content .event_questions  .quest-group-descript {
 	background: #E9E9E9;
 	font-size: 81.25%;
-	margin: -20px 0 20px ;
+	margin: 0 0 20px ;
 	padding-left: 5px;
 	
 }

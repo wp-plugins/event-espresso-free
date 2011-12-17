@@ -84,7 +84,9 @@ function attendee_edit_record() {
 	}
 
 	$questions_in = '';
-
+	if ( !is_array($question_groups) && !empty($question_groups)) {
+		$question_groups = unserialize($question_groups);
+	}
 	foreach ($question_groups as $g_id)
 		$questions_in .= $g_id . ',';
 

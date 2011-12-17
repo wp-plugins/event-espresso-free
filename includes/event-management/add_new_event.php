@@ -280,7 +280,7 @@ function add_new_event() {
                     <label for="registration_end"> <?php echo __('Registration End:', 'event_espresso') ?></label>
                     <input type="text" size="10" id="registration_end" class="datepicker" name="registration_end" value="" />
                   </p>
-				  <span class="description"><?php _e('All events <strong>require</strong> registration start/end dates and start/end times in order to display properly on your pages.', 'event_espresso'); ?></span>
+				 <span class="description"><?php _e('All events <strong>require</strong> registration start/end dates and start/end times in order to display properly on your pages.', 'event_espresso'); ?></span>
                 </fieldset>
                 <fieldset id="add-event-dates">
                   <legend>
@@ -308,13 +308,11 @@ function add_new_event() {
                       :</label>
                     <?php echo eventespresso_ddtimezone($event_id) ?></p>
                 </fieldset>
-                <?php  }
-				if ($espresso_premium == true){
-					echo get_option('event_espresso_re_active') == 1 ? '' : '<p class="recurring-available"><a class="inform" href="http://eventespresso.com/?p=3319" target="_blank" title="Visit eventespresso.com for full details">' . __('Recurring Event Manager Now Available!', 'event_espresso') . '</a></p>';
-				}
-				?>
-                
-                </td>
+                <?php  } ?>
+                <?php /* ?> <p>
+                <br /> <?php echo __('Event Visible On:','event_espresso') . ' <input type="text" size="15" id="visible_on" class="datepicker" name="visible_on" value="" />'; ?> <br />
+                                  </p><?php */ ?>
+                <?php echo get_option('event_espresso_re_active') == 1 ? '' : '<p class="recurring-available"><a class="inform" href="http://eventespresso.com/?p=3319" target="_blank" title="Visit eventespresso.com for full details">' . __('Recurring Event Manager Now Available!', 'event_espresso') . '</a></p>'; ?></td>
               <?php // ADDED TIME REGISTRATION LIMITS  ?>
               <td class="b"><fieldset id="add-register-times">
                   <legend>
@@ -352,13 +350,14 @@ function add_new_event() {
         }
 	?>
       <div id="event-pricing" class="postbox">
+				<?php (get_option('events_members_active') == 'true')? $members_active = 'class="members-active"' : $members_active = ''; ?>
         <div class="handlediv" title="Click to toggle"><br />
         </div>
         <h3 class="hndle"> <span>
           <?php _e('Event Pricing', 'event_espresso'); ?>
           </span> </h3>
         <div class="inside">
-          <table width="100%" border="0" cellpadding="5">
+          <table <?php echo $members_active ?>width="100%" border="0" cellpadding="5">
             <tr valign="top">
               <td id="standard-pricing" class="a"><?php event_espresso_multi_price_update($event_id); //Standard pricing ?></td>
               <?php

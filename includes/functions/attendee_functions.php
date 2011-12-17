@@ -32,6 +32,9 @@ function add_attendee_questions($questions, $registration_id, $attendee_id=0, $e
     if (count($question_groups) > 0) {
         $questions_in = '';
 		
+		//Debug
+		//echo "<pre question_groups - >".print_r($question_groups,true)."</pre>";
+		
         foreach ($question_groups as $g_id)
             $questions_in .= $g_id . ',';
 
@@ -45,8 +48,7 @@ function add_attendee_questions($questions, $registration_id, $attendee_id=0, $e
 														on q.id = qgr.question_id
 														JOIN " . EVENTS_QST_GROUP_TABLE . " qg
 														on qg.id = qgr.group_id
-														WHERE qgr.group_id in (" . $questions_in
-                        . ") ORDER BY q.id ASC");
+														WHERE qgr.group_id in (" . $questions_in . ") ORDER BY q.id ASC");
         //. ") AND q.system_name IS NULL ORDER BY id ASC");
 
         $num_rows = $wpdb->num_rows;
