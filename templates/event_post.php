@@ -64,8 +64,7 @@ global $wpdb;
 
         //Build the registration page
         if ($num_rows > 0) {
-            //Create a log file
-            //espresso_log::singleton()->log( array ( 'file' => __FILE__, 'function' => __FUNCTION__, 'status' => " $sql] [ sqldump = " . var_export($events, true) ) );
+            do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
             //These are the variables that can be used throughout the registration page
             //foreach ($events as $event) {
             global $this_event_id;
@@ -219,7 +218,7 @@ global $wpdb;
 
 				'registration_endT' => $data->event->registration_endT,
 				'registration_end' => $data->event->registration_end,
-'event_address' => empty($data->event->event_address) ? '' : $data->event->event_address,
+				'event_address' => empty($data->event->event_address) ? '' : $data->event->event_address,
 
 				'start_date' => '<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
                 'end_date' => '<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',

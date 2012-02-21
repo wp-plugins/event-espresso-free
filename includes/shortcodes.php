@@ -126,13 +126,12 @@ if (!function_exists('event_espresso_list_attendees')) {
 
 	function event_espresso_list_attendees($atts) {
 		//echo $atts;
-		extract(shortcode_atts(array('event_identifier' => 'NULL', 'single_event_id' => 'NULL', 'category_identifier' => 'NULL', 'event_category_id' => 'NULL', 'show_gravatar' => 'NULL', 'show_expired' => 'NULL', 'show_secondary' => 'NULL', 'show_deleted' => 'NULL', 'show_recurrence' => 'NULL', 'limit' => 'NULL', 'paid_only' => 'NULL'), $atts));
+		extract(shortcode_atts(array('event_identifier' => 'NULL', 'category_identifier' => 'NULL', 'event_category_id' => 'NULL', 'show_gravatar' => 'NULL', 'show_expired' => 'NULL', 'show_secondary' => 'NULL', 'show_deleted' => 'NULL', 'show_recurrence' => 'NULL', 'limit' => 'NULL', 'paid_only' => 'NULL'), $atts));
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		//get the event identifiers
 		$event_identifier = "{$event_identifier}";
-		$single_event_id = "{$single_event_id}";
-		$event_identifier = ($single_event_id != 'NULL') ? $single_event_id : $event_identifier;
+		
 		$show_gravatar = "{$show_gravatar}";
 
 		//get the category identifiers
@@ -602,6 +601,7 @@ add_shortcode('SESSION_ID', 'espresso_session_id_sc');
   image_class
   show_image (true|false default true)
   show_staff_titles (true|false default true)
+  show_staff_roles (true|false default true)
   show_staff_details (true|false default true)
   show_image (true|false default true)
   show_description (true|false default true)
@@ -638,16 +638,19 @@ if (!function_exists('espresso_staff_sc')) {
 		$inside_wrapper_after = isset($inside_wrapper) ? '</' . $inside_wrapper . '>' : '</p>';
 
 		//Show the persons title?
-		$show_staff_titles = (isset($show_persons_title) && $show_persons_title == 'false') ? false : true;
+		$show_staff_titles = isset($show_staff_titles) && $show_staff_titles == 'false' ? false : true;
+		
+		//Show the persons role?
+		$show_staff_roles = isset($show_staff_roles) && $show_staff_roles == 'false' ? false : true;
 
 		//Show the persons details?
-		$show_staff_details = (isset($show_details) && $show_details == 'false') ? false : true;
+		$show_staff_details = isset($show_staff_details) && $show_staff_details == 'false' ? false : true;
 
 		//Show image?
-		$show_image = (isset($show_image) && $show_image == 'false') ? false : true;
+		$show_image = isset($show_image) && $show_image == 'false' ? false : true;
 
 		//Show the description?
-		$show_description = (isset($show_description) && $show_description == 'false') ? false : true;
+		$show_description = isset($show_description) && $show_description == 'false' ? false : true;
 
 		//Find the event id
 		if (isset($event_id)) {
@@ -660,7 +663,7 @@ if (!function_exists('espresso_staff_sc')) {
 			//_e('No event or staff id supplied!', 'event_espresso') ;
 			return;
 		}
-		$limit = (isset($limit) && $limit > 0) ? " LIMIT 0," . $limit . " " : '';
+		$limit = isset($limit) && $limit > 0 ? " LIMIT 0," . $limit . " " : '';
 		$sql = "SELECT s.id, s.name, s.role, s.meta ";
 		$sql .= " FROM " . EVENTS_PERSONNEL_TABLE . ' s ';
 		if (isset($id) && $id > 0) {
@@ -686,9 +689,11 @@ if (!function_exists('espresso_staff_sc')) {
 
 				//Build the persons name/title
 				$html .= $inside_wrapper_before;
-				if ($show_staff_titles != false) {
+				
+				if ($show_staff_roles != false) {
 					$person_title = $person_role != '' ? ' - ' . stripslashes_deep($person_role) : '';
 				}
+				
 				$html .= $name_wrapper_start . stripslashes_deep($person_name) . $name_wrapper_end . $person_title;
 				$html .= $inside_wrapper_after;
 
@@ -706,7 +711,9 @@ if (!function_exists('espresso_staff_sc')) {
 				if ($show_staff_details != false) {
 					$html .= $inside_wrapper_before;
 					$html .= isset($meta['organization']) ? __('Company:', 'event_espresso') . ' ' . stripslashes_deep($meta['organization']) . '<br />' : '';
-					$html .= isset($meta['title']) ? __('Title:', 'event_espresso') . ' ' . stripslashes_deep($meta['title']) . '<br />' : '';
+					if ($show_staff_titles != false) {
+						$html .= isset($meta['title']) ? __('Title:', 'event_espresso') . ' ' . stripslashes_deep($meta['title']) . '<br />' : '';
+					}
 					$html .= isset($meta['industry']) ? __('Industry:', 'event_espresso') . ' ' . stripslashes_deep($meta['industry']) . '<br />' : '';
 					$html .= isset($meta['city']) ? __('City:', 'event_espresso') . ' ' . stripslashes_deep($meta['city']) . '<br />' : '';
 					$html .= isset($meta['country']) ? __('Country:', 'event_espresso') . ' ' . stripslashes_deep($meta['country']) . '<br />' : '';
@@ -795,29 +802,29 @@ if (!function_exists('espresso_venue_details_sc')) {
 		$map_image_wrapper_end = isset($map_image_wrapper) ? '</' . $map_image_wrapper . '>' : '</p>';
 
 		//Google Map link text
-		$show_google_map_link = (isset($show_google_map_link) && $show_google_map_link == 'false') ? false : true;
+		$show_google_map_link = isset($show_google_map_link) && $show_google_map_link == 'false' ? false : true;
 		$map_link_text = isset($map_link_text) ? $map_link_text : __('Map and Directions', 'event_espresso');
 
 		//Show Google map image?
-		$show_map_image = (isset($show_map_image) && $show_map_image == 'false') ? false : true;
+		$show_map_image = isset($show_map_image) && $show_map_image == 'false' ? false : true;
 
 		//Show title?
-		$show_title = (isset($show_title) && $show_title == 'false') ? false : true;
+		$show_title = isset($show_title) && $show_title == 'false' ? false : true;
 
 		//Show image?
-		$show_image = (isset($show_image) && $show_image == 'false') ? false : true;
+		$show_image = isset($show_image) && $show_image == 'false' ? false : true;
 
 		//Show the description?
-		$show_description = (isset($show_description) && $show_description == 'false') ? false : true;
+		$show_description = isset($show_description) && $show_description == 'false' ? false : true;
 
 		//Show address details?
-		$show_address = (isset($show_address) && $show_address == 'false') ? false : true;
+		$show_address = isset($show_address) && $show_address == 'false' ? false : true;
 
 		//Show additional details
-		$show_additional_details = (isset($show_additional_details) && $show_additional_details == 'false') ? false : true;
+		$show_additional_details = isset($show_additional_details) && $show_additional_details == 'false' ? false : true;
 
 		$FROM = " FROM ";
-		$order_by = (isset($order_by) && $order_by != '') ? " ORDER BY " . $order_by . " ASC " : " ORDER BY name ASC ";
+		$order_by = isset($order_by) && $order_by != '' ? " ORDER BY " . $order_by . " ASC " : " ORDER BY name ASC ";
 		$limit = $limit > 0 ? " LIMIT 0," . $limit . " " : '';
 
 		$using_id = false;

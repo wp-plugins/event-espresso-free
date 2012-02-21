@@ -243,7 +243,7 @@ function add_new_event() {
 				
 				if (function_exists('wp_editor')){
 					$args = array("textarea_rows" => 5, "textarea_name" => "event_desc", "editor_class" => "my_editor_custom");
-					wp_editor("My event content", "event_desc", $args);
+					wp_editor("", "event_desc", $args);
 				}else{
 					the_editor('', $id = 'event_desc', $prev_id = 'title', $media_buttons = true, $tab_index = 3);
 				}
@@ -532,14 +532,16 @@ function add_new_event() {
           <div id="emaildescriptiondivrich" class="postarea">
             <div class="email-conf-opts">
               <p><?php echo __('Send custom confirmation emails for this event?', 'event_espresso') . ' ' . select_input('send_mail', $values, 'N'); ?> <?php echo '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?></p>
-              <p>
-                <?php $email_id = isset($email_id) ? $email_id : '';
-										_e('Use a', 'event_espresso'); ?>
-                <a href="admin.php?page=event_emails" target="_blank">
-                <?php _e('pre-existing email', 'event_espresso'); ?>
-                </a>? <?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') . ' <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=email_manager_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?> </p>
-              <br />
-              <em>OR</em>
+              <?php if ($espresso_premium == true){?>
+				  <p>
+					<?php $email_id = isset($email_id) ? $email_id : '';
+											_e('Use a', 'event_espresso'); ?>
+					<a href="admin.php?page=event_emails" target="_blank">
+					<?php _e('pre-existing email', 'event_espresso'); ?>
+					</a>? <?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') . ' <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=email_manager_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?> </p>
+				  <br />
+				  <em>OR</em>
+			  <?php } ?>
               <p class="section-heading">
                 <?php _e('Create a custom email:', 'event_espresso') ?> <?php echo '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=event_custom_emails"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?>
                 </p>
@@ -550,7 +552,7 @@ function add_new_event() {
 				//echo '<p>version_compare ='.(version_compare($wp_version, $wp_min_version) >= 0).'</p>';
 				if (function_exists('wp_editor')){
 					$args = array("textarea_rows" => 5, "textarea_name" => "conf_mail", "editor_class" => "my_editor_custom");
-					wp_editor("My email content", "conf_mail", $args);
+					wp_editor("", "conf_mail", $args);
 				}else{
 					echo  '<textarea name="conf_mail" class="theEditor" id="conf_mail"></textarea>';
 					espresso_tiny_mce();

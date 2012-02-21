@@ -79,13 +79,17 @@ if ( !function_exists( 'event_espresso_shopping_cart' ) ){
 			<div class="mer-event-submit ui-widget-content ui-corner-all">
 				<input type="hidden" name="event_name[<?php echo $r->id; ?>]" value="<?php echo stripslashes_deep( $r->event_name ); ?>" />
 				<input type="hidden" name="regevent_action" value="load_checkout_page" />
-
-			<div id="event_espresso_coupon_wrapper" class="clearfix event-data-display">
+			
+			<?php 
+			//Coupon code display
+			//Uncomment the following code at your own risk. Just beware that all coupon codes will work for everyting in the cart. 
+			?>
+			<?php /*?><div id="event_espresso_coupon_wrapper" class="clearfix event-data-display">
 				<label class="coupon-code" for="event_espresso_coupon_code">
 					<?php _e( 'Enter Coupon Code ', 'event_espresso' ); ?>
 				</label>
 				<input onkeydown="if(event.keyCode==13) {document.getElementById('event_espresso_refresh_total').focus(); return false;}" type="text" name="event_espresso_coupon_code" id ="event_espresso_coupon_code" value="<?php echo $_SESSION['espresso_session']['coupon_code']; ?>"/>
-			</div>
+			</div><?php */?>
 
 			<div id="event_espresso_total_wrapper" class="clearfix event-data-display">
 					<a href="#" id="event_espresso_refresh_total"><?php _e( 'Refresh Total', 'event_espresso' ); ?></a>
@@ -94,7 +98,7 @@ if ( !function_exists( 'event_espresso_shopping_cart' ) ){
 				</span>
 			</div>
 
-			<input type="submit" class="submit btn_event_form_submit ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" name="Continue" id="event_espresso_continue_registration" value="<?php _e( 'Continue to registration page', 'event_espresso' ); ?>" />
+			<input type="submit" class="submit btn_event_form_submit ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" name="Continue" id="event_espresso_continue_registration" value="<?php _e( 'Finish Registration', 'event_espresso' ); ?>" />
 		</div><!-- / .mer-event-submit -->
 	</div><!-- / .event-display-boxes -->
 </form>

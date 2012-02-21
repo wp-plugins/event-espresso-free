@@ -4,9 +4,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 
 function attendee_edit_record() {
 	global $wpdb, $org_options;
-	if (!empty($org_options['full_logging']) && $org_options['full_logging'] == 'Y') {
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => ''));
-	}
+	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$id = $_REQUEST['id'];
 	$registration_id = $_REQUEST['registration_id'];
 	if (isset($_REQUEST['r_id']))
@@ -15,29 +13,29 @@ function attendee_edit_record() {
 	if (!empty($_REQUEST['delete_attendee']) && $_REQUEST['delete_attendee'] == 'true') {
 		$sql = " DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id ='$id'";
 		$wpdb->query($sql);
-//Added by Imon
-#$sql = " UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = IF(IS NULL quantity,NULL,quantity-1 WHERE registration_id ='$registration_id'";
-		#$wpdb->query( $sql );
-		$sql = " UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantity > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE registration_id ='$registration_id'";
-		$wpdb->query($sql);
-		$sql = " UPDATE " . EVENTS_ATTENDEE_COST_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantity > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE attendee_id ='$id'";
-		$wpdb->query($sql);
-		event_espresso_cleanup_multi_event_registration_id_group_data();
-		event_espresso_cleanup_attendee_cost_data();
+		$wpdb->query("SELECT id from " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='$registration_id' ");
+		if ($wpdb->num_rows == 0) {
+			$sql = " UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantity > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE registration_id ='$registration_id'";
+			$wpdb->query($sql);
+			$sql = " UPDATE " . EVENTS_ATTENDEE_COST_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantity > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE attendee_id ='$id'";
+			$wpdb->query($sql);
+			event_espresso_cleanup_multi_event_registration_id_group_data();
+			event_espresso_cleanup_attendee_cost_data();
+		}
 		return events_payment_page($_REQUEST['primary'], $_REQUEST['p_id']);
 	}
 	$counter = 0;
 	$additional_attendees = NULL;
-	
+
 	$sql = "SELECT  t1.*, t2.event_name, t2.question_groups, t2.event_meta FROM " . EVENTS_ATTENDEE_TABLE . " t1
 				 JOIN " . EVENTS_DETAIL_TABLE . " t2
 				 ON t1.event_id = t2.id
 				 WHERE t1.id = '" . $id . "' AND t1.registration_id = '" . $registration_id . "'
 				 ORDER BY t1.id";
-	
+
 	//Debug
 	//echo '<p>$sql- '.$sql.'</p>';
-	
+
 	$results = $wpdb->get_results($sql);
 
 	foreach ($results as $result) {
@@ -73,10 +71,10 @@ function attendee_edit_record() {
 	$response_source = $_POST;
 	$questions = $wpdb->get_row("SELECT question_groups, event_meta FROM " . EVENTS_DETAIL_TABLE . " WHERE id = " . $event_id . " ");
 	$question_groups = unserialize($questions->question_groups);
-	
+
 	//Debug
 	//echo "<pre>".print_r($question_groups,true)."</pre>";
-	
+
 	$event_meta = unserialize($questions->event_meta);
 
 	if (isset($event_meta['add_attendee_question_groups']) && $event_meta['add_attendee_question_groups'] != NULL) {
@@ -201,7 +199,6 @@ function attendee_edit_record() {
 						$wpdb->query($sql);
 
 						/* DEBUG */
-						//This was a nightmare ot debug!! The questions were not saving and I suck at programming!!!
 						//echo '<p>'.$sql.'</p>';
 						//$sql = "UPDATE " . EVENTS_ANSWER_TABLE . " SET answer='$value_string' WHERE attendee_id = '$id' AND question_id ='$question->question_id'";
 						//echo '<p>$question->q_id = '.$question->q_id.'</p>';
@@ -229,14 +226,15 @@ function attendee_edit_record() {
 			return events_payment_page($_REQUEST['primary'], $_REQUEST['p_id']);
 	}
 	?>
-	<div class="event-display-boxes">
+	<div id="event_espresso_registration_form" class="event-display-boxes">
+ 	 <div class="event_espresso_form_wrapper event-data-display">
 		<h3 class="section-heading"><?php
 		if ($_REQUEST['registration_id'] = 'true') {
 			echo __('Edit Your', 'event_espresso') . ' ';
 		}_e('Registration', 'event_espresso');
 	?></h3>
 		<p><strong><?php _e('Event:', 'event_espresso'); ?> <?php echo $event_name; ?></strong></p>
-		<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" class="espresso_form">
+		<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" class="espresso_form" id="registration_form">
 			<?php
 			if (count($question_groups) > 0) {
 				$questions_in = '';
@@ -265,7 +263,7 @@ function attendee_edit_record() {
 
 				/* DEBUG */
 				//echo '<p>$q_sql_2 - '.$q_sql_2.'</p>';
-				
+
 				$questions = '';
 
 				$questions = $wpdb->get_results($q_sql_2);
@@ -283,7 +281,7 @@ $q_ids = '';
 					$existing_questions = rtrim($q_ids, ",");
 
 					$q_sql_3 = "SELECT q.* FROM " . EVENTS_QUESTION_TABLE . " q  JOIN " . EVENTS_QST_GROUP_REL_TABLE . " qgr ON q.id = qgr.question_id JOIN " . EVENTS_QST_GROUP_TABLE . " qg ON qg.id = qgr.group_id WHERE qgr.group_id IN (" . $questions_in . ") AND q.id NOT IN (" . $existing_questions . ") GROUP BY q.question ORDER BY qg.id, q.id ASC";
-					
+
 					//DEBUG
 					//echo '$q_sql_3 - <p>'.$q_sql_3.'</p>';
 
@@ -303,7 +301,7 @@ $q_ids = '';
 							//if new group, close fieldset
 							echo ($group_name != '' && $group_name != $question->group_name) ? '</fieldset>' : '';
 
-							// DEBUG 
+							// DEBUG
 							//echo '<p>'.print_r($question).'</p>';
 							//END DEBUG
 
@@ -339,5 +337,6 @@ $q_ids = '';
 			<p class="espresso_confirm_registration"><input class="btn_event_form_submit" type="submit" name="submit" value="<?php _e('Update Record', 'event_espresso'); ?>" /></p>
 		</form>
 	</div><!-- / .event-display-boxes -->
+	</div><!-- / .event_espresso_form_wrapper .event-data-display -->
 	<?php
 }

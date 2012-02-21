@@ -15,7 +15,7 @@ $category_id= $_REQUEST['category_id'];
 		
 		$sql_data = array('%s','%s','%s','%s');
 	
-	if ($wpdb->update( get_option('events_category_detail_tbl'), $sql, $update_id, $sql_data, array( '%d' ) )){?>
+	if ($wpdb->update( EVENTS_CATEGORY_TABLE, $sql, $update_id, $sql_data, array( '%d' ) )){?>
 	<div id="message" class="updated fade"><p><strong><?php _e('The category has been updated.', 'event_espresso'); ?> </strong></p></div>
 <?php }else { ?>
 	<div id="message" class="error"><p><strong><?php _e('The category was not updated.', 'event_espresso'); ?></strong></p></div>

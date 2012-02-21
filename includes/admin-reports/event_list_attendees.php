@@ -13,7 +13,7 @@ function event_list_attendees() {
         if (is_array($_POST['checkbox'])) {
             while (list($key, $value) = each($_POST['checkbox'])):
                 $del_id = $key;
-                $sql = "DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id = '$del_id'";
+                $sql = "DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = '$del_id'";
                 $wpdb->query($sql);
             endwhile;
         }
@@ -37,34 +37,34 @@ function event_list_attendees() {
                 } else {
                     $checker = 0;
                 }
-                $wpdb->get_results("SELECT checked_in_quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id = '$del_id' LIMIT 0,1 ");
+                $wpdb->get_results("SELECT checked_in_quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = '$del_id' LIMIT 0,1 ");
                 $ticket_scanned = $wpdb->last_result[0]->checked_in_quantity;
                 if ($ticket_scanned >= 1) {
                     ?>
-<div id="message" class="error fade">
-  <p><strong>
-    <?php _e('Scanned tickets cannot be redeemed/un-redeemed here.', 'event_espresso'); ?>
-    </strong></p>
-</div>
-<?php
-                } else {
-                    $sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET checked_in = $checker WHERE registration_id = '$del_id'";
-                    $wpdb->query($sql);
-                    //echo $sql;
-                    ?>
-<div id="message" class="updated fade">
-  <p><strong>
-    <?php _e('Customer(s) attendance data successfully updated for this event.', 'event_espresso'); ?>
-    </strong></p>
-</div>
-<?php
+					<div id="message" class="error fade">
+					  <p><strong>
+						<?php _e('Scanned tickets cannot be redeemed/un-redeemed here.', 'event_espresso'); ?>
+						</strong></p>
+					</div>
+					<?php
+									} else {
+										$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET checked_in = $checker WHERE id = '$del_id'";
+										$wpdb->query($sql);
+										//echo $sql;
+										?>
+					<div id="message" class="updated fade">
+					  <p><strong>
+						<?php _e('Customer(s) attendance data successfully updated for this event.', 'event_espresso'); ?>
+						</strong></p>
+					</div>
+					<?php
                 }
             endwhile;
         }
     }
 	
     require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/event-management/queries.php');
-	
+	$total_events = espresso_total_events();
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/admin_reports_filters.php')) {
         require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/admin_reports_filters.php');
     } else {
@@ -284,47 +284,9 @@ function event_list_attendees() {
 						$event_date = $attendee->start_date;
 						
 						
-					//}
-				//}
-				//if ($temp_reg_id == $registration_id && isset($attendees[$i])) {
-//					
-//					$booking_info = "";
-//					/*
-//					 * Added for seating chart addon
-//					 */
-//					$booking_info = "";
-//					if ( defined('ESPRESSO_SEATING_CHART') ){
-//						$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
-//						if ( $seating_chart_id !== false )
-//						{
-//							$seat = $wpdb->get_row("select scs.* , sces.id as booking_id from ".EVENTS_SEATING_CHART_SEAT_TABLE." scs inner join ".EVENTS_SEATING_CHART_EVENT_SEAT_TABLE." sces on scs.id = sces.seat_id where sces.attendee_id = {$attendee->id}");
-//							if ( $seat !== NULL )
-//							{
-//								$booking_info = "[Seat: ".$seat->custom_tag." <br/>#booking id: ".$seat->booking_id." ]<br/>";
-//							}
-//						}
-//					}
-//					/*
-//					 *	End
-//					 */
-//
-//					$attendees_group .= "<li> $fname $lname $email <br/>".$booking_info." <span style=\"visibility:hidden\">" . $registration_id . "</span>$quantity</li>";
-//					/*echo '<p>';
-//					echo $payment_status.'<br />';
-//					echo 'Temp Reg. Id: '.$temp_reg_id.'<br />';
-//					echo 'Amount: '. espresso_attendee_price(array('attendee_id'=>$registration_id)).'<br />';
-//					echo '</p>';*/
-//					//Removing the price to cut down confusion
-//					//$total_amount_pd = espresso_attendee_price(array('registration_id'=>$registration_id, 'reg_total'=>true));
-//				} else {
-//					$go = true;
-//				}
-				//echo $attendee->quantity;
-				#echo "total attendees : {$total_attendees} && counter : {$counter}";
-				//if ($go || $total_attendees == $counter) {
                 ?>
                   <tr>
-                    <td class="check-column" style="padding:7px 0 22px 7px; vertical-align:top;"><input name="checkbox[<?php echo $registration_id ?>]" type="checkbox"  title="Delete <?php echo $fname ?><?php echo $lname ?>"></td>
+                    <td class="check-column" style="padding:7px 0 22px 7px; vertical-align:top;"><input name="checkbox[<?php echo $id ?>]" type="checkbox"  title="Delete <?php echo $fname ?><?php echo $lname ?>"></td>
                     <td class="row-title"  nowrap="nowrap"><a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;id=<?php echo $id ?>" title="<?php echo'ID#:'.$id.' [ REG#: ' . $registration_id.' ]'; ?>"><?php echo $fname ?> <?php echo $lname ?>
                       <?php /*?><ul>
                          <?php echo $attendees_group ?>
@@ -378,54 +340,6 @@ function event_list_attendees() {
 	?></td>
       </tr>
       <?php
-					//#echo '<p>';
-//					$id = $attendee->id;
-//					$temp_reg_id = $registration_id;
-//					$booking_info = "";
-//														/*
-//														 * Added for seating chart addon
-//														 */
-//														
-//														if ( defined('ESPRESSO_SEATING_CHART') )
-//														{
-//															$seating_chart_id = seating_chart::check_event_has_seating_chart($attendee->event_id);
-//															if ( $seating_chart_id !== false )
-//															{
-//																$seat = $wpdb->get_row("select scs.* , sces.id as booking_id from ".EVENTS_SEATING_CHART_SEAT_TABLE." scs inner join ".EVENTS_SEATING_CHART_EVENT_SEAT_TABLE." sces on scs.id = sces.seat_id where sces.attendee_id = {$id}");
-//																if ( $seat !== NULL )
-//																{
-//																	$booking_info = "[Seat: ".$seat->custom_tag." <br/>#booking id: ".$seat->booking_id." ]<br/>";
-//																}
-//															}
-//														}
-//														/*
-//														 *	End
-//														 */
-//                                                        $email = '<span style="visibility:hidden">' . $attendee->email . '</span>';
-//                                                        $attendees_group = "<li>$fname $lname $email <br/>$booking_info $quantity</li>";
-//					$go = false;
-//																	   
-//					$total_amount_pd = espresso_attendee_price(array('registration_id'=>$temp_reg_id, 'reg_total'=>true));
-//					$attended = $attendee->checked_in;
-//					$ticket_scanned = $attendee->checked_in_quantity;
-//					$payment_status = $attendee->payment_status;
-//					$payment_date = $attendee->payment_date;
-//					$date = $attendee->date;
-//					$event_id = $attendee->event_id;
-//					$coupon_code = $attendee->coupon_code;
-//					$txn_type = $attendee->txn_type;
-//					$txn_id = $attendee->txn_id;
-//					$event_name = $attendee->event_name;
-//					$event_time = $attendee->event_time;
-//					$price_option = $attendee->price_option;
-//					$event_date = $attendee->start_date;
-				//}
-				//$counter++;
-			#} #if (isset($attendees[$i]))]
-			
-	/**
-		End Edit 09-07-11
-	**/
 	$temp_reg_id = $registration_id;
 	$registration_id='';
 		}

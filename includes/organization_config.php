@@ -12,30 +12,25 @@ function organization_config_mnu() {
 		$org_options['organization_state'] = $_POST['org_state'];
 		$org_options['organization_zip'] = $_POST['org_zip'];
 		$org_options['organization_country'] = $_POST['org_country'];
-		$org_options['organization_timezone'] = isset($_POST['organization_timezone']) ? $_POST['organization_timezone'] : 'America/New_York';
 		$org_options['contact_email'] = $_POST['email'];
-		$org_options['currency_format'] = isset($_POST['currency_format']) ? $_POST['currency_format'] : 'USD';
-		$org_options['currency_symbol'] = isset($_POST['currency_format']) ? $_POST['currency_format'] : 'USD';
-		$org_options['events_listing_type'] = isset($_POST['events_listing_type']) ? $_POST['events_listing_type'] : '';
 		$org_options['expire_on_registration_end'] = $_POST['expire_on_registration_end'];
 		$org_options['event_page_id'] = $_POST['event_page_id'];
 		$org_options['return_url'] = $_POST['return_url'];
 		$org_options['cancel_return'] = $_POST['cancel_return'];
 		$org_options['notify_url'] = $_POST['notify_url'];
-		$org_options['use_sandbox'] = isset($_POST['use_sandbox']) ? $_POST['use_sandbox'] : '';
 		$org_options['events_in_dasboard'] = $_POST['events_in_dasboard'];
 		$org_options['default_mail'] = $_POST['default_mail'];
 		$org_options['payment_subject'] = $_POST['payment_subject'];
 		$org_options['payment_message'] = esc_html($_POST['payment_message']);
 		$org_options['message'] = esc_html($_POST['success_message']);
 		$org_options['email_before_payment'] = $_POST['email_before_payment'];
+		$org_options['email_fancy_headers'] = $_POST['email_fancy_headers'];
 		$org_options['use_captcha'] = $_POST['use_captcha'];
 		$org_options['recaptcha_publickey'] = $_POST['recaptcha_publickey'];
 		$org_options['recaptcha_privatekey'] = $_POST['recaptcha_privatekey'];
 		$org_options['recaptcha_theme'] = $_POST['recaptcha_theme'];
 		$org_options['recaptcha_width'] = $_POST['recaptcha_width'];
 		$org_options['recaptcha_language'] = $_POST['recaptcha_language'];
-		$org_options['use_custom_post'] = isset($_POST['use_custom_post']) ? $_POST['use_custom_post'] : '';
 		$org_options['espresso_dashboard_widget'] = $_POST['espresso_dashboard_widget'];
 		$org_options['time_reg_limit'] = $_POST['time_reg_limit'];
 		$org_options['use_attendee_pre_approval'] = $_POST['use_attendee_pre_approval'];
@@ -54,34 +49,64 @@ function organization_config_mnu() {
 		$org_options['default_payment_status'] = $_POST['default_payment_status'];
 		$currency_format = getCountryFullData($org_options['organization_country']);
 		switch ($currency_format['iso_code_3']) {
-			case 'USA': $org_options['currency_symbol'] = '$';
+			case 'USA': $org_options['currency_symbol'] = '$'; // US Dollar
 				break;
-			case 'CHE': $org_options['currency_symbol'] = 'Fr.';
+			case 'CHE': $org_options['currency_symbol'] = 'Fr.'; // Swiss Franc
 				break;
-			case 'AUS': $org_options['currency_symbol'] = 'A $';
+			case 'AUS': $org_options['currency_symbol'] = 'A$'; // Australian Dollar
 				break;
-			case 'GBR': $org_options['currency_symbol'] = '&pound;';
+			case 'GBR': $org_options['currency_symbol'] = '&pound;'; // British Pound
 				break;
-			case 'NOR': $org_options['currency_symbol'] = 'NOK ';
+			case 'NOR': $org_options['currency_symbol'] = 'kr'; // Norwegian Krone
 				break;
-			case 'BRA': $org_options['currency_symbol'] = 'R$';
+			case 'BRA': $org_options['currency_symbol'] = 'R$'; // Brazillian Real
 				break;
-			case 'CAN': $org_options['currency_symbol'] = 'C $';
+			case 'CAN': $org_options['currency_symbol'] = 'C$'; // Canadian Dollar
 				break;
-			case 'JPN': $org_options['currency_symbol'] = '&yen;';
+			case 'JPN': $org_options['currency_symbol'] = '&yen;'; // Japanese Yen
 				break;
-			case 'SWE': $org_options['currency_symbol'] = 'Kr. ';
+			case 'SWE': $org_options['currency_symbol'] = 'kr'; // Swedish Krona
 				break;
-			case 'DNK': $org_options['currency_symbol'] = 'DKK ';
+			case 'DNK': $org_options['currency_symbol'] = 'kr'; // Danish Krone
 				break;
-			case 'ZAF': $org_options['currency_symbol'] = 'R ';
+			case 'ZAF': $org_options['currency_symbol'] = 'R'; // South African Rand
+				break;
+			case 'IND': $org_options['currency_symbol'] = 'Rs'; // Indian Rupee
+				break;
+			case 'TUR' : $org_options['currency_symbol'] = 'TL'; // Turkish Lira
+				break;
+			case 'NZL' : $org_options['currency_symbol'] = 'NZ$'; // New Zealand Dollar
+				break;
+			case 'HKG' : $org_options['currency_symbol'] = 'HK$'; // Hong Kong Dollar
+				break;
+			case 'SGP' : $org_options['currency_symbol'] = 'S$'; // Singapore Dollar
+				break;
+			case 'POL' : $org_options['currency_symbol'] = 'zl'; // Polish Zloty (hex code: z&#x0142;)
+				break;
+			case 'HUN' : $org_options['currency_symbol'] = 'Ft'; // Hungarian Forint
+				break;
+			case 'CZE' : $org_options['currency_symbol'] = 'Kc'; // Czech Koruna (hex code: K&#x10D;)
+				break;
+			case 'ISR' : $org_options['currency_symbol'] = 'ILS'; // Israeli Shekel (hex code: &#8362;)
+				break;
+			case 'MEX' : $org_options['currency_symbol'] = 'Mex$'; // Mexican Peso
+				break;
+			case 'MYS' : $org_options['currency_symbol'] = 'RM'; // Malaysian Ringgit
+				break;
+			case 'PHL' : $org_options['currency_symbol'] = 'PhP'; // Phillipine Peso (hex code: &#x20b1;)
+				break;
+			case 'TWN' : $org_options['currency_symbol'] = 'NT$'; // New Taiwan Dollar
+				break;
+			case 'THA' : $org_options['currency_symbol'] = 'THB'; // Thai Baht (hex code: &#xe3f;)
+				break;
+			case 'AUT' || 'BEL' || 'CYP' || 'EST' || 'FIN' || 'FRA' || 'DEU' || 'GRC' || 'IRL' || 'ITA' || 'LUX' || 'MLT' || 'NLD' || 'PRT' || 'SVK' || 'SVN' || 'ESP' || 'AND' || 'MCO' || 'SMR' || 'VAT' | 'MYT' || 'MNE' || 'XKV' || 'SPM' : $org_options['currency_symbol'] = 'EUR'; // use the Euro for all eurozone countries
 				break;
 			default: $org_options['currency_symbol'] = '$';
 				break;
 		}
-		if (getCountryZoneId($org_options['organization_country']) == '2') {
+		/* if (getCountryZoneId($org_options['organization_country']) == '2') {
 			$org_options['currency_symbol'] = 'Euro: '; //Creates the symbol for the Euro
-		}
+		} */
 		update_option('events_organization_settings', $org_options);
 		echo '<div id="message" class="updated fade"><p><strong>' . __('Organization details saved.', 'event_espresso') . '</strong></p></div>';
 	}
@@ -155,7 +180,7 @@ function organization_config_mnu() {
 															<label for="org_country">
 																<?php _e('Organization Country:', 'event_espresso'); ?>
 															</label>
-															<?php printCountriesSelector("org_country", isset($org_options['organization_country']) ? $org_options['organization_country'] : ''); ?> (<?php echo $org_options['currency_symbol']; ?>)</li>
+															<?php printCountriesSelector("org_country", $org_options['organization_country']); ?> (<?php echo $org_options['currency_symbol']; ?>)</li>
 														<li>
 															<label for="email">
 																<?php _e('Primary contact email:', 'event_espresso'); ?>
@@ -204,7 +229,10 @@ function organization_config_mnu() {
 											<div class="inside">
 												<div class="padding"> <a name="page_settings" id="page_settings"></a>
 													<?php
-													if (($org_options['event_page_id'] == ('0' || '') || $org_options['return_url'] == ('0' || '') || $org_options['notify_url'] == ('0' || ''))) {
+													if (empty($org_options['event_page_id'])
+																	|| empty($org_options['return_url'])
+																	|| empty($org_options['notify_url'])
+																	|| empty($org_options['cancel_return'])) {
 														espresso_create_default_pages();
 													}
 
@@ -295,7 +323,7 @@ function organization_config_mnu() {
 														</select>
 														<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=cancel_return_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
 														<span class="messages">(
-															<?php _e('This should be a page on your website that contains a cancelled message. <br />No short tags are needed. This page should hidden from your navigation, <br />but still viewable to the public (not password protected.)', 'event_espresso'); ?>
+															<?php echo sprintf(__("This should be a page on your website that contains a cancelled message %s and the %s shortcode. This page should hidden %s from your navigation, but still viewable to the public (not password protected.)", 'event_espresso'), '<br />', '<span class="highlight">[ESPRESSO_CANCELLED]</span>', '<br />'); ?>
 															)</span></p>
 													<?php ##### popup help box #####    ?>
 													<div id="cancel_return_info" class="pop-help" style="display:none">
@@ -306,7 +334,7 @@ function organization_config_mnu() {
 															<?php _e('A URL to which the payer\'s browser is redirected if payment is cancelled; for example, a URL on your website that displays a "Payment Canceled" page.', 'event_espresso'); ?>
 														</p>
 														<p>
-															<?php _e('This should be a page on your website that contains a cancelled message. No short tags are needed.', 'event_espresso'); ?>
+															<?php echo sprintf(__("This should be a page on your website that contains a cancelled message and the %s shortcode.", 'event_espresso'), '<strong>[ESPRESSO_CANCELLED]</strong>'); ?>
 														</p>
 														<p><em class="important"><b>
 																	<?php _e('ATTENTION:', 'event_espresso'); ?>
@@ -372,6 +400,19 @@ function organization_config_mnu() {
 														<?php _e('Send registration confirmation emails before payment is received?', 'event_espresso');
 														echo select_input('email_before_payment', $values, $org_options['email_before_payment']); ?>
 													</p>
+													<p>
+														<?php _e('Use fancy email headers?', 'event_espresso');
+														echo select_input('email_fancy_headers', $values, $org_options['email_fancy_headers']); ?>
+														<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=fancyemailheaders"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
+													</p>
+													<?php ###### Popup help box #######    ?>
+													<div id="fancyemailheaders" class="pop-help" style="display:none">
+														<h2>
+															<?php _e('Fancy Email Headers', 'event_espresso'); ?>
+														</h2>
+														<p><?php echo sprintf(__("This option enables the use of the email header format %s From: name %s %s Reply-to: name %s %s.", 'event_espresso'), '<br />', '&lt;email@address.com&gt;', '<br />', '&lt;email@address.com&gt;', '<br />'); ?></p>
+														<p><?php _e("You should only use this if you know it will not cause email delivery problems. Some servers will not send emails that use this format.", 'event_espresso'); ?></p>
+													</div>
 													<h4>
 														<?php _e('Payment Confirmation Email:', 'event_espresso'); ?>
 													</h4>

@@ -91,8 +91,6 @@ function edit_event($event_id = 0) {
 
         $question_groups = unserialize($event->question_groups);
 
-        $item_groups = unserialize($event->item_groups);
-
         $event_meta = unserialize($event->event_meta);
 
         $recurrence_id = $event->recurrence_id;
@@ -544,10 +542,10 @@ function edit_event($event_id = 0) {
           <table width="100%" border="0" cellpadding="5">
               <tr valign="top">
 
-            <?php
-                                if (function_exists('espresso_venue_dd') && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
-                                    $ven_type = 'class="use-ven-manager"';
-                                    ?>
+           <?php
+			if (function_exists('espresso_venue_dd') && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
+				$ven_type = 'class="use-ven-manager"';
+           ?>
             <td <?php echo $ven_type ?>><fieldset id="venue-manager">
                 <legend><?php echo __('Venue Information', 'event_espresso') ?></legend>
                 <?php if (!espresso_venue_dd()) : ?>
@@ -694,13 +692,15 @@ function edit_event($event_id = 0) {
           <div id="emaildescriptiondivrich" class="postarea">
             <div class="email-conf-opts">
               <p><?php echo __('Send custom confirmation emails for this event?', 'event_espresso') . ' ' . select_input('send_mail', $values, $send_mail); ?> <?php echo '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=custom_email_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?></p>
-              <p>
-                <?php _e('Use a ', 'event_espresso'); ?>
-                <a href="admin.php?page=event_emails" target="_blank">
-                <?php _e('pre-existing email', 'event_espresso'); ?>
-                </a>? <?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') . ' <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=email_manager_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?> </p>
-              <br />
-              <em>OR</em>
+              <?php if ($espresso_premium == true){?>
+				  <p>
+					<?php _e('Use a ', 'event_espresso'); ?>
+					<a href="admin.php?page=event_emails" target="_blank">
+					<?php _e('pre-existing email', 'event_espresso'); ?>
+					</a>? <?php echo espresso_db_dropdown('id', 'email_name', EVENTS_EMAIL_TABLE, 'email_name', $email_id, 'desc') . ' <a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=email_manager_info"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?> </p>
+				  <br />
+				  <em>OR</em>
+			  <?php } ?>
               <p>
                 <?php _e('Create a custom email:', 'event_espresso') ?>  <?php echo '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=event_custom_emails"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?>
                 </p>

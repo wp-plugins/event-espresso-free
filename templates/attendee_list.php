@@ -41,12 +41,15 @@ li.attendee_details{
 if (!function_exists('event_espresso_show_attendess')) {
 	function event_espresso_show_attendess($sql,$show_gravatar,$paid_only, $sort=''){
 		//echo $sql;
-		global $wpdb;
+		global $wpdb,$this_is_a_reg_page;
 		$events = $wpdb->get_results($sql);
 		foreach ($events as $event){
 			$event_id = $event->id;
 			$event_name = stripslashes_deep($event->event_name);
-			$event_desc = do_shortcode(stripslashes_deep($event->event_desc));
+			
+			if ($this_is_a_reg_page != TRUE){
+				$event_desc = do_shortcode(stripslashes_deep($event->event_desc));
+			}
 
 			//This variable is only available using the espresso_event_status function which is loacted in the Custom Files Addon (http://eventespresso.com/download/plugins-and-addons/custom-files-addon/)
 			$event_status = function_exists('espresso_event_status') ? espresso_event_status($event_id) : '';
@@ -59,7 +62,7 @@ if (!function_exists('event_espresso_show_attendess')) {
 					  <?php
 							$a_sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE event_id='" . $event_id . "'";
 							$a_sql .= $paid_only == 'true'? " AND (payment_status='Completed' OR payment_status='Pending') ":'';
-                                                        $a_sql .= $sort;
+                            $a_sql .= $sort;
 							//echo $a_sql;
 							$attendees = $wpdb->get_results($a_sql);
 							foreach ($attendees as $attendee){

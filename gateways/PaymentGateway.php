@@ -97,7 +97,7 @@ if (!class_exists('PaymentGateway')) {
         public function submitButton($button_url, $gateway) {
             $this->prepareSubmit();
 							global $gateway_name;
-            echo '<form  method="post" name="payment_form" action="' . $this->gatewayUrl . '">';
+            echo '<li><form  method="post" name="payment_form" action="' . $this->gatewayUrl . '">';
             foreach ($this->fields as $name => $value) {
                 echo "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
             }
@@ -119,7 +119,7 @@ if (!class_exists('PaymentGateway')) {
                     break;
             }
             echo '<input class="espresso_payment_button' . $gateway_name . '" type="image" alt="Pay using ' . $gateway_name . '" src="' . $button_url . '" />';
-            echo '</form>';
+            echo '</form></li>';
         }
 
         /**
@@ -204,9 +204,11 @@ if (!class_exists('PaymentGateway')) {
 
             $text .= "\nIPN Response from gateway Server:\n " . $this->ipnResponse;
             // Write to log
+						if (is_writable($this->ipnLogFile)) {
             $fp = @fopen($this->ipnLogFile, 'a');
             @fwrite($fp, $text . "\n\n");
             @fclose($fp);
+						}
         }
 
         public function dump_fields() {
@@ -226,7 +228,7 @@ if (!class_exists('PaymentGateway')) {
 							echo '<tbody>';
             ksort($this->fields);
             foreach ($this->fields as $key => $value) {
-							
+
 							echo '<tr>';
 							echo '<td style="color: #fff; border-right: 1px solid #ccc;">' . $key . '</td>';
 							echo '<td style="color: #fff;">' . urldecode($value) .'&nbsp;</td>';

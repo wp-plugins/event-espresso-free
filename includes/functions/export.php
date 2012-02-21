@@ -2,7 +2,7 @@
 // Export data for event, called by excel request below
 if (!function_exists('espresso_event_export')){
 	function espresso_event_export($ename){
-		global $wpdb;
+		global $wpdb, $org_options;
 		$htables = array();
 		$htables[] = 'Event Id';
 		$htables[] = 'Name';
@@ -11,9 +11,11 @@ if (!function_exists('espresso_event_export')){
 		$htables[] = 'Start Time';
 		$htables[] = 'DoW';
 		$htables[] = 'Reg Begins';
+		
 		if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true){
 			$htables[] = 'Submitter';
 		}
+		
 		$htables[] = 'Status';
 		$htables[] = 'Attendees';
 
@@ -22,73 +24,106 @@ if (!function_exists('espresso_event_export')){
 			$year_r = $pieces[0];
 			$month_r = $pieces[1];
 		}
+		
+		
 		$group = '';
-		if (function_exists('espresso_member_data')&&espresso_member_data('role')=='espresso_group_admin')
-		{
+		
+		if ( function_exists('espresso_member_data') && espresso_member_data('role')=='espresso_group_admin' ) { 
+		
 			$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
 			$group = unserialize($group);
+			
 			$sql = "(SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
 			$sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT, ";
 			$sql .= " e.address, e.address2, e.city, e.state, e.zip, e.country, ";
 			$sql .= " e.venue_title, e.phone, e.wp_user ";
+			
+			if ( isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ) {
+				$sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta ";
+			}
+			
 			$sql .= " FROM ". EVENTS_DETAIL_TABLE ." e ";
-			if ($_REQUEST[ 'category_id' ] !='')
-			{
+			
+			if ( isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
+				$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id ";
+			}
+			
+			if ($_REQUEST[ 'category_id' ] !='') {
 				$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
 				$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
 			}
-			if ($group !='')
-			{
+			
+			if ($group !=''){
 				$sql .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 				$sql .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 			}
+			
 			$sql .= ($_POST[ 'event_status' ] !='' && $_POST[ 'event_status' ] !='IA')  ? " WHERE event_status = '" . $_POST[ 'event_status' ] ."' ":" WHERE event_status != 'D' ";
 			$sql .= $_REQUEST[ 'category_id' ] !='' ? " AND c.id = '" . $_REQUEST[ 'category_id' ] . "' " : '';
 			$sql .= $group !='' ? " AND l.locale_id IN (" . implode(",",$group) . ") " : '';
-			if ($_POST[ 'month_range' ] !='')
-			{
+			
+			if ($_POST[ 'month_range' ] !=''){
 				$sql .= " AND start_date BETWEEN '".date('Y-m-d', strtotime($year_r. '-' .$month_r . '-01'))."' AND '".date('Y-m-d', strtotime($year_r . '-' .$month_r. '-31'))."' ";
 			}		
-			if ($_REQUEST[ 'today' ]=='true')
-			{
+			
+			if ($_REQUEST[ 'today' ]=='true'){
 				$sql .= " AND start_date = '" . $curdate ."' ";
 			}			
-			if ($_REQUEST[ 'this_month' ]=='true')
-			{
+			
+			if ($_REQUEST[ 'this_month' ]=='true'){
 				$sql .= " AND start_date BETWEEN '".date('Y-m-d', strtotime($this_year_r. '-' .$this_month_r . '-01'))."' AND '".date('Y-m-d', strtotime($this_year_r . '-' .$this_month_r. '-' . $days_this_month))."' ";
 			}
+			
 			$sql .= ") UNION ";
+			
 		}
+		
+		
 		$sql .= "(SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
 		$sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT, ";
 		$sql .= " e.address, e.address2, e.city, e.state, e.zip, e.country, ";
 		$sql .= " e.venue_title, e.phone, e.wp_user ";
+		
+		if ( isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
+			$sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta ";
+		}
+		
 		$sql .= " FROM ". EVENTS_DETAIL_TABLE ." e ";
-		if ($_REQUEST[ 'category_id' ] !='')
-		{
+		
+		if ( isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ) {
+			$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id ";
+		}
+		
+		if ($_REQUEST[ 'category_id' ] !=''){
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
 		}
+		
 		$sql .= ($_POST[ 'event_status' ] !='' && $_POST[ 'event_status' ] !='IA')  ? " WHERE event_status = '" . $_POST[ 'event_status' ] ."' ":" WHERE event_status != 'D' ";
 		$sql .= $_REQUEST[ 'category_id' ] !='' ? " AND c.id = '" . $_REQUEST[ 'category_id' ] . "' " : '';
-		if ($_POST[ 'month_range' ] !='')
-		{
+		
+		if ($_POST[ 'month_range' ] !=''){
 			$sql .= " AND start_date BETWEEN '".date('Y-m-d', strtotime($year_r. '-' .$month_r . '-01'))."' AND '".date('Y-m-d', strtotime($year_r . '-' .$month_r. '-31'))."' ";
 		}		
-		if ($_REQUEST[ 'today' ]=='true')
-		{
+		
+		if ($_REQUEST[ 'today' ]=='true'){
 			$sql .= " AND start_date = '" . $curdate ."' ";
 		}			
-		if ($_REQUEST[ 'this_month' ]=='true')
-		{
+		
+		if ($_REQUEST[ 'this_month' ]=='true'){
 			$sql .= " AND start_date BETWEEN '".date('Y-m-d', strtotime($this_year_r. '-' .$this_month_r . '-01'))."' AND '".date('Y-m-d', strtotime($this_year_r . '-' .$this_month_r. '-' . $days_this_month))."' ";
 		}
-		if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') )
-		{
+		
+		if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') ){
 			$sql .= " AND wp_user = '" . espresso_member_data('id') ."' ";
 		}
-		ob_start();
+		
 		$sql .= ") ORDER BY start_date ASC";
+		
+		ob_start();
+		
+		//echo $sql;
+		
 		$filename = $_REQUEST['all_events'] == "true"? __('all-events', 'event_espresso') :	sanitize_title_with_dashes($event_name);
 		$filename = $filename . "-" . $today ;
 		switch ($_REQUEST['type']) 
@@ -115,8 +150,7 @@ if (!function_exists('espresso_event_export')){
 			break;
 		}
 		$events = $wpdb->get_results($sql);
-		foreach ($events as $event)
-		{
+		foreach ($events as $event){
 			$event_id= $event->event_id;
 			$event_name=stripslashes_deep($event->event_name);
 			$event_identifier=stripslashes_deep($event->event_identifier);
@@ -129,16 +163,39 @@ if (!function_exists('espresso_event_export')){
 			$status = event_espresso_get_is_active($event_id);
 			$recurrence_id = $event->recurrence_id;
 			$registration_startT = $event->registration_startT;
-			$event_address = $event->address;
-			$event_address2 = $event->address2;
-			$event_city = $event->city;
-			$event_state = $event->state;
-			$event_zip = $event->zip;
-			$event_country = $event->country;
-			$event_phone = $event->phone;
-			$venue_title = $event->venue_title;
+			
+
+			//Venue variables
+			if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
+				//$data = new stdClass;
+				//$data->event->venue_meta = unserialize($event->venue_meta);
+				
+				//Debug
+				//echo "<pre>".print_r($data->event->venue_meta,true)."</pre>";
+				$venue_title = $event->venue_name;
+				/*$data->event->venue_url = $data->event->venue_meta['website'];
+				$data->event->venue_phone = $data->event->venue_meta['phone'];
+				$data->event->venue_image = '<img src="'.$data->event->venue_meta['image'].'" />';
+				$data->event->address = $data->event->venue_address;
+				$data->event->address2 = $data->event->venue_address2;
+				$data->event->city = $data->event->venue_city;
+				$data->event->state = $data->event->venue_state;
+				$data->event->zip = $data->event->venue_zip;
+				$data->event->country = $data->event->venue_country;*/
+			} else {
+				$venue_title = $event->venue_title;
+				/*$event_address = $event->address;
+				$event_address2 = $event->address2;
+				$event_city = $event->city;
+				$event_state = $event->state;
+				$event_zip = $event->zip;
+				$event_country = $event->country;
+				$event_phone = $event->phone;*/
+			}
+
+
 			$wp_user = $event->wp_user;
-			$location = ($event_address != '' ? $event_address :'') . ($event_address2 != '' ? '<br />' . $event_address2 :'') . ($event_city != '' ? '<br />' . $event_city :'') . ($event_state != '' ? ', ' . $event_state :'') . ($event_zip != '' ? '<br />' . $event_zip :'') . ($event_country != '' ? '<br />' . $event_country :'');
+			//$location = ($event_address != '' ? $event_address :'') . ($event_address2 != '' ? '<br />' . $event_address2 :'') . ($event_city != '' ? '<br />' . $event_city :'') . ($event_state != '' ? ', ' . $event_state :'') . ($event_zip != '' ? '<br />' . $event_zip :'') . ($event_country != '' ? '<br />' . $event_country :'');
 			$dow = date("D",strtotime($start_date));
 			echo $event_id 
 					. $s . $event_name
@@ -146,14 +203,16 @@ if (!function_exists('espresso_event_export')){
 					. $s . $start_date
 					. $s . event_espresso_get_time($event_id, 'start_time')
 					. $s . $dow
-					. $s . event_date_display($registration_start,get_option('date_format'));
-			if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true){
+					. $s . str_replace ( ',', ' ', event_date_display($registration_start,get_option('date_format'))); // ticket 570
+					
+			if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true) {
 					$user_company = espresso_user_meta($wp_user, 'company') !=''?espresso_user_meta($wp_user, 'company'):'';
 					$user_organization = espresso_user_meta($wp_user, 'organization') !=''?espresso_user_meta($wp_user, 'organization'):'';
 					$user_co_org = $user_company !=''?$user_company:$user_organization;
 					echo $s . (espresso_user_meta($wp_user, 'user_firstname') !=''?espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname'):espresso_user_meta($wp_user, 'display_name'));
 			}
-			echo $s . 	strip_tags($status['display']) . $s . str_replace('/',' of ', get_number_of_attendees_reg_limit($event_id) );
+			
+			echo $s . 	strip_tags($status['display']) . $s . str_replace('/',' of ', get_number_of_attendees_reg_limit($event_id, 'num_attendees_slash_reg_limit') );
 
 			switch ($_REQUEST['type']) 
 			{

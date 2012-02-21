@@ -3,7 +3,7 @@ function edit_event_category(){
 	global $wpdb;
 	
 	$id=$_REQUEST['id'];
-	$results = $wpdb->get_results("SELECT * FROM ". get_option('events_category_detail_tbl') ." WHERE id =".$id);
+	$results = $wpdb->get_results("SELECT * FROM ". EVENTS_CATEGORY_TABLE ." WHERE id =".$id);
 	foreach ($results as $result){
 		$category_id= $result->id;
 		$category_name=stripslashes($result->category_name);
@@ -79,5 +79,4 @@ function edit_event_category(){
 
 
 <?php 
-//espresso_tiny_mce();
 }

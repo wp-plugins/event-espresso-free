@@ -77,15 +77,19 @@ function edit_attendee_record() {
 			/**
 			 * End
 			 * */
-            $sql = " UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantity > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE registration_id ='$registration_id'";
-            $wpdb->query($sql);
-            /**
-             * Added by Imon
-             * */
-			$sql = " UPDATE " . EVENTS_ATTENDEE_COST_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantity > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE attendee_id ='$id'";
-            $wpdb->query($sql);
-			event_espresso_cleanup_multi_event_registration_id_group_data();
-			event_espresso_cleanup_attendee_cost_data();
+			
+			$wpdb->query("SELECT id from " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id ='$registration_id' ");
+			if ($wpdb->num_rows == 0) {
+				$sql = " UPDATE " . EVENTS_ATTENDEE_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantity > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE registration_id ='$registration_id'";
+				$wpdb->query($sql);
+				/**
+				 * Added by Imon
+				 * */
+				$sql = " UPDATE " . EVENTS_ATTENDEE_COST_TABLE . " SET quantity = IF(quantity IS NULL ,NULL,IF(quantity > 0,IF(quantity-1>0,quantity-1,1),0)) WHERE attendee_id ='$id'";
+				$wpdb->query($sql);			
+				event_espresso_cleanup_multi_event_registration_id_group_data();
+				event_espresso_cleanup_attendee_cost_data();
+			}
             
         }else if (!empty($_REQUEST['attendee_action']) && $_REQUEST['attendee_action'] == 'update_attendee') {
 		/*
@@ -226,7 +230,6 @@ function edit_attendee_record() {
                             $wpdb->query( $sql );
 							
 							/* DEBUG */
-							//This was a nightmare ot debug!! The questions were not saving and I suck at programming!!!
 							
 							//echo '<p>'.$sql.'</p>';	
                             
@@ -422,25 +425,26 @@ function edit_attendee_record() {
 				//Output the questions
                 $question_displayed = array();
                 foreach ($questions as $question) {
+					$counter++;
                     if (!in_array($question->id, $question_displayed)) {
                         $question_displayed[] = $question->id;
                         //if new group, close fieldset
-                        echo ($group_name != '' && $group_name != $question->group_name) ? '</fieldset>' : '';
+                        //echo ($group_name != '' && $group_name != $question->group_name) ? '</fieldset>' : '';
 						
 						/* DEBUG */
 						//echo '<p>'.print_r($question).'</p>';
 						/* END DEBUG */
 						
-                        if ($group_name != $question->group_name) {
+                       /* if ($group_name != $question->group_name) {
                             echo "<fieldset><legend>$question->group_name<legend>";
                             $group_name = $question->group_name;
-                        }
+                        }*/
 
                         echo '<p>';
                         echo event_form_build_edit($question, $question->answer, $show_admin_only = true);
                         echo "</p>";
 
-                        $counter++;
+                        
                         echo $counter == $num_rows ? '</fieldset>' : '';
                     }
                 }
@@ -471,7 +475,7 @@ function edit_attendee_record() {
                 { 
                     $attendee_num++;
             ?>
-              <li><a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;id=<?php echo $att; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;attendee_num=<?php echo $attendee_num; ?>" title="<?php _e('Edit Attendee', 'event_espresso'); ?>"><strong><?php echo $row['full_name']; ?></strong> (<?php echo $row['email']; ?>)</a> | <a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;attendee_id=<?php echo $att; ?>&amp;form_action=edit_attendee&amp;attendee_action=delete_attendee&amp;id=<?php echo $id ?>" title="<?php _e('Delete Attendee', 'event_espresso'); ?>" onclick="return confirmDelete();">
+              <li><a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;id=<?php echo $att; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;attendee_num=<?php echo $attendee_num; ?>" title="<?php _e('Edit Attendee', 'event_espresso'); ?>"><strong><?php echo $row['full_name']; ?></strong> (<?php echo $row['email']; ?>)</a> | <a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;attendee_id=<?php echo $att; ?>&amp;form_action=edit_attendee&amp;attendee_action=delete_attendee&amp;id=<?php echo $att ?>" title="<?php _e('Delete Attendee', 'event_espresso'); ?>" onclick="return confirmDelete();">
                 <?php _e('Delete', 'event_espresso'); ?>
                 </a></li>
               <?php 	

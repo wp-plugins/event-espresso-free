@@ -46,7 +46,7 @@ if (!function_exists('register_attendees')) {
         isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.address2 venue_address2, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
         $sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id = e.id ";
-		
+
         isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
 		$sql.= " WHERE e.is_active='Y' ";
 		$sql.= " AND e.event_status != 'D' ";
@@ -73,8 +73,7 @@ if (!function_exists('register_attendees')) {
 
         //Build the registration page
         if ($num_rows > 0) {
-            //Create a log file
-            //espresso_log::singleton()->log( array ( 'file' => __FILE__, 'function' => __FUNCTION__, 'status' => " $sql] [ sqldump = " . var_export($events, true) ) );
+            do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
             //These are the variables that can be used throughout the registration page
             //foreach ($events as $event) {
             global $this_event_id;
@@ -178,7 +177,7 @@ if (!function_exists('register_attendees')) {
             $reg_limit = $data->event->reg_limit;
             $additional_limit = $data->event->additional_limit;
 
-                
+
 
             //If the coupon code system is intalled then use it
             if (function_exists('event_espresso_coupon_registration_page')) {
@@ -217,19 +216,19 @@ if (!function_exists('register_attendees')) {
                 'venue_city' => $venue_city,
                 'venue_state' => $venue_state,
                 'venue_country' => $venue_country,
-				
+
 				'is_active' => $data->event->is_active,
 				'event_status' => $data->event->event_status,
 				'start_time' => $data->event->start_time,
 				'start_time' => empty($data->event->start_time) ? '' : $data->event->start_time,
-	
+
 				'registration_startT' => $data->event->registration_startT,
 				'registration_start' => $data->event->registration_start,
-				
+
 				'registration_endT' => $data->event->registration_endT,
 				'registration_end' => $data->event->registration_end,
 'event_address' => empty($data->event->event_address) ? '' : $data->event->event_address,
-                
+
 				'start_date' => '<span class="section-title">' . event_espresso_no_format_date($start_date, get_option('date_format')) . '</span>',
                 'end_date' => '<span class="section-title">' . event_date_display($end_date, get_option('date_format')) . '</span>',
                 //'time' => event_espresso_time_dropdown($event_id, 0),
@@ -242,9 +241,9 @@ if (!function_exists('register_attendees')) {
 //This function gets the status of the event.
                 $is_active = array();
                 $is_active = event_espresso_get_is_active(0, $all_meta);
-				
+
 				//echo '<p>'.print_r(event_espresso_get_is_active($event_id, $all_meta)).'</p>';;
-				
+
             if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true') {
                 ?>
                 <script type="text/javascript">

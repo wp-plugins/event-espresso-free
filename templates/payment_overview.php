@@ -25,7 +25,8 @@
     <dt>
       <?php _e('Registration ID:', 'event_espresso'); ?>
     </dt>
-    <dd><?php echo $att_registration_id ?></dd>
-    <?php echo $txn_id == ''?'':'<dt>'.__('Transaction ID:', 'event_espresso').'</dt> <dd>'.$txn_id. '</dd>'; ?>
+    <dd><?php echo $registration_id ?></dd>
+    <?php echo $txn_id == ''?'':'<dt>'.__('Transaction ID:', 'event_espresso').'</dt> <dd>'.$txn_id. '</dd>';
+		echo apply_filters('filter_hook_espresso_display_add_to_calendar_by_attendee_id', $attendee_id);?>
   </dl>
 </div>

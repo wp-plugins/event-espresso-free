@@ -27,7 +27,9 @@ if (!function_exists('event_form_build')) {
         if ($question->required == "Y") {
             $required = ' title="' . $question->required_text . '" class="required ' . $email_validate . ' '.$class.'"';
             $required_label = "<em>*</em>";
-        }
+        } else {
+			$required = 'class="' . $class . '"';
+		}
         if (is_array($answer) && array_key_exists($event_id, $answer)) {
 
             $answer = empty($answer[$event_id]['event_attendees'][$price_id][$attendee_number][$field_name]) ? '' : $answer[$event_id]['event_attendees'][$price_id][$attendee_number][$field_name];
@@ -90,17 +92,22 @@ if (!function_exists('event_form_build')) {
                                 $disabled = $answer == '' ? '' : 'disabled="disabled"';
                                 $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
                                 break;
+							case $question->system_name == 'country':
+                                if($attendee_number==1) $answer = esc_attr(get_user_meta($userid, 'event_espresso_country', true));
+                                $disabled = $answer == '' ? '' : 'disabled="disabled"';
+                                $html .= $answer == '' ? '' : '<input name="' . $question->system_name . $multi_name_adjust . '" type="hidden" value="' . $answer . '" class="'.$class.'" />';
+                                break;
                         }
                     }
                 }
 
                 $html .= '<p class="event_form_field">' . $label;
                 $disabled = isset($disabled) ? $disabled : '';
-                $html .= '<input type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" class="'.$class.'" value="' . $answer . '" ' . $disabled . ' /></p>';
+                $html .= '<input type="text" ' . $required . ' id="' . $field_name . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '"  name="' . $field_name . $multi_name_adjust . '" size="40" value="' . $answer . '" ' . $disabled . ' /></p>';
                 break;
             case "TEXTAREA" :
                 $html .= '<p class="event_form_field event-quest-group-textarea">' . $label;
-                $html .= '<textarea id=""' . $required . ' name="' . $field_name . $multi_name_adjust . '"  cols="30" rows="5" class="'.$class.'">' . $answer . '</textarea></p>';
+                $html .= '<textarea id=""' . $required . ' name="' . $field_name . $multi_name_adjust . '"  cols="30" rows="5">' . $answer . '</textarea></p>';
                 break;
             case "SINGLE" :
                 $values = explode(",", $question->response);
@@ -113,7 +120,7 @@ if (!function_exists('event_form_build')) {
                     //old way $checked = in_array ( $value, $answers ) ? ' checked="checked"' : "";
                     $value = trim($value);
                     $checked = ( $value == $answer ) ? ' checked="checked"' : "";
-                    $html .= '<li><label for="SINGLE_' . $question->id . '_' . $key . '" class="'.$class.'"><input title="' . $question->required_text . '" id="SINGLE_' . $question->id . '_' . $key . '" ' . $required . ' name="' . $field_name . $multi_name_adjust . '"  type="radio" value="' . $value . '" ' . $checked . ' /> ' . $value . '</label></li>';
+                    $html .= '<li><label for="SINGLE_' . $question->id . '_' . $key . '_' . $attendee_number . '" class="'.$class.'"><input id="SINGLE_' . $question->id . '_' . $key . '_' . $attendee_number . '" ' . $required . ' name="' . $field_name . $multi_name_adjust . '"  type="radio" value="' . $value . '" ' . $checked . ' /> ' . $value . '</label></li>';
                     //echo $label;
                 }
                 $html .= '</ul>';
@@ -141,7 +148,7 @@ if (!function_exists('event_form_build')) {
                 $values = explode(",", $question->response);
                 $answers = explode(",", $answer);
                 $html .= '<p class="event_form_field" class="'.$class.'">' . $label;
-                $html .= '<select ' . $dd_type . ' ' . $required . ' id="DROPDOWN_' . $question->id . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '" class="'.$class.'">';
+                $html .= '<select ' . $dd_type . ' ' . $required . ' id="DROPDOWN_' . $question->id . '-' . $event_id . '-' . $price_id . '-' . $attendee_number . '">';
                 $html .= "<option value=''>" . __('Select One', 'event_espresso') . "</option>";
                 foreach ($values as $key => $value) {
                     $value = trim($value);
@@ -163,10 +170,26 @@ if (!function_exists('event_form_build')) {
 
 function event_form_build_edit($question, $edits, $show_admin_only = false) {
     $required = '';
-    if ($question->required == "Y") {
+   /* if ($question->required == "Y") {
         $required = ' class="required"';
-    }
+    }*/
+	
+	 /**
+         * Temporary client side email validation solution by Abel, will be replaced
+         * in the next version with a full validation suite.
+         */
+        $email_validate = $question->system_name == 'email' ? 'email' : '';
 
+        if ($question->required == "Y") {
+            $required = ' title="' . $question->required_text . '" class="required ' . $email_validate . ' '.$class.'"';
+            $required_label = "<em>*</em>";
+        } else {
+			$required = 'class="' . $class . '"';
+		}
+	$required_label = isset($required_label) ? $required_label : '';
+	
+	//echo '<p>$required = '.$required.'</p>';
+	//echo "<pre>".print_r($question,true)."</pre>";
     //echo '<p>id = '.$question->id.'</p>';
     //echo '<p>q_id = '.$question->q_id.'</p>';
     //Sometimes the answer id is passed as the question id, so we need to make sure that we get the right question id.
@@ -180,7 +203,7 @@ function event_form_build_edit($question, $edits, $show_admin_only = false) {
         return;
     }
     $field_name = ($question->system_name != '') ? $question->system_name : 'TEXT_' . $question->id;
-    echo '<label for="' . $field_name . '">' . $question->question . '</label><br>';
+    echo '<label for="' . $field_name . '">' . $question->question . $required_label .'</label><br>';
     switch ($question->question_type) {
         case "TEXT" :
             echo '<input type="text" ' . $required . ' id="' . $field_name . '"  name="' . $field_name . '" size="40"  value="' . $edits . '" />';
@@ -227,5 +250,3 @@ function event_form_build_edit($question, $edits, $show_admin_only = false) {
             break;
     }
 }
-
-?>

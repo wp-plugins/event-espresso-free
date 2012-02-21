@@ -251,7 +251,6 @@ function update_event($recurrence_arr = array()) {
         $question_groups = serialize($_REQUEST['question_groups']);
         $add_attendee_question_groups = serialize(empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups']);
 
-        $item_groups = serialize(empty($_REQUEST['item_groups']) ? '' : $_REQUEST['item_groups']);
         $event_mata['default_payment_status'] = $_REQUEST['default_payment_status'];
         $event_mata['venue_id'] = empty($_REQUEST['venue_id']) ? '' : $_REQUEST['venue_id'][0];
         $event_mata['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
@@ -315,13 +314,13 @@ function update_event($recurrence_arr = array()) {
             'allow_multiple' => $allow_multiple, 'send_mail' => $send_mail, 'is_active' => $is_active, 'event_status' => $event_status,
             'conf_mail' => $conf_mail, 'use_coupon_code' => $use_coupon_code, 'member_only' => $member_only, 'externalURL' => $externalURL,
             'early_disc' => $early_disc, 'early_disc_date' => $early_disc_date, 'early_disc_percentage' => $early_disc_percentage, 'alt_email' => $alt_email,
-            'question_groups' => $question_groups, 'item_groups' => $item_groups, 'allow_overflow' => $allow_overflow,
+            'question_groups' => $question_groups, 'allow_overflow' => $allow_overflow,
             'overflow_event_id' => $overflow_event_id, 'additional_limit' => $additional_limit,
             'reg_limit' => $reg_limit, 'email_id' => $email_id, 'registration_startT' => $registration_startT, 'registration_endT' => $registration_endT, 'event_meta' => $event_mata, 'require_pre_approval' => $require_pre_approval, 'timezone_string' => $timezone_string);
 
         $sql_data = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
             '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-            '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s');
+            '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s');
 
         $update_id = array('id' => $event_id);
 

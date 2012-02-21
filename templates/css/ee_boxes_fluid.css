@@ -123,14 +123,13 @@ table.price_list {
 #event_espresso_refresh_total,
 .inline-link  { /* floating links */
 	border-bottom: 1px solid #ccc;
-	color: #868C68;
 	font-weight: bold;
 	padding-bottom: 3px;
 	text-decoration: none;
 }
 .inline-link:focus,
 .inline-link:hover {
-	color: #CD7950;
+	
 }
 #content .event-display-boxes .address-block {
 	border: 1px solid #bfbfbf;
@@ -145,12 +144,11 @@ table.price_list {
 	margin: 10px -10px -10px;
 	padding-left: 10px;
 }
-#content  .register-link-footer a,
+#content .register-link-footer a,
 #content .register-link-footer a:visited {
-	color: #F0EFE6;
 	font-weight: bold;
 	font-size: 90%;
- text-decoration: none;
+	text-decoration: none;
 }	
 /* >Pages
 ------------------------------------------------------------------------------*/
@@ -418,7 +416,6 @@ ul#espresso_payment_buttons li form {
 	background: #FAF9EF;
 	border: 1px solid #bfbfbf;
 	width: auto;
-	height: 40px;
 }
 a.btn_event_form_submit {
 	display: inline-block;
@@ -435,7 +432,6 @@ a.btn_event_form_submit {
 	margin-bottom: 0;
 }
 .btn_event_form_submit:hover {
-	background: #D7DCBD;
 	color: #000 !important;
 	cursor: pointer;
 }

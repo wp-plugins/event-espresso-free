@@ -79,7 +79,7 @@ function espresso_admin_format_content($content='') {
 //This loads the the tinymce script into the header
 function espresso_tiny_mce() {
 	global $wp_version;
-	
+
 	$wp_min_version = '3.2';
 	//If the version of WordPress is lower than 3.2, then we load the fallback script.
 	if (!version_compare($wp_version, $wp_min_version, '>=')) {
@@ -485,9 +485,9 @@ function getCountriesArray($lang="en") {
                 array(3, 'Germany', 'DE', 'DEU', 2),
                 array(198, 'Switzerland', 'CH', 'CHE', 1),
                 array(87, 'The Netherlands', 'NL', 'NLD', 2),
-                array(9, 'Netherlands Antilles ', 'AN', 'ANT', 2),
                 array(197, 'Sweden', 'SE', 'SWE', 1),
-                array(4, 'Andorra', 'AD', 'AND', 1),
+                array(230, 'Akrotiri and Dhekelia', 'CY', 'CYP', 2),
+                array(4, 'Andorra', 'AD', 'AND', 2),
                 array(5, 'Angola', 'AO', 'AGO', 1),
                 array(6, 'Anguilla', 'AI', 'AIA', 1),
                 array(7, 'Antarctica', 'AQ', 'ATA', 1),
@@ -511,42 +511,48 @@ function getCountriesArray($lang="en") {
                 array(27, 'Bolivia', 'BO', 'BOL', 1),
                 array(28, 'Bosnia and Herzegovina', 'BA', 'BIH', 1),
                 array(29, 'Botswana', 'BW', 'BWA', 1),
+                array(96, 'Bouvet Island', 'BV', 'BVT', 1),
                 array(30, 'Brazil', 'BR', 'BRA', 1),
                 array(31, 'Brunei', 'BN', 'BRN', 1),
-                array(32, 'Bulgaria', 'BG', 'BGR', 2),
+                array(32, 'Bulgaria', 'BG', 'BGR', 1),
                 array(33, 'Burkina Faso', 'BF', 'BFA', 1),
                 array(34, 'Burundi', 'BI', 'BDI', 1),
                 array(35, 'Bhutan', 'BT', 'BTN', 1),
                 array(36, 'Cape Verde', 'CV', 'CPV', 1),
                 array(37, 'Cambodia', 'KH', 'KHM', 1),
                 array(38, 'Cameroon', 'CM', 'CMR', 1),
+                array(98, 'Cayman Islands', 'KY', 'CYM', 1),
+                array(172, 'Central African Republic', 'CF', 'CAF', 1),
                 array(40, 'Chad', 'TD', 'TCD', 1),
                 array(41, 'Chile', 'CL', 'CHL', 1),
                 array(42, 'China', 'CN', 'CHN', 1),
+                array(105, 'Christmas Island', 'CX', 'CXR', 1),
                 array(43, 'Cyprus', 'CY', 'CYP', 2),
+                array(99, 'Cocos Island', 'CC', 'CCK', 1),
+                array(100, 'Cook Islands', 'CK', 'COK', 1),
                 array(44, 'Colombia', 'CO', 'COL', 1),
                 array(45, 'Comoros', 'KM', 'COM', 1),
                 array(46, 'Congo', 'CG', 'COG', 1),
                 array(47, 'Corea del Norte', 'KP', 'PRK', 1),
-                array(48, 'South Korea', 'KR', 'KOR', 1),
-                array(49, 'Ivory Coast ', 'CI', 'CIV', 1),
                 array(50, 'Costa Rica', 'CR', 'CRI', 1),
                 array(51, 'Croatia', 'HR', 'HRV', 1),
                 array(52, 'Cuba', 'CU', 'CUB', 1),
+                array(173, 'Czech Republic', 'CZ', 'CZE', 1),
                 array(53, 'Danmark', 'DK', 'DNK', 1),
                 array(54, 'Djibouti', 'DJ', 'DJI', 1),
                 array(55, 'Dominica', 'DM', 'DMA', 1),
+                array(174, 'Dominican Republic', 'DO', 'DOM', 1),
                 array(56, 'Ecuador', 'EC', 'ECU', 1),
                 array(57, 'Egypt', 'EG', 'EGY', 1),
                 array(58, 'El Salvador', 'SV', 'SLV', 1),
-                array(59, 'United Arab Emirates', 'AE', 'ARE', 1),
                 array(60, 'Eritrea', 'ER', 'ERI', 1),
                 array(61, 'Eslovakia', 'SK', 'SVK', 2),
                 array(62, 'Eslovenia', 'SI', 'SVN', 2),
                 array(65, 'Estonia', 'EE', 'EST', 2),
                 array(66, 'Ethiopia', 'ET', 'ETH', 1),
+                array(102, 'Faroe islands', 'FO', 'FRO', 1),
+                array(103, 'Falkland Islands', 'FK', 'FLK', 1),
                 array(67, 'Fiji', 'FJ', 'FJI', 1),
-                array(68, 'Philippines', 'PH', 'PHL', 1),
                 array(69, 'Finland', 'FI', 'FIN', 2),
                 array(71, 'Gabon', 'GA', 'GAB', 1),
                 array(72, 'Gambia', 'GM', 'GMB', 1),
@@ -566,24 +572,16 @@ function getCountriesArray($lang="en") {
                 array(86, 'Haiti', 'HT', 'HTI', 1),
                 array(88, 'Honduras', 'HN', 'HND', 1),
                 array(89, 'Hong Kong', 'HK', 'HKG', 1),
-                array(90, 'Hungry', 'HU', 'HUN', 2),
+                array(90, 'Hungary', 'HU', 'HUN', 1),
                 array(91, 'India', 'IN', 'IND', 1),
+                array(205, 'British Indian Ocean Territory', 'IO', 'IOT', 1),
                 array(92, 'Indonesia', 'ID', 'IDN', 1),
                 array(93, 'Iraq', 'IQ', 'IRQ', 1),
                 array(94, 'Iran', 'IR', 'IRN', 1),
                 array(95, 'Ireland', 'IE', 'IRL', 2),
-                array(96, 'Bouvet Island', 'BV', 'BVT', 1),
                 array(97, 'Iceland', 'IS', 'ISL', 1),
-                array(98, 'Cayman Islands', 'KY', 'CYM', 1),
-                array(99, 'Cocos Island', 'CC', 'CCK', 1),
-                array(100, 'Cook Islands', 'CK', 'COK', 1),
-                array(101, 'Northern Marianas', 'MP', 'MNP', 1),
-                array(102, 'Faroe islands', 'FO', 'FRO', 1),
-                array(103, 'Falkland Islands', 'FK', 'FLK', 1),
-                array(104, 'Marshall islands', 'MH', 'MHL', 1),
-                array(105, 'Christmas Island', 'CX', 'CXR', 1),
-                array(108, 'Virgin Islands', 'VI', 'VIR', 1),
                 array(110, 'Israel', 'IL', 'ISR', 1),
+                array(49, 'Ivory Coast ', 'CI', 'CIV', 1),
                 array(112, 'Jamaica', 'JM', 'JAM', 1),
                 array(113, 'Japan', 'JP', 'JPN', 1),
                 array(114, 'Jordan', 'JO', 'JOR', 1),
@@ -591,6 +589,8 @@ function getCountriesArray($lang="en") {
                 array(116, 'Kenya', 'KE', 'KEN', 1),
                 array(117, 'Kirguistan', 'KG', 'KGZ', 1),
                 array(118, 'Kiribati', 'KI', 'KIR', 1),
+                array(48, 'South Korea', 'KR', 'KOR', 1),
+                array(228, 'Kosovo', 'XK', 'XKV', 2), // there is no official ISO code for Kosovo yet (http://geonames.wordpress.com/2010/03/08/xk-country-code-for-kosovo/) so using a temporary country code and a modified 3 character code for ISO code -- this should be updated if/when Kosovo gets its own ISO code
                 array(119, 'Kuwait', 'KW', 'KWT', 1),
                 array(120, 'Laos', 'LA', 'LAO', 1),
                 array(121, 'Latvia', 'LV', 'LVA', 2),
@@ -609,22 +609,26 @@ function getCountriesArray($lang="en") {
                 array(134, 'Maldivas', 'MV', 'MDV', 1),
                 array(135, 'Mali', 'ML', 'MLI', 1),
                 array(136, 'Malta', 'MT', 'MLT', 2),
+                array(101, 'Northern Marianas', 'MP', 'MNP', 1),
                 array(137, 'Marruecos', 'MA', 'MAR', 1),
+                array(104, 'Marshall islands', 'MH', 'MHL', 1),
                 array(138, 'Martinica', 'MQ', 'MTQ', 1),
                 array(139, 'Mauricio', 'MU', 'MUS', 1),
                 array(140, 'Mauritania', 'MR', 'MRT', 1),
-                array(141, 'Mayote', 'YT', 'MYT', 1),
+                array(141, 'Mayote', 'YT', 'MYT', 2),
                 array(142, 'Mexico', 'MX', 'MEX', 1),
                 array(143, 'Micronesia', 'FM', 'FSM', 1),
                 array(144, 'Moldova', 'MD', 'MDA', 1),
-                array(145, 'Monaco', 'MC', 'MCO', 1),
+                array(145, 'Monaco', 'MC', 'MCO', 2),
                 array(146, 'Mongolia', 'MN', 'MNG', 1),
                 array(147, 'Montserrat', 'MS', 'MSR', 1),
+                array(227, 'Montenegro', 'ME', 'MNE', 2),
                 array(148, 'Mozambique', 'MZ', 'MOZ', 1),
                 array(149, 'Myanmar', 'MM', 'MMR', 1),
                 array(150, 'Namibia', 'NA', 'NAM', 1),
                 array(151, 'Nauru', 'NR', 'NRU', 1),
                 array(152, 'Nepal', 'NP', 'NPL', 1),
+                array(9, 'Netherlands Antilles', 'AN', 'ANT', 1),
                 array(153, 'Nicaragua', 'NI', 'NIC', 1),
                 array(154, 'Niger', 'NE', 'NER', 1),
                 array(155, 'Nigeria', 'NG', 'NGA', 1),
@@ -639,26 +643,25 @@ function getCountriesArray($lang="en") {
                 array(164, 'Papua New Guinea', 'PG', 'PNG', 1),
                 array(165, 'Paraguay', 'PY', 'PRY', 1),
                 array(166, 'Peru', 'PE', 'PER', 1),
-                array(167, 'Polonia', 'PL', 'POL', 2),
+                array(68, 'Philippines', 'PH', 'PHL', 1),
+                array(167, 'Poland', 'PL', 'POL', 1),
                 array(168, 'Portugal', 'PT', 'PRT', 2),
                 array(169, 'Puerto Rico', 'PR', 'PRI', 1),
                 array(170, 'Qatar', 'QA', 'QAT', 1),
-                array(172, 'Central African Republic', 'CF', 'CAF', 1),
-                array(173, 'Czech Republic', 'CZ', 'CZE', 2),
-                array(174, 'Dominican Republic', 'DO', 'DOM', 1),
                 array(176, 'Rowanda', 'RW', 'RWA', 1),
                 array(177, 'Romania', 'RO', 'ROM', 2),
                 array(178, 'Russia', 'RU', 'RUS', 1),
+                array(229, 'Saint Pierre and Miquelon', 'PM', 'SPM', 2),
                 array(180, 'Samoa', 'WS', 'WSM', 1),
                 array(181, 'American Samoa', 'AS', 'ASM', 1),
-                array(183, 'San Marino', 'SM', 'SMR', 1),
+                array(183, 'San Marino', 'SM', 'SMR', 2),
                 array(184, 'San Vincente y las Granadinas', 'VC', 'VCT', 1),
                 array(185, 'Santa Helena', 'SH', 'SHN', 1),
                 array(186, 'Santa Lucia', 'LC', 'LCA', 1),
                 array(188, 'Senegal', 'SN', 'SEN', 1),
                 array(189, 'Seychelles', 'SC', 'SYC', 1),
                 array(190, 'Sierra Leona', 'SL', 'SLE', 1),
-                array(191, 'Singapore', 'SG', 'SGP', 4),
+                array(191, 'Singapore', 'SG', 'SGP', 1),
                 array(192, 'Syria', 'SY', 'SYR', 1),
                 array(193, 'Somalia', 'SO', 'SOM', 1),
                 array(194, 'Sri Lanka', 'LK', 'LKA', 1),
@@ -670,7 +673,6 @@ function getCountriesArray($lang="en") {
                 array(202, 'Taiwan', 'TW', 'TWN', 1),
                 array(203, 'Tanzania', 'TZ', 'TZA', 1),
                 array(204, 'Tajikistan', 'TJ', 'TJK', 1),
-                array(205, 'British Indian Ocean Territory', 'IO', 'IOT', 1),
                 array(206, 'Timor Oriental', 'TP', 'TMP', 1),
                 array(207, 'Togo', 'TG', 'TGO', 1),
                 array(208, 'Tokelau', 'TK', 'TKL', 1),
@@ -682,12 +684,14 @@ function getCountriesArray($lang="en") {
                 array(214, 'Tuvalu', 'TV', 'TUV', 1),
                 array(215, 'Ukraine', 'UA', 'UKR', 1),
                 array(216, 'Uganda', 'UG', 'UGA', 1),
+                array(59, 'United Arab Emirates', 'AE', 'ARE', 1),
                 array(217, 'Uruguay', 'UY', 'URY', 1),
                 array(218, 'Uzbekistan', 'UZ', 'UZB', 1),
                 array(219, 'Vanuatu', 'VU', 'VUT', 1),
-                array(220, 'Vatican', 'VA', 'VAT', 1),
+                array(220, 'Vatican City', 'VA', 'VAT', 2),
                 array(221, 'Venezuela', 'VE', 'VEN', 1),
                 array(222, 'Vietnam', 'VN', 'VNM', 1),
+                array(108, 'Virgin Islands', 'VI', 'VIR', 1),
                 array(223, 'Yemen', 'YE', 'YEM', 1),
                 array(224, 'Yugoslavia', 'YU', 'YUG', 1),
                 array(225, 'Zambia', 'ZM', 'ZMB', 1),
@@ -705,7 +709,8 @@ function getCountryZoneId($country_id) {
     return 0;
 }
 
-function getCountryBelongsZone($country_id, $zone_id=1 /* USA by default */) {
+// this function doesn't appear to work -- default country/zone is NOT USA, for some reason it's defaulting to EU ~c
+function getCountryBelongsZone($country_id, $zone_id=1) { // USA by default
     //2 is for european union
     $countries = getCountriesArray();
     for ($t = 0; $t < sizeof($countries); $t++)
@@ -999,7 +1004,7 @@ function event_espresso_custom_email_info() {
       <p>
         <?php _e('For customized confirmation emails, the following tags can be placed in the email form and they will pull data from the database to include in the email.', 'event_espresso'); ?>
       </p>
-      <p>[registration_id], [fname], [lname], [phone], [event], [event_link], [event_url], [ticket_type], [ticket_link], [qr_code], [description], [cost], [company], [co_add1], [co_add2], [co_city],[co_state], [co_zip],[contact], [payment_url], [invoice_link], [start_date], [start_time], [end_date], [end_time], [location], [location_phone], [google_map_link], [venue_title], [venue_url], [venue_image], [venue_phone], [custom_questions]</p>
+      <p>[registration_id], [fname], [lname], [phone], [event], [event_link], [event_url], [ticket_type], [ticket_link], [qr_code], [description], [cost], [company], [co_add1], [co_add2], [co_city],[co_state], [co_zip],[contact], [payment_url], [invoice_link], [start_date], [start_time], [end_date], [end_time], [location], [location_phone], [google_map_link], [venue_title], [venue_address], [venue_url], [venue_image], [venue_phone], [custom_questions]</p>
     </div>
   </div>
 </div>
@@ -1301,28 +1306,28 @@ function espresso_create_default_pages() {
 
         switch ($new_page_title) {
             case 'Event Registration':
-                if ($org_options['event_page_id'] == ('0' || '')) {
+                if (empty($org_options['event_page_id'])) {
                     $my_post['post_content'] = '[ESPRESSO_EVENTS]';
                     $event_page_id = wp_insert_post($my_post);
                     $org_options['event_page_id'] = $event_page_id;
                 }
                 break;
             case 'Thank You':
-                if ($org_options['return_url'] == ('0' || '')) {
+                if (empty($org_options['return_url'])) {
                     $my_post['post_content'] = '[ESPRESSO_PAYMENTS]';
                     $return_url = wp_insert_post($my_post);
                     $org_options['return_url'] = $return_url;
                 }
                 break;
             case 'Registration Cancelled':
-                if ($org_options['cancel_return'] == ('0' || '')) {
-                    $my_post['post_content'] = 'You have cancelled your registration.';
+                if (empty($org_options['cancel_return'])) {
+                    $my_post['post_content'] = 'You have cancelled your registration.<br />[ESPRESSO_CANCELLED]';
                     $cancel_return = wp_insert_post($my_post);
                     $org_options['cancel_return'] = $cancel_return;
                 }
                 break;
             case 'Transactions':
-                if ($org_options['notify_url'] == ('0' || '')) {
+                if (empty($org_options['notify_url'])) {
                     $my_post['post_content'] = '[ESPRESSO_TXN_PAGE]';
                     $notify_url = wp_insert_post($my_post);
                     $org_options['notify_url'] = $notify_url;

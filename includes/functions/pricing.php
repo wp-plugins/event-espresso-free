@@ -176,13 +176,13 @@ if (!function_exists('early_discount_amount')) {
 if (!function_exists('event_espresso_price_dropdown')) {
 
     function event_espresso_price_dropdown($event_id, $label = 1, $multi_reg = 0, $value = '') {
-		
+
 		//Attention:
 		//If changes to this function are not appearing, you may have the members addon installed and will need to update the function there.
 
         global $wpdb, $org_options;
         $html = '';
-        
+
 		//Will make the name an array and put the time id as a key so we know which event this belongs to
         $multi_name_adjust = $multi_reg == 1 ? "[$event_id]" : '';
         $surcharge_text = isset($org_options['surcharge_text']) ? $org_options['surcharge_text'] : __('Surcharge', 'event_espresso');
@@ -216,7 +216,7 @@ if (!function_exists('event_espresso_price_dropdown')) {
                 //Using price ID
                 $html .= '<option' . $selected . ' value="' . $result->id . '|' . $result->price_type . '">' . $result->price_type . ' (' . $org_options['currency_symbol'] . number_format($result->event_cost, 2) . $message . ') ' . $surcharge . ' </option>';
             }
-            $html .= '</select><input type="hidden" name="price_select" id="price_select-' . $event_id . '" value="true">';
+            $html .= '</select><input type="hidden" name="price_select" id="price_select-' . $event_id . '" value="true" />';
         } else if ($wpdb->num_rows == 1) {
             foreach ($results as $result) {
 
@@ -238,13 +238,13 @@ if (!function_exists('event_espresso_price_dropdown')) {
                 }
                 $message = isset($message) ? $message : '';
                 $html .= '<span class="event_price_label">' . __('Price:', 'event_espresso') . '</span> <span class="event_price_value">' . $org_options['currency_symbol'] . number_format($result->event_cost, 2) . $message . $surcharge . '</span>';
-                $html .= '<input type="hidden" name="price_id' . $multi_name_adjust . '" id="price_id-' . $result->id . '" value="' . $result->id . '">';
+                $html .= '<input type="hidden" name="price_id' . $multi_name_adjust . '" id="price_id-' . $result->id . '" value="' . $result->id . '" />';
             }
         } else if ($wpdb->num_rows == 0) {
             $html .= '<span class="free_event">' . __('Free Event', 'event_espresso') . '</span>';
-            $html .= '<input type="hidden" name="payment' . $multi_name_adjust . '" id="payment-' . $event_id . '" value="' . __('free event', 'event_espresso') . '">';
+            $html .= '<input type="hidden" name="payment' . $multi_name_adjust . '" id="payment-' . $event_id . '" value="' . __('free event', 'event_espresso') . '" />';
         }
-		
+
         return $html;
     }
 
@@ -307,7 +307,7 @@ if (!function_exists('espresso_payment_type')) {
 
 /**
  * espresso_attendee_price()
- * 
+ *
  * @return float|null  the price paid for an event by attendee id or the registration id, if information not found then it will return null
  */
 function espresso_attendee_price($atts) {
@@ -318,7 +318,7 @@ function espresso_attendee_price($atts) {
      * If the registration_id is empty, then retrieve it
      * */
     $generated_registration_id = false;
-    if (!isset($registration_id)) 
+    if (!isset($registration_id))
     {
         if (!isset($attendee_id))
         {
@@ -334,7 +334,7 @@ function espresso_attendee_price($atts) {
     /**
      * Check if the attendee is from old age i.e. before 3.1.10
      * */
-    $ice_age = true; 
+    $ice_age = true;
     $ice_row = $wpdb->get_row($wpdb->prepare("select * from ".EVENTS_ATTENDEE_COST_TABLE." inner join ".EVENTS_ATTENDEE_TABLE." where registration_id = '%s'",$registration_id));
     if ( $ice_row !== NULL )
     {
@@ -356,7 +356,7 @@ function espresso_attendee_price($atts) {
             return number_format($total_cost, 2, '.', '');
         }
     }
-    
+
     /**
      * Return the total amount paid for this registration
      * */
@@ -430,8 +430,8 @@ function espresso_attendee_price($atts) {
     return NULL;
 }
 
-function get_reg_total_price($registration_id) 
+function get_reg_total_price($registration_id)
 {
-    
+
 }
 

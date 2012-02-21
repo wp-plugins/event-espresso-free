@@ -49,7 +49,9 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
         <?php //echo $status_display_open; //Turn this on to display the not open message. ?>
         <?php //echo $status_display_custom_closed; //Turn this on to display the closed message. ?>
     </h2>
-    <?php /* Venue details. Un-comment to display. */ ?>
+    <?php
+		echo apply_filters('filter_hook_espresso_display_add_to_calendar_by_event_id', $event_id);
+		/* Venue details. Un-comment to display. */ ?>
     <?php //echo $venue_title != ''?'<p id="event_venue_name-'.$event_id.'" class="event_venue_name">'.stripslashes_deep($venue_title).'</p>':'' ?>
     <?php //echo $venue_address != ''?'<p id="event_venue_address-'.$event_id.'" class="event_venue_address">'.stripslashes_deep($venue_address).'</p>':''?>
     <?php //echo $venue_address2 != ''?'<p id="event_venue_address2-'.$event_id.'" class="event_venue_address2">'.stripslashes_deep($venue_address2).'</p>':''?>
@@ -83,12 +85,11 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
         </p>
         <?php
     }
-    ?>
 
-    <p><?php echo espresso_show_social_media($event_id, 'twitter'); ?> <?php echo espresso_show_social_media($event_id, 'facebook'); ?></p>
+	//Social media buttons
+	do_action('espresso_social_display_buttons', $event_id);
 
-    <?php
-    $num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
+	$num_attendees = get_number_of_attendees_reg_limit($event_id, 'num_attendees'); //Get the number of attendees. Please visit http://eventespresso.com/forums/?p=247 for available parameters for the get_number_of_attendees_reg_limit() function.
     if ($num_attendees >= $reg_limit) {
         ?>
         <p id="available_spaces-<?php echo $event_id ?>"><span class="section-title"><?php _e('Available Spaces:', 'event_espresso') ?> </span><?php echo get_number_of_attendees_reg_limit($event_id, 'available_spaces', 'All Seats Reserved') ?></p>
@@ -129,7 +130,7 @@ $status_display_custom_closed = $status['status'] == 'REGISTRATION_CLOSED' ? ' -
             ?>
 
             <p id="register_link-<?php echo $event_id ?>" class="register-link-footer">
-                <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register for Event', 'event_espresso'); ?></a>
+                <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register', 'event_espresso'); ?></a>
                 <?php echo isset($cart_link) && $externalURL == '' ? $cart_link : ''; ?>
             </p>
         <?php } else { ?>

@@ -263,44 +263,49 @@ function event_espresso_questions_config_mnu() {
         postboxes.add_postbox_toggles('form_builder');
         } );
 		
-		// Remove li parent for input 'values' from page if 'text' box or 'textarea' are selected
+	// Remove li parent for input 'values' from page if 'text' box or 'textarea' are selected
 	var selectValue = jQuery('select#question_type option:selected').val();
 	//alert(selectValue + ' - this is initial value');
 	// hide values field on initial page view
-	if(selectValue == 'TEXT' || selectValue == 'TEXTAREA'){
+	if(selectValue == 'TEXT' || selectValue == 'TEXTAREA' || selectValue == 'DATE'){
 		jQuery('#add-question-values').hide();
+		// we don't want the values field trying to validate if not displayed, remove its name
+		jQuery('#add-question-values td input').attr("name","notrequired") 
 	}
-	// we don't want the values field trying to validate if not displayed, remove its name
-	jQuery('#add-question-values td input').attr("name","notrequired") 
+	
 	
 	jQuery('select#question_type').bind('change', function() {
 		var selectValue = jQuery('select#question_type option:selected').val();
   
-		if (selectValue == 'TEXT' || selectValue == 'TEXTAREA'  || selectValue == 'DATE') {
-		  jQuery('#add-question-values').fadeOut('slow');
+		if (selectValue == 'TEXT' || selectValue == 'TEXTAREA' || selectValue == 'DATE') {
+			jQuery('#add-question-values').fadeOut('slow');
+		 	// we don't want the values field trying to validate if not displayed, remove its name
+			jQuery('#add-question-values td input').attr("name","notrequired") 
 			//alert(selectValue);
 		} else{
 			//alert(selectValue);
 			jQuery('#add-question-values').fadeIn('slow');
 			// add the correct name value back in so we can run validation check.
-			jQuery('#add-question-values td input').attr("name","values")
+			jQuery('#add-question-values td input').attr("name","values");
+			
 		}
 	});
 
-// Add new question or question group form validation
+
+	// Add new question or question group form validation
 	jQuery(function(){
-   jQuery('#new-question-form').validate({
-		  rules: {
-			question: "required",
-			values: "required"
-			},
-			messages: {
-			question: "Please add a title for your question",
-			values: "Please add a list of values for your question"
-			}
-   });
+		jQuery('#new-question-form').validate({
+			  rules: {
+				question: "required",
+				values: "required"
+				},
+				messages: {
+				question: "Please add a title for your question",
+				values: "Please add a list of values for your question"
+				}
+		});
 		
-		});				
+	});				
 </script>
 
     <?php

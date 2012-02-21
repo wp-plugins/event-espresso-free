@@ -64,15 +64,15 @@ jQuery(document).ready(function() {
 
                 params.main_container.slideUp('fast', function(){
                     params.main_container.remove();
-                    
+
                 }).delay(1500).queue(function() {
-                        
+
                     });
                 _eecart.calculate_total();
             }) ;
 
         },
-        
+
         calculate_total: function(grand_total){
             var _eecart = this;
             _eecart.progress(jQuery('#event_total_price'));
@@ -84,14 +84,14 @@ jQuery(document).ready(function() {
 
             var data = "action=event_espresso_calculate_total&" + jQuery("#event_espresso_shopping_cart").serialize();
 
-            
+
             event_espresso_do_ajax(data,function(r){
 
                 jQuery('#event_total_price').html(r.grand_total);
 
             });
-            
-            
+
+
         }
 
 
@@ -111,7 +111,7 @@ jQuery(document).ready(function() {
         }
 
         EECART.add_item(data);
-       
+
         return false;
 
 
@@ -237,7 +237,7 @@ jQuery(document).ready(function() {
             jQuery('#event_espresso_shopping_cart :input[name^="price_id[' + id + ']"]').each(function(){
 
                 populate_qty_dd(jQuery(this), open_spaces);
-            
+
             });
         }
 
@@ -284,7 +284,7 @@ jQuery(document).ready(function() {
 
 
         if (jQuery('.event_espresso_copy_info option:selected').text() == "CLEAR FIELDS"){
-         
+
             jQuery('#multi_regis_form_fields-' + to_event_id + "-" + to_price_id + " :input[name*='[" + to_event_id + "][" + to_price_id + "][" + to_attendee_no + "]']").each(function(){
 
 
@@ -344,22 +344,22 @@ jQuery(document).ready(function() {
         });
         jQuery(this).val('');
 
-        
+
 
     });
 
     function event_espresso_do_ajax(data, callback){
-        
+
         jQuery.ajax({
             data: data,
             dataType: "json",
             success: function(response, textStatus){
-                
+
                 process_response(response, callback);
 
             },
             error: function(resp) {
-                alert("Error.");
+                //alert("Error.");
             }
         });
 
@@ -370,9 +370,9 @@ jQuery(document).ready(function() {
         if (from_server == null){
             return false;
         }
-        
+
         if (from_server.code == 1)
-        {          
+        {
             callback(from_server);
         }
         else

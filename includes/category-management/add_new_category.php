@@ -30,7 +30,7 @@ function add_new_event_category() {
 											array('id'=>'Y','text'=> __('Yes','event_espresso')),
 											array('id'=>'N','text'=> __('No','event_espresso'))
 											);				
-										echo select_input('display_desc', $values, $display_category_desc);
+										echo select_input('display_desc', $values, 'N');
 										?>
                        
                    <div id="categorydescriptiondivrich" class="postarea"> 
