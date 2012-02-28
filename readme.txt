@@ -1,7 +1,6 @@
 === Event Espresso Lite - Event Management and Registration System ===
 
-Contributors: 
-Seth Shoultes http://eventespresso.com
+Contributors: sethshoultes
 
 Donate link: http://eventespresso.com
 
@@ -13,33 +12,59 @@ Tested up to: 3.3
 
 Stable tag: 3.1.18.L
 
+Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
+
 == Description ==
 
-If your organization offers classes, workshops, events, trainings, conferences or concerts for which participants need to register or buy a ticket in advance, Event Espresso can make you a hero [WordPress event manager](http://eventespresso.com/). Why? Because this online [event registration](http://eventespresso.com/) and ticketing management system will save your organization countless hours of administrative time, create a "green" and paperless [event registration](http://eventespresso.com/) process, reduce costs and be available to take sign-ups 24/7. Everything from custom event registration questions, registration confirmation and reminder emails to payment management, and quite a bit more is all included and automatically handled for you. Install the Event Espresso [WordPress events calendar](http://eventespresso.com/features/event-calendar/) to list your upcoming events in day, week, or month views (including list view).
+Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
 
-Event Espresso events are created from within the WordPress admin. The [WordPress events plugin](http://eventespresso.com/) even creates registration forms so attendees can easily sign up right on your website.
+Event Espresso is a [WordPress event manager](http://eventespresso.com/) which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.
 
-Where is the attendee registration or ticketing information stored? Attendee ticket information is stored right in the WordPress database, allowing you to have access to any and all the information you collect from your attendees at any time.
+= Why Online Event Management? =
+You shouldn't need convinced about how awesome online event management is, but in case you do:
 
-Event Espresso has all the event management tools you need, from accepting payments to reports to promotions.
+* save yourself countless hours of boring admin
+* create green, paperless [event registration](http://eventespresso.com/)
+* reduce costs
+* process sign-ups 24/7
 
-This version of Event Espresso only uses the PayPal IPN to record payments to a database. A premium support license can be purchased to extend the event management plugin to use Authorize.net and other payment options. This is basically a fully working preview of the pro version. Some advanced functionality has been left out and is only available in the pro version of this event management plugin.
+= What's Included? =
 
-**[Buy a Premium Support License](http://eventespresso.com/download/) to get access to more features (including [recurring events](http://eventespresso.com/download/plugins-and-addons/recurring-events-manager/), [Groupon integration](http://eventespresso.com/download/add-ons/groupon-integration/), [members integration](http://eventespresso.com/download/add-ons/members-integration/), [custom files](http://eventespresso.com/download/add-ons/custom-files-addon/), etc.) and payment options for your WordPress events.**
+* out-of-the-box event registration from your WordPress website
+* process payments via PayPal IPN
+* create custom event registration questions 
+* automated confirmation and reminder emails
+* manage attendees and export attendee data
+* easily manage attendees profiles
 
-[Most Comprehensive Event Solution for WordPress](http://s3.amazonaws.com/espresso-site/images/event-solution.jpg "Most Comprehensive Event Solution for WordPress")
+**Everything you need** to process and manage event registrations from your website.
 
+But just in case you want some **advanced features**, you can grab a copy of our premium, advanced or developer plugins.
 
-Reporting features provide a list of events, list of attendees, and excel export.
+= Event Espresso Premium =
 
+* manual registration
+* additional payment gateways including Authorize.net, IDEAL, Firstdata and PayPal Pro
+* multiple pricing options
+* promotion codes
+* custom post type support
+* reusable email templates
+* upcoming event calendar
+* [MailChimp integration](http://eventespresso.com/download/plugins-and-addons/mailchimp-integration/) (advanced & developer)
+* [recurring events](http://eventespresso.com/download/plugins-and-addons/recurring-events-manager/) (advanced & developer)
+* [members integration](http://eventespresso.com/download/add-ons/members-integration/) (advanced & developer)
+* [Groupon integration](http://eventespresso.com/download/add-ons/groupon-integration/) (advanced & developer)
+* [custom files](http://eventespresso.com/download/add-ons/custom-files-addon/) (advanced & developer)
+* multiple event registration (advanced & developer)
 
-== Support ==
-Please visit the forums http://www.eventespresso.com/forums/ or visit the "Help/Support" menu within the Event Espresso admin
+That's not all! If you want to turbo-charge your event management, we've made it possible for you to process event registrations using your very own smartphones to scan QR codes!
 
-Current Version: 3.1.18.L
+= Support =
+We monitor the WordPress.org support forums, but for faster support you can visit our [forum](http://www.eventespresso.com/forums/). You can also visit the Help/Support menu from the Event Espresso admin. Please visit the forums  or visit the "Help/Support" menu within the Event Espresso admin.
 
-Author: Seth Shoultes
-Author URI: http://eventespresso.com
+If your support issue is urgent, we also offer [priority event management support](http://eventespresso.com/support/premium-support-options/).
+
+Check out the advanced [installation](http://eventespresso.com/support/installing-event-espresso/) and [setup instructions](http://eventespresso.com/support/setting-event-espresso/) on our website.
 
 == Screenshots ==
 
@@ -59,34 +84,46 @@ Author URI: http://eventespresso.com
 
 5. Create a new page (not post) on your site. Put [ESPRESSO_EVENTS] in it on a line by itself.
 
-6. Note: if you are upgradings from a previous version please backup your data prior to upgrade.
+6. Note: if you are upgrading from a previous version please backup your data prior to upgrade.
 
-= License =
-
-This plugin is provided "as is" and without any warranty or expectation of function. I'll probably try to help you if you ask nicely, but I can't promise anything. You are welcome to use this plugin and modify it however you want, as long as you give credit where it is due. 
-
+Check out the advanced [installation](http://eventespresso.com/support/installing-event-espresso/) and [setup instructions](http://eventespresso.com/support/setting-event-espresso/) on our website.
 
 == Frequently Asked Questions ==
 
+**Can I fully manage my events with Event Espresso lite?**
+
+You will be able to fully manage basic events with Event Espresso lite. This will be sufficient for many WordPress users. If you need advanced features you can check out our Premium [Event Management plugin](http://eventespresso.com/download/)
+
+**Do you monitor the WordPress.org support forums?**
+
+We do, although you'll find a faster response time at the [support forums on our homepage](http://www.eventespresso.com/forums/).
+
+**How do I display a single event on my page?**
+
 To display a single event on a page use the [SINGLEEVENT single_event_id="Unique Event ID"]
 
-To display a list of events in sidebar, use the Event Registration Widget. If your theme doesn't use widgets, you can use  <?php display_all_events(); ?> in theme code.
+**How do I display a list of events in the sidebar?**
 
-To use, create a new page with only  [ESPRESSO_EVENTS]
+To display a list of events in the sidebar, use the Event Registration Widget. If your theme doesn't use widgets, you can use  '<?php display_all_events(); ?>' in your theme's code.
+
+**I have no idea how to get started. Can you help?**
+
+You need to create a new page and insert only the [ESPRESSO_EVENTS] shortcode. This page should be excluded from your navigation. This means you should not add it to your navigation menu under Appearance > Menus. If you're using a pre-WordPress 3.0 theme you can use the [exclude pages plugin](http://wordpress.org/extend/plugins/exclude-pages/).
+
+You should also create and exclude from navigation:
+
+* insert [ESPRESSO_PAYMENTS] shortcode on a new page to create a URL back to the payment/thank you page
+* insert the [ESPRESSO_TXN] to create the page for processing your payment transactions
+
+
+**Can I display a list of attendees?**
 
 To display list of attendees of an active event use [LISTATTENDEES] on a page or post.
 
-*For URL link back to the payment/thank you page use  [ESPRESSO_PAYMENTS] on a new page.
-
-*For PayPal to notify about payment confirmation use  [ESPRESSO_TXN_PAGE] on a new page.
-
-*This page should be hidden from from your navigation menu. Exclude pages by using the 'Exclude Pages' plugin from http://wordpress.org/extend/plugins/exclude-pages/ or using the 'exclude' parameter in your 'wp_list_pages' template tag. Please refer to http://codex.wordpress.org/Template_Tags/wp_list_pages for more inforamation about excluding pages.
-
-= Email Confirmations =
+**How do I customize my confirmation emails?**
 For customized confirmation emails, the following tags can be placed in the email form and they will pull data from the database to include in the email.
 
 [fname], [lname], [phone], [event],[description], [cost], [company], [co_add1], [co_add2], [co_city],[co_state], [co_zip],[contact], [payment_url], [start_date], [start_time], [end_date], [end_time]
-
 
 = Sample Mail Send =
 
@@ -100,4 +137,12 @@ Click here to review your payment information [payment_url].
 
 Thank You.
 
- 
+== Other Notes ==
+
+= License =
+
+This plugin is provided "as is" and without any warranty or expectation of function. I'll probably try to help you if you ask nicely, but I can't promise anything. You are welcome to use this plugin and modify it however you want, as long as you give credit where it is due. 
+
+== Changelog ==
+
+The changelog for the premium version [can be found here](http://eventespresso.com/forums/2011/08/version-3-1/).
