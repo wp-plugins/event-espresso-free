@@ -7,7 +7,7 @@
  * @package		Event Espresso PayPal Gateway
  * @category	Library
  */
-class Paypal extends PaymentGateway {
+class EE_Paypal extends PaymentGateway {
 
 	public $gateway_version = '1.0';
 
@@ -21,9 +21,9 @@ class Paypal extends PaymentGateway {
 		parent::__construct();
 		// Some default values of the class
 		$this->gatewayUrl = 'https://www.paypal.com/cgi-bin/webscr';
-		$this->ipnLogFile = 'paypal.ipn_results.log';
+		$this->ipnLogFile = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/paypal.ipn_results.log';
 		// Populate $fields array with a few default
-		$this->addField('rm', '2');					 // Return method = POST
+		$this->addField('rm', '2');	 // Return method = POST
 		$this->addField('cmd', '_xclick');
 	}
 
@@ -39,20 +39,18 @@ class Paypal extends PaymentGateway {
 	}
 
 	public function logErrors($errors) {
-		if (!$this->logIpn || !is_writable($this->logIpn))
-			return;
-		// Timestamp
+		if ($this->logIpn) {
+			// Timestamp
+			$text = '[' . date('m/d/Y g:i A') . '] - ';
 
-		$text = '[' . date('m/d/Y g:i A') . '] - ';
-		// Success or failure being logged?
+			// Success or failure being logged?
+			$text .= "Errors from IPN Validation:\n";
+			$text .= $errors;
 
-		$text .= "Errors from IPN Validation:\n";
-		$text .= $errors;
-
-		// Write to log
-		$fp = @fopen($this->ipnLogFile, 'a');
-		@fwrite($fp, $text . "\n\n");
-		@fclose($fp);
+			// Write to log
+			file_put_contents($this->ipnLogFile, $text, FILE_APPEND)
+							or do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, 'could not write to paypal log file');
+		}
 	}
 
 	/**
@@ -83,7 +81,7 @@ class Paypal extends PaymentGateway {
 			}
 			$req .= 'cmd=_notify-validate';
 			$url = $this->gatewayUrl;
-			$ch = curl_init();		// Starts the curl handler
+			$ch = curl_init(); // Starts the curl handler
 			$error = array();
 			$error["set_host"] = curl_setopt($ch, CURLOPT_URL, $url); // Sets the paypal address for curl
 			$error["set_fail_on_error"] = curl_setopt($ch, CURLOPT_FAILONERROR, 1);

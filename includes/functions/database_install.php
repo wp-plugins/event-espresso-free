@@ -152,6 +152,38 @@ function events_data_tables_install() {
 		}
 	}
 
+	function espresso_answer_fix() {
+		global $wpdb;
+		$sql = "SHOW COLUMNS FROM `" . EVENTS_ANSWER_TABLE . "` LIKE 'id';";
+		$test = $wpdb->query($sql);
+		if (empty($test)) {
+			$sql = "ALTER TABLE " . EVENTS_ANSWER_TABLE . " DROP PRIMARY KEY";
+			$wpdb->query($sql);
+			$sql = "ALTER TABLE  `" . EVENTS_ANSWER_TABLE . "` ADD  `id` INT( 11 ) unsigned NOT NULL AUTO_INCREMENT FIRST , ADD PRIMARY KEY (  `id` )";
+			$wpdb->query($sql);
+		}
+	}
+
+	function espresso_added_by_admin_session_id_fix() {
+		global $wpdb;
+		$sql = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE attendee_session=''";
+		$ids = $wpdb->get_col($sql);
+		foreach ($ids as $id) {
+			$wpdb->update(EVENTS_ATTENDEE_TABLE, array('attendee_session' => uniqid('', true)), array('id' => $id));
+		}
+	}
+
+	function espresso_add_cancel_shortcode() {
+		global $org_options;
+		$org_options = get_option('events_organization_settings');
+		$cancel_page = get_page($org_options['cancel_return'], ARRAY_A);
+		$test = strpos($cancel_page['post_content'], '[ESPRESSO_CANCELLED]');
+		if ($test === false) {
+			$cancel_page['post_content'] = $cancel_page['post_content'] . '[ESPRESSO_CANCELLED]';
+			wp_update_post($cancel_page);
+		}
+	}
+
 	function events_organization_tbl_install() {
 		global $wpdb;
 
@@ -582,9 +614,6 @@ function events_data_tables_install() {
 			KEY `attendee_id` (`attendee_id`)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
-
-	events_organization_tbl_install();
-
 	$table_name = "events_question";
 	$sql = "id int(11) unsigned NOT NULL auto_increment,
 			sequence INT(11) NOT NULL default '0',
@@ -637,9 +666,13 @@ function events_data_tables_install() {
 			KEY `attendee_id` (`attendee_id`)";
 	event_espresso_run_install($table_name, $table_version, $sql);
 
+	events_organization_tbl_install();
 	event_espresso_install_system_names();
 	event_espresso_create_upload_directories();
 	event_espresso_update_shortcodes();
 	event_espresso_update_attendee_data();
 	espresso_update_attendee_qty();
+	espresso_answer_fix();
+	espresso_added_by_admin_session_id_fix();
+	espresso_add_cancel_shortcode();
 }

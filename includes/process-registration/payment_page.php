@@ -339,6 +339,9 @@ function event_espresso_pay() {
 		if (empty($_GET['registration_id']) || $payment_data['registration_id'] != $_GET['registration_id'])
 			die("Cheaters never win!");
 		$payment_data = apply_filters('filter_hook_espresso_thank_you_get_payment_data', $payment_data);
+		if(!empty($payment_data['debug'])) {
+			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data['debug']);
+		}
 		$payment_data = apply_filters('filter_hook_espresso_update_attendee_payment_data_in_db', $payment_data);
 		do_action('action_hook_espresso_email_after_payment', $payment_data);
 	}

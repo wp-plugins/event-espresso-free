@@ -168,12 +168,12 @@ if (!function_exists('event_form_build')) {
 
 }
 
-function event_form_build_edit($question, $edits, $show_admin_only = false) {
+function event_form_build_edit($question, $edits, $show_admin_only = false, $class='my_class') {
     $required = '';
    /* if ($question->required == "Y") {
         $required = ' class="required"';
     }*/
-	
+
 	 /**
          * Temporary client side email validation solution by Abel, will be replaced
          * in the next version with a full validation suite.
@@ -187,7 +187,7 @@ function event_form_build_edit($question, $edits, $show_admin_only = false) {
 			$required = 'class="' . $class . '"';
 		}
 	$required_label = isset($required_label) ? $required_label : '';
-	
+
 	//echo '<p>$required = '.$required.'</p>';
 	//echo "<pre>".print_r($question,true)."</pre>";
     //echo '<p>id = '.$question->id.'</p>';

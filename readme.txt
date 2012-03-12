@@ -4,13 +4,13 @@ Contributors: sethshoultes
 
 Donate link: http://eventespresso.com
 
-Tags: event registration, events calendar, wordpress events, event ticketing, class registration, conference registration, online registration, event management, buddypress, tickets, ticketing, ticket, registration, wordcamp, event manager
+Tags: event registration, events planner, events calendar, wordpress events, event ticketing, class registration, conference registration, online registration, event management, buddypress, tickets, ticketing, ticket, registration, wordcamp, event manager, training, sports, booking
 
 Requires at least: 3.1
 
 Tested up to: 3.3
 
-Stable tag: 3.1.18.L
+Stable tag: 3.1.20.L
 
 Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
 

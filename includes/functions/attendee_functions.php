@@ -21,7 +21,7 @@ function add_attendee_questions($questions, $registration_id, $attendee_id=0, $e
     global $wpdb, $org_options;
     $wpdb->show_errors();
     //print_r($question_groups);
-	
+
 	/**
 	* Added this check because in some cases question groups are being sent as serialized
 	*/
@@ -31,10 +31,10 @@ function add_attendee_questions($questions, $registration_id, $attendee_id=0, $e
 
     if (count($question_groups) > 0) {
         $questions_in = '';
-		
+
 		//Debug
 		//echo "<pre question_groups - >".print_r($question_groups,true)."</pre>";
-		
+
         foreach ($question_groups as $g_id)
             $questions_in .= $g_id . ',';
 
@@ -58,7 +58,7 @@ function add_attendee_questions($questions, $registration_id, $attendee_id=0, $e
             global $email_questions; //Make a global variable to hold the answers to the questions to be sent in the admin email.
             $email_questions = '<p>' . __('Form Questions:', 'event_espresso') . '<br />';
             foreach ($questions as $question) {
-                if (!in_array($question->id, $question_displayed)) {
+                if (!in_array($question->id, $question_displayed) && $question->admin_only != 'Y') {
                     $question_displayed[] = $question->id;
                     switch ($question->question_type) {
                         case "TEXT" :

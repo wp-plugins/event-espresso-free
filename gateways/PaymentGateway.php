@@ -101,24 +101,7 @@ if (!class_exists('PaymentGateway')) {
             foreach ($this->fields as $name => $value) {
                 echo "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
             }
-            switch ($gateway) {
-                case 'authnet':
-                    $gateway_name = 'Authorize.net';
-                    break;
-                case 'paypal':
-                    $gateway_name = 'PayPal';
-                    break;
-                case 'eway':
-                    $gateway_name = 'eWay';
-                    break;
-                case 'mwarrior':
-                    $gateway_name = 'mwarrior';
-                    break;
-                case '2checkout':
-                    $gateway_name = '2checkout';
-                    break;
-            }
-            echo '<input class="espresso_payment_button' . $gateway_name . '" type="image" alt="Pay using ' . $gateway_name . '" src="' . $button_url . '" />';
+            echo '<input class="espresso_payment_button_' . $gateway . '" type="image" alt="Pay using ' . $gateway_name . '" src="' . $button_url . '" />';
             echo '</form></li>';
         }
 

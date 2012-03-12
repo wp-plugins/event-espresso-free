@@ -7,8 +7,6 @@ function espresso_transactions_paypal_get_attendee_id($attendee_id) {
 	return $attendee_id;
 }
 
-add_filter('filter_hook_espresso_transactions_get_attendee_id', 'espresso_transactions_paypal_get_attendee_id');
-
 function espresso_process_paypal($payment_data) {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	$payment_data['txn_type'] = 'Paypal';
@@ -16,7 +14,7 @@ function espresso_process_paypal($payment_data) {
 	$payment_data['payment_status'] = 'Incomplete';
 	$payment_data['txn_details'] = serialize($_REQUEST);
 	include_once ('Paypal.php');
-	$myPaypal = new Paypal();
+	$myPaypal = new EE_Paypal();
 	echo '<!--Event Espresso PayPal Gateway Version ' . $myPaypal->gateway_version . '-->';
 	$myPaypal->ipnLog = TRUE;
 	$paypal_settings = get_option('event_espresso_paypal_settings');
@@ -53,5 +51,3 @@ function espresso_process_paypal($payment_data) {
 	add_action('action_hook_espresso_email_after_payment', 'espresso_email_after_payment');
 	return $payment_data;
 }
-
-add_filter('filter_hook_espresso_transactions_get_payment_data', 'espresso_process_paypal');

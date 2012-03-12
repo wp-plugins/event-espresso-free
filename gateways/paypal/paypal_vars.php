@@ -4,7 +4,7 @@ function espresso_display_paypal($payment_data) {
 	extract($payment_data);
 	global $wpdb;
 	include_once ('Paypal.php');
-	$myPaypal = new Paypal();
+	$myPaypal = new EE_Paypal();
 	echo '<!-- Event Espresso PayPal Gateway Version ' . $myPaypal->gateway_version . '-->';
 	global $org_options;
 	$paypal_settings = get_option('event_espresso_paypal_settings');
@@ -17,9 +17,14 @@ function espresso_display_paypal($payment_data) {
 	}
 
 	$myPaypal->addField('business', $paypal_id);
-	$myPaypal->addField('return', home_url() . '/?page_id=' . $org_options['return_url'] . '&registration_id=' . $registration_id);
-	$myPaypal->addField('cancel_return', home_url() . '/?page_id=' . $org_options['cancel_return']);
-	$myPaypal->addField('notify_url', home_url() . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&registration_id=' . $registration_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment');
+	if ($paypal_settings['force_ssl_return']) {
+		$home = str_replace("http://", "https://", home_url());
+	} else {
+		$home = home_url();
+	}
+	$myPaypal->addField('return', $home . '/?page_id=' . $org_options['return_url'] . '&registration_id=' . $registration_id. '&type=paypal');
+	$myPaypal->addField('cancel_return', $home . '/?page_id=' . $org_options['cancel_return']);
+	$myPaypal->addField('notify_url', $home . '/?page_id=' . $org_options['notify_url'] . '&id=' . $attendee_id . '&registration_id=' . $registration_id . '&event_id=' . $event_id . '&attendee_action=post_payment&form_action=payment&type=paypal');
 	$event_name = $wpdb->get_var('SELECT event_name FROM ' . EVENTS_DETAIL_TABLE . " WHERE id='" . $event_id . "'");
 	$myPaypal->addField('cmd', '_cart');
 	$myPaypal->addField('upload', '1');

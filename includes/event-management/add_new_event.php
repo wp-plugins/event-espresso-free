@@ -2,7 +2,7 @@
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 function add_new_event() {
 	global $wpdb, $org_options, $espresso_premium;
-	
+
 	if ( empty($event_name) ){
 		$event_name = '';
 	}
@@ -26,16 +26,16 @@ function add_new_event() {
             <div id="publishing-action">
               <input class="button-primary" type="submit" name="Submit" value="<?php _e('Submit New Event', 'event_espresso'); ?>" id="add_new_event" />
             </div>
-            <!-- /publishing-action --> 
+            <!-- /publishing-action -->
           </div>
-          <!-- /major-publishing-actions --> 
+          <!-- /major-publishing-actions -->
         </div>
-        <!-- /submitpost --> 
+        <!-- /submitpost -->
       </div>
-      <!-- /inside --> 
+      <!-- /inside -->
     </div>
     <!-- /submitdiv -->
-    
+
     <?php
             $values = array(array('id' => 'Y', 'text' => __('Yes', 'event_espresso')), array('id' => 'N', 'text' => __('No', 'event_espresso')));
 
@@ -81,7 +81,7 @@ function add_new_event() {
                                 {
                             ?>
             <option value="<?php echo $seating_chart->id; ?>"><?php echo $seating_chart->name; ?></option>
-            <?php                        
+            <?php
                                 }
                             ?>
           </select>
@@ -93,7 +93,7 @@ function add_new_event() {
 		/*
 		 * End
 		 */
-		 
+
       ###### Modification by wp-developers to introduce attendee pre-approval requirement ##########
       if (isset($org_options['use_attendee_pre_approval']) && $org_options['use_attendee_pre_approval'] == 'Y' && $espresso_premium == true) {
        ?>
@@ -126,7 +126,7 @@ function add_new_event() {
         <?php _e('Member Options', 'event_espresso'); ?>
         </span> </h3>
       <div class="inside">
-        <p><?php echo event_espresso_member_only($member_only); ?></p>
+        <p><?php echo event_espresso_member_only('N'); ?></p>
       </div>
     </div>
     <!-- /event-category -->
@@ -157,15 +157,15 @@ function add_new_event() {
       <div class="inside"> <?php echo event_espresso_get_categories(); ?> </div>
     </div>
     <!-- /event-category -->
-    
+
     <?php
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/event-management/promotions_box.php')) {
 		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "includes/admin-files/event-management/promotions_box.php");
 	}
 ?>
-    <?php echo espresso_event_question_groups(empty($question_groups) ? array() : $question_groups); ?> 
+    <?php echo espresso_event_question_groups(empty($question_groups) ? array() : $question_groups); ?>
     <!-- /event-questions -->
-    
+
     <?php
          if (function_exists('espresso_personnel_cb') && isset($org_options['use_personnel_manager']) && $org_options['use_personnel_manager'] == 'Y' && $espresso_premium == true) {
 				?>
@@ -187,15 +187,15 @@ function add_new_event() {
         <?php _e('Groupon Options', 'event_espresso'); ?>
         </span> </h3>
       <div class="inside">
-        <p><?php echo event_espresso_add_new_event_groupon($use_groupon_code); ?></p>
+        <p><?php echo event_espresso_add_new_event_groupon(); ?></p>
       </div>
     </div>
     <!-- /groupon-options -->
     <?php } ?>
   </div>
-  <!-- /side-sortables --> 
+  <!-- /side-sortables -->
 </div>
-<!-- /side-info-column --> 
+<!-- /side-info-column -->
 
 <!-- Left Column-->
 <div id="post-body">
@@ -223,7 +223,7 @@ function add_new_event() {
               ?>
         </div>
       </div>
-      <!-- /edit-slug-box --> 
+      <!-- /edit-slug-box -->
     </div>
     <!-- /titlediv -->
     <div id="descriptiondivrich" class="postarea"> <strong>
@@ -240,7 +240,7 @@ function add_new_event() {
 	*/
 	//the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2)
                 //
-				
+
 				if (function_exists('wp_editor')){
 					$args = array("textarea_rows" => 5, "textarea_name" => "event_desc", "editor_class" => "my_editor_custom");
 					wp_editor("", "event_desc", $args);
@@ -346,7 +346,7 @@ function add_new_event() {
          */
 		if (get_option('event_espresso_re_active') == 1 && $espresso_premium == true) {
 			require_once(EVENT_ESPRESSO_RECURRENCE_FULL_PATH . "functions/re_view_functions.php");
-			event_espresso_re_form($events);
+			event_espresso_re_form();
         }
 	?>
       <div id="event-pricing" class="postbox">
@@ -382,9 +382,9 @@ function add_new_event() {
           </span> </h3>
         <div class="inside">
           <table width="100%" border="0" cellpadding="5">
-            
+
               <tr>
-            
+
             <?php
 			if (function_exists('espresso_venue_dd') && isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' && $espresso_premium == true) {
 				$ven_type = 'class="use-ven-manager"';
@@ -394,7 +394,17 @@ function add_new_event() {
                 <?php if( !espresso_venue_dd() ) : ?>
                 <p class="info"><b>
                   <?php _e('You have not created any venues yet.', 'event_espresso'); ?>
-                  </b></p>
+										<input id="phys-addr" type="hidden"  value="" name="address" />
+										<input id="phys-addr-2" type="hidden"  value="" name="address2" />
+										<input id="phys-city" type="hidden"  value="" name="city" />
+										<input id="phys-state" type="hidden"  value="" name="state" />
+                   <input id="zip-postal" type="hidden"  value="" name="zip" />
+                  <input id="phys-country" type="hidden"  value="" name="country" />
+									<input id="ven-title"  type="hidden"  value="" name="venue_title" />
+									<input id="ven-website" type="hidden"  value="" name="venue_url" />
+									<input id="ven-phone" type="hidden"  value="" name="venue_phone" />
+									<input id="ven-image" type="hidden"  value="" name="venue_image" />
+                 </b></p>
                 <p><a href="admin.php?page=event_venues"><?php echo __('Add venues to the Venue Manager', 'event_espresso') ?></a></p>
                 <?php else: ?>
                 <?php echo espresso_venue_dd($venue_id) ?>
@@ -445,9 +455,9 @@ function add_new_event() {
                 </p>
               </fieldset></td>
               <td <?php echo $ven_type; ?>>
-            
+
               <fieldset id="venue-info">
-            
+
             <legend>
             <?php _e('Venue Information', 'event_espresso'); ?>
             </legend>
@@ -476,7 +486,7 @@ function add_new_event() {
               <input id="ven-image" size="20" tabindex="110"  type="text"  value="<?php echo isset($venue_image) ? $venue_image : '' ?>" name="venue_image" />
             </p>
               </td>
-            
+
             <?php } ?>
             <td <?php echo $ven_type ?>>
             <fieldset id="virt-location">
@@ -503,11 +513,11 @@ function add_new_event() {
               </fieldset>
               </td>
               </tr>
-                        
+
           </table>
         </div>
       </div>
-      
+
       <!-- /event-location-->
       <?php if ($espresso_premium == true) { ?>
       <div  id="event-meta" class="postbox">
@@ -546,7 +556,7 @@ function add_new_event() {
                 <?php _e('Create a custom email:', 'event_espresso') ?> <?php echo '<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=event_custom_emails"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . '/images/question-frame.png" width="16" height="16" /></a>'; ?>
                 </p>
             </div>
-            
+
             <div class="postbox">
              <?php
 				//echo '<p>version_compare ='.(version_compare($wp_version, $wp_min_version) >= 0).'</p>';
@@ -581,7 +591,7 @@ function add_new_event() {
 	}
 ?>
     </div>
-    <!-- /normal-sortables--> 
+    <!-- /normal-sortables-->
   </div>
   <!-- /post-body-content -->
   <?php include_once('create_events_help.php'); ?>

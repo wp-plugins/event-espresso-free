@@ -8,6 +8,7 @@ function event_espresso_paypal_payment_settings() {
 		$paypal_settings['currency_format'] = $_POST['currency_format'];
 		$paypal_settings['use_sandbox'] = empty($_POST['use_sandbox']) ? false : true;
 		$paypal_settings['bypass_payment_page'] = $_POST['bypass_payment_page'];
+		$paypal_settings['force_ssl_return'] = empty($_POST['force_ssl_return']) ? false : true;
 		$paypal_settings['no_shipping'] = $_POST['no_shipping'];
 		$paypal_settings['button_url'] = $_POST['button_url'];
 		update_option('event_espresso_paypal_settings', $paypal_settings);
@@ -25,6 +26,7 @@ function event_espresso_paypal_payment_settings() {
 		$paypal_settings['currency_format'] = 'USD';
 		$paypal_settings['use_sandbox'] = false;
 		$paypal_settings['bypass_payment_page'] = 'N';
+		$paypal_settings['force_ssl_return'] = false;
 		$paypal_settings['no_shipping'] = '0';
 		$paypal_settings['button_url'] = $button_url;
 		if (add_option('event_espresso_paypal_settings', $paypal_settings, '', 'no') == false) {
@@ -217,6 +219,12 @@ function event_espresso_display_paypal_settings() {
 							<input name="use_sandbox" type="checkbox" value="1" <?php echo $paypal_settings['use_sandbox'] ? 'checked="checked"' : '' ?> />
 							&nbsp;<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=sandbox_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a><br />
 						</li>
+						<li>
+							<label for="force_ssl_return">
+								<?php _e('Do you want to force the return url to be https? ', 'event_espresso'); ?>
+								<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=force_ssl_return"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a>
+							</label>
+							<input name="force_ssl_return" type="checkbox" value="1" <?php echo $paypal_settings['force_ssl_return'] ? 'checked="checked"' : '' ?> /></li>
 						<li>
 							<?php _e('Current Button Image:', 'event_espresso'); ?>
 							<br />

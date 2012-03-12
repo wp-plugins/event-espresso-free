@@ -1,7 +1,9 @@
 <?php
-function espresso_help_popup($name){
-	return  '<a class="thickbox" href="#TB_inline?height=400&amp;width=500&amp;inlineId=' . $name . '" target="_blank"><span class="question">[?]</span></a>';
+
+function espresso_help_popup($name) {
+	return '<a class="thickbox" href="#TB_inline?height=400&amp;width=500&amp;inlineId=' . $name . '" target="_blank"><span class="question">[?]</span></a>';
 }
+
 add_filter('espresso_help', 'espresso_help_popup');
 
 function before_gateways() {
@@ -42,7 +44,8 @@ function event_espresso_gateways_options() {
 
 	$gateways_glob = glob(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/*/settings.php");
 	$upload_gateways_glob = glob(EVENT_ESPRESSO_GATEWAY_DIR . '*/settings.php');
-	if(!is_array($upload_gateways_glob)) $upload_gateways_glob = array();
+	if (!is_array($upload_gateways_glob))
+		$upload_gateways_glob = array();
 	foreach ($upload_gateways_glob as $upload_gateway) {
 		$pos = strpos($upload_gateway, 'gateways');
 		$sub = substr($upload_gateway, $pos);
@@ -71,7 +74,7 @@ function event_espresso_gateways_options() {
 }
 
 function espresso_update_active_gateways() {
-  //upgrade script for those updating from versions prior to 3.1.16.P
+	//upgrade script for those updating from versions prior to 3.1.16.P
 	//hooked to plugin activation
 	$twocheckout_settings = get_option('event_espresso_2checkout_settings');
 	if (!empty($twocheckout_settings) && strpos($twocheckout_settings['button_url'], "/2checkout/logo.png")) {
@@ -176,90 +179,193 @@ function espresso_update_active_gateways() {
 	}
 	$active_gateways = get_option('event_espresso_active_gateways', array());
 	$dir = dirname(__FILE__);
-	if(get_option('events_2checkout_active')==true
-					|| array_key_exists('2checkout', $active_gateways)) {
-		$active_gateways['2checkout'] = $dir . "/2checkout";
+	if (!empty($active_gateways)) {
+		if (array_key_exists('2checkout', $active_gateways)) {
+			$active_gateways['2checkout'] = $dir . "/2checkout";
+		}
+		if (array_key_exists('aim', $active_gateways)) {
+			$active_gateways['aim'] = $dir . "/aim";
+		}
+		if (array_key_exists('alipay', $active_gateways)) {
+			$active_gateways['alipay'] = $dir . "/alipay";
+		}
+		if (array_key_exists('authnet', $active_gateways)) {
+			$active_gateways['authnet'] = $dir . "/authnet";
+		}
+		if (array_key_exists('bank', $active_gateways)) {
+			$active_gateways['bank'] = $dir . "/bank";
+		}
+		if (array_key_exists('check', $active_gateways)) {
+			$active_gateways['check'] = $dir . "/check";
+		}
+		if (array_key_exists('eway', $active_gateways)) {
+			$active_gateways['eway'] = $dir . "/eway";
+		}
+		if (array_key_exists('exact', $active_gateways)) {
+			$active_gateways['exact'] = $dir . "/exact";
+		}
+		if (array_key_exists('firstdata', $active_gateways)) {
+			$active_gateways['firstdata'] = $dir . "/firstdata";
+		}
+		if (array_key_exists('firstdata_connect_2', $active_gateways)) {
+			$active_gateways['firstdata_connect_2'] = $dir . "/firstdata_connect_2";
+		}
+		if (array_key_exists('ideal', $active_gateways)) {
+			$active_gateways['ideal'] = $dir . "/ideal";
+		}
+		if (array_key_exists('invoice', $active_gateways)) {
+			$active_gateways['invoice'] = $dir . "/invoice";
+		}
+		if (array_key_exists('mwarrior', $active_gateways)) {
+			$active_gateways['mwarrior'] = $dir . "/mwarrior";
+		}
+		if (array_key_exists('nab', $active_gateways)) {
+			$active_gateways['nab'] = $dir . "/nab";
+		}
+		if (array_key_exists('paypal', $active_gateways)) {
+			$active_gateways['paypal'] = $dir . "/paypal";
+		}
+		if (array_key_exists('paypal_pro', $active_gateways)) {
+			$active_gateways['paypal_pro'] = $dir . "/paypal_pro";
+		}
+		if (array_key_exists('paytrace', $active_gateways)) {
+			$active_gateways['paytrace'] = $dir . "/paytrace";
+		}
+		if (array_key_exists('quickpay', $active_gateways)) {
+			$active_gateways['quickpay'] = $dir . "/quickpay";
+		}
+		if (array_key_exists('realauth', $active_gateways)) {
+			$active_gateways['realauth'] = $dir . "/realauth";
+		}
+		if (array_key_exists('stripe', $active_gateways)) {
+			$active_gateways['stripe'] = $dir . "/stripe";
+		}
+		if (array_key_exists('wepay', $active_gateways)) {
+			$active_gateways['wepay'] = $dir . "/wepay";
+		}
+		if (array_key_exists('worldpay', $active_gateways)) {
+			$active_gateways['worldpay'] = $dir . "/worldpay";
+		}
+	} else {
+		if (get_option('events_2checkout_active') == true) {
+			$active_gateways['2checkout'] = $dir . "/2checkout";
+		}
+		if (get_option('events_authnet_aim_active') == true) {
+			$active_gateways['aim'] = $dir . "/aim";
+		}
+		if (get_option('events_alipay_active') == true) {
+			$active_gateways['alipay'] = $dir . "/alipay";
+		}
+		if (get_option('events_authnet_active') == true) {
+			$active_gateways['authnet'] = $dir . "/authnet";
+		}
+		if (get_option('events_bank_payment_active') == true) {
+			$active_gateways['bank'] = $dir . "/bank";
+		}
+		if (get_option('events_check_payment_active') == true) {
+			$active_gateways['check'] = $dir . "/check";
+		}
+		if (get_option('events_eway_active') == true) {
+			$active_gateways['eway'] = $dir . "/eway";
+		}
+		if (get_option('events_exact_active') == true) {
+			$active_gateways['exact'] = $dir . "/exact";
+		}
+		if (get_option('events_firstdata_active') == true) {
+			$active_gateways['firstdata'] = $dir . "/firstdata";
+		}
+		if (get_option('events_firstdata_connect_2_active') == true) {
+			$active_gateways['firstdata_connect_2'] = $dir . "/firstdata_connect_2";
+		}
+		if (get_option('events_ideal_active') == true) {
+			$active_gateways['ideal'] = $dir . "/ideal";
+		}
+		if (get_option('events_invoice_payment_active') == true) {
+			$active_gateways['invoice'] = $dir . "/invoice";
+		}
+		if (get_option('events_mwarrior_active') == true) {
+			$active_gateways['mwarrior'] = $dir . "/mwarrior";
+		}
+		if (get_option('events_nab_active') == true) {
+			$active_gateways['nab'] = $dir . "/nab";
+		}
+		if (get_option('events_paypal_active') == true) {
+			$active_gateways['paypal'] = $dir . "/paypal";
+		}
+		if (get_option('events_paypal_pro_active') == true) {
+			$active_gateways['paypal_pro'] = $dir . "/paypal_pro";
+		}
+		if (get_option('events_paytrace_active') == true) {
+			$active_gateways['paytrace'] = $dir . "/paytrace";
+		}
+		if (get_option('events_quickpay_active') == true) {
+			$active_gateways['quickpay'] = $dir . "/quickpay";
+		}
+		$payment_settings = get_option('event_espresso_realauth_settings');
+		if (!empty($payment_settings['active'])) {
+			$active_gateways['realauth'] = $dir . "/realauth";
+		}
+		if (get_option('events_stripe_active') == true) {
+			$active_gateways['stripe'] = $dir . "/stripe";
+		}
+		if (get_option('events_wepay_active') == true) {
+			$active_gateways['wepay'] = $dir . "/wepay";
+		}
+		if (get_option('events_worldpay_active') == true) {
+			$active_gateways['worldpay'] = $dir . "/worldpay";
+		}
 	}
-	if(get_option('events_authnet_aim_active')==true
-					|| array_key_exists('aim', $active_gateways)) {
-		$active_gateways['aim'] = $dir . "/aim";
-	}
-	if(get_option('events_alipay_active')==true
-					|| array_key_exists('alipay', $active_gateways)) {
-		$active_gateways['alipay'] = $dir . "/alipay";
-	}
-	if(get_option('events_authnet_active')==true
-					|| array_key_exists('authnet', $active_gateways)) {
-		$active_gateways['authnet'] = $dir . "/authnet";
-	}
-	if(get_option('events_bank_payment_active')==true
-					|| array_key_exists('bank', $active_gateways)) {
-		$active_gateways['bank'] = $dir . "/bank";
-	}
-	if(get_option('events_check_payment_active')==true
-					|| array_key_exists('check', $active_gateways)) {
-		$active_gateways['check'] = $dir . "/check";
-	}
-	if(get_option('events_eway_active')==true
-					|| array_key_exists('eway', $active_gateways)) {
-		$active_gateways['eway'] = $dir . "/eway";
-	}
-	if(get_option('events_exact_active')==true
-					|| array_key_exists('exact', $active_gateways)) {
-		$active_gateways['exact'] = $dir . "/exact";
-	}
-	if(get_option('events_firstdata_active')==true
-					|| array_key_exists('firstdata', $active_gateways)) {
-		$active_gateways['firstdata'] = $dir . "/firstdata";
-	}
-	if(get_option('events_firstdata_connect_2_active')==true
-					|| array_key_exists('firstdata_connect_2', $active_gateways)) {
-		$active_gateways['firstdata_connect_2'] = $dir . "/firstdata_connect_2";
-	}
-	if(get_option('events_ideal_active')==true
-					|| array_key_exists('ideal', $active_gateways)) {
-		$active_gateways['ideal'] = $dir . "/ideal";
-	}
-	if(get_option('events_invoice_payment_active')==true
-					|| array_key_exists('invoice', $active_gateways)) {
-		$active_gateways['invoice'] = $dir . "/invoice";
-	}
-	if(get_option('events_mwarrior_active')==true
-					|| array_key_exists('mwarrior', $active_gateways)) {
-		$active_gateways['mwarrior'] = $dir . "/mwarrior";
-	}
-	if(get_option('events_nab_active')==true
-					|| array_key_exists('nab', $active_gateways)) {
-		$active_gateways['nab'] = $dir . "/nab";
-	}
-	if(get_option('events_paypal_active')==true
-					|| array_key_exists('paypal', $active_gateways)) {
-		$active_gateways['paypal'] = $dir . "/paypal";
-	}
-	if(get_option('events_paypal_pro_active')==true
-					|| array_key_exists('paypal_pro', $active_gateways)) {
-		$active_gateways['paypal_pro'] = $dir . "/paypal_pro";
-	}
-	if(get_option('events_paytrace_active')==true
-					|| array_key_exists('paytrace', $active_gateways)) {
-		$active_gateways['paytrace'] = $dir . "/paytrace";
-	}
-	if(get_option('events_quickpay_active')==true
-					|| array_key_exists('quickpay', $active_gateways)) {
-		$active_gateways['quickpay'] = $dir . "/quickpay";
-	}
+
+	delete_option('events_2checkout_active');
+	delete_option('events_authnet_aim_active');
+	delete_option('events_alipay_active');
+	delete_option('events_authnet_active');
+	delete_option('events_bank_payment_active');
+	delete_option('events_check_payment_active');
+	delete_option('events_eway_active');
+	delete_option('events_exact_active');
+	delete_option('events_firstdata_active');
+	delete_option('events_firstdata_connect_2_active');
+	delete_option('events_ideal_active');
+	delete_option('events_invoice_payment_active');
+	delete_option('events_mwarrior_active');
+	delete_option('events_nab_active');
+	delete_option('events_paypal_active');
+	delete_option('events_paypal_pro_active');
+	delete_option('events_paytrace_active');
+	delete_option('events_quickpay_active');
 	$payment_settings = get_option('event_espresso_realauth_settings');
-	if(!empty($payment_settings['active'])
-					|| array_key_exists('realauth', $active_gateways)) {
-		$active_gateways['realauth'] = $dir . "/realauth";
-	}
-	if(get_option('events_stripe_active')==true
-					|| array_key_exists('stripe', $active_gateways)) {
-		$active_gateways['stripe'] = $dir . "/stripe";
-	}
-	if(get_option('events_worldpay_active')==true
-					|| array_key_exists('worldpay', $active_gateways)) {
-		$active_gateways['worldpay'] = $dir . "/worldpay";
-	}
+	$payment_settings['active'] = false;
+	update_option('event_espresso_realauth_settings', $payment_settings);
+	delete_option('events_stripe_active');
+	delete_option('events_wepay_active');
+	delete_option('events_worldpay_active');
 	update_option('event_espresso_active_gateways', $active_gateways);
+
+	chdir('../');
+	if (file_exists('paypal.ipn_results.log')) {
+		if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/paypal.ipn_results.log')) {
+			$old = file_get_contents('paypal.ipn_results.log');
+			$new = file_get_contents(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/paypal.ipn_results.log');
+			$result1 = file_put_contents(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/paypal.ipn_results.log', $old . $new);
+			$result2 = unlink('paypal.ipn_results.log');
+			if ($result1 && $result2)
+				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, "appended new log file to old log file in new location and deleted old log file");
+			else
+				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, "there was a problem appending new log file to old log file in new location or deleting old log file");
+		} else {
+			if (rename('paypal.ipn_results.log', EVENT_ESPRESSO_UPLOAD_DIR . 'logs/paypal.ipn_results.log'))
+				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, 'moved old paypal log file to new location');
+			else
+				do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, 'could not move old paypal log file to new location');
+		}
+	} else
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, 'old paypal log file did not exist');
+	if (!file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/.htaccess')) {
+		if (file_put_contents(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/.htaccess', 'deny from all'))
+			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, 'created .htaccess file that blocks direct access to logs folder');
+		else
+			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, 'there was a problem creating .htaccess file to block direct access to logs folder');
+	} else
+		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '.htaccess file already exists in logs folder');
 }
