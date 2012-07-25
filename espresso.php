@@ -273,11 +273,14 @@ if ($this_is_a_reg_page == TRUE && file_exists(EVENT_ESPRESSO_UPLOAD_DIR . "/sea
 
 //Global files
 //Premium funtions. If this is a paid version, then we need to include these files.
+global $espresso_premium;
 if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/misc_functions.php')) {
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/misc_functions.php');
-	global $espresso_premium;
 	$espresso_premium = espresso_system_check();
+}else{
+	$espresso_premium = false;
 }
+
 //Build the addon files
 if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/addons_includes.php')) {
 	require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/addons_includes.php');
