@@ -6,9 +6,9 @@ Donate link: http://eventespresso.com
 
 Tags: event registration, events planner, events calendar, wordpress events, event ticketing, class registration, conference registration, online registration, event management, buddypress, tickets, ticketing, ticket, registration, wordcamp, event manager, training, sports, booking
 
-Requires at least: 3.4.1
+Requires at least: 3.3
 
-Tested up to: 3.3
+Tested up to: 3.4.1
 
 Stable tag: 3.1.25.L
 
