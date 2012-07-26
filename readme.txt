@@ -60,7 +60,7 @@ But just in case you want some **advanced features**, you can grab a copy of our
 That's not all! If you want to turbo-charge your event management, we've made it possible for you to process event registrations using your very own smartphones to scan QR codes!
 
 = Support =
-We monitor the WordPress.org support forums, but for faster support you can visit our [forum](http://www.eventespresso.com/forums/). You can also visit the Help/Support menu from the Event Espresso admin. Please visit the forums  or visit the "Help/Support" menu within the Event Espresso admin.
+We monitor the WordPress.org support forums, but for faster support you can visit our [forum](http://eventespresso.com/support/forums/). You can also visit the Help/Support menu from the Event Espresso admin. Please visit the forums  or visit the "Help/Support" menu within the Event Espresso admin.
 
 If your support issue is urgent, we also offer [priority event management support](http://eventespresso.com/support/premium-support-options/).
 
@@ -96,7 +96,7 @@ You will be able to fully manage basic events with Event Espresso lite. This wil
 
 **Do you monitor the WordPress.org support forums?**
 
-We do, although you'll find a faster response time at the [support forums on our homepage](http://www.eventespresso.com/forums/).
+We do, although you'll find a faster response time at the [support forums on our homepage](http://eventespresso.com/support/forums/).
 
 **How do I display a single event on my page?**
 
