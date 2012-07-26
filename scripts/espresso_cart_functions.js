@@ -99,7 +99,7 @@ jQuery(document).ready(function() {
 
     };
 
-    jQuery('.ee_add_item_to_cart').click(function(){
+    jQuery('.ee_add_item_to_cart').live('click',function(){
 
         var data = {
             item_type: 'event',
@@ -118,7 +118,7 @@ jQuery(document).ready(function() {
 
     });
 
-    jQuery('.ee_delete_item_from_cart').click(function(){
+    jQuery('.ee_delete_item_from_cart').live('click',function(){
 
         var data = {
             item_type: 'event',

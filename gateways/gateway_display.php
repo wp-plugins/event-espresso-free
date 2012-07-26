@@ -36,7 +36,7 @@ function espresso_display_finalize_payment_header($data) {
 		<span class="ui-icon ui-icon-alert"></span>
 		<p><strong><?php _e('Attention!', 'event_espresso'); ?></strong><br />
 	<?php _e('If using one of the offline payment options, please make note of the information below, then', 'event_espresso'); ?>
-			<a href="<?php echo home_url() . '/?page_id=' . $org_options['return_url']; ?>&amp;payment_type=cash_check&amp;id=<?php echo $data['attendee_id'] . '&registration_id=' . $data['registration_id'] ?>" class="inline-link" title="<?php _e('Finalize your registration', 'event_espresso'); ?>"><?php _e('click here to finalize your registration', 'event_espresso'); ?></a>
+			<a href="<?php echo home_url() . '/?page_id=' . $org_options['return_url']; ?>&amp;payment_type=cash_check&amp;id=<?php echo $data['attendee_id'] . '&r_id=' . $data['registration_id'] ?>" class="inline-link" title="<?php _e('Finalize your registration', 'event_espresso'); ?>"><?php _e('click here to finalize your registration', 'event_espresso'); ?></a>
 		</p>
 	</div>
 	<?php
@@ -44,7 +44,7 @@ function espresso_display_finalize_payment_header($data) {
 
 $active_gateways = get_option('event_espresso_active_gateways', array());
 foreach ($active_gateways as $gateway => $path) {
-	require_once($path . "/init.php");
+	event_espresso_require_gateway($gateway . "/init.php");
 }
 $data['fname'] = $fname;
 $data['lname'] = $lname;
@@ -69,7 +69,7 @@ $data['registration_id'] = $registration_id;
 $data['phone'] = $phone;
 //This file builds the gateways that are available
 echo '<div id="onsite-payments" class="event-display-boxes ui-widget">';
-echo '<h2 class="section-heading ui-widget-header ui-corner-top">' . __('Please choose a payment option:', 'event_espresso') . '</h2>';
+echo '<h3 class="section-heading ui-widget-header ui-corner-top">' . __('Please choose a payment option:', 'event_espresso') . '</h3>';
 echo '<div class="event-data-display ui-widget-content ui-corner-bottom">';
 
 do_action('action_hook_espresso_display_onsite_payment_header');

@@ -82,96 +82,155 @@ function event_espresso_edit_list() {
 			$year_r = $pieces[0];
 			$month_r = $pieces[1];
 		}
+		
 		$group = '';
-		if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_group_admin') {
-			$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
-			$group = unserialize($group);
-			$sql = "(SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
-			$sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT ";
-			//Get the venue information
-			if ($org_options['use_venue_manager'] == 'Y') {
-				$sql .= ", v.name AS venue_title, v.address AS venue_address, v.address2 AS venue_address2, v.city AS venue_city, v.state AS venue_state, v.zip AS venue_zip, v.country AS venue_country ";
-			} else {
-				$sql .= ", e.venue_title, e.phone, e.address, e.address2, e.city, e.state, e.zip, e.country ";
-			}
-			if ($org_options['use_venue_manager'] == 'Y') {
-				$sql .= ", lc.name AS locale_name, e.wp_user ";
-			}
-			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
-			if ($_REQUEST['category_id'] != '') {
-				$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " cr ON cr.event_id = e.id ";
-				$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = cr.cat_id ";
-			}
-			if ($group != '' && $org_options['use_venue_manager'] == 'Y') {
-				$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON vr.event_id = e.id ";
-				$sql .= " LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = vr.venue_id ";
-				$sql .= " LEFT JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = vr.venue_id ";
-				$sql .= " LEFT JOIN " . EVENTS_LOCALE_TABLE . " lc ON lc.id = l.locale_id ";
-			}
-			$sql .= ( $_POST['event_status'] != '' && $_POST['event_status'] != 'IA') ? " WHERE e.event_status = '" . $_POST['event_status'] . "' " : " WHERE e.event_status != 'D' ";
-			$sql .= $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
-			$sql .= $group != '' && $org_options['use_venue_manager'] == 'Y' ? " AND l.locale_id IN (" . implode(",", $group) . ") " : '';
-			if ($_POST['month_range'] != '') {
-				$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-31')) . "' ";
-			}
-			if ($_REQUEST['today'] == 'true') {
-				$sql .= " AND e.start_date = '" . $curdate . "' ";
-			}
-			if ($_REQUEST['this_month'] == 'true') {
-				$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month)) . "' ";
-			}
-			$sql .= ") UNION ";
+		
+		//Check if the venue manager is turned on
+		$use_venue_manager = false;
+		if ( isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ){
+			$use_venue_manager = true;
 		}
+		
+		//This checks to see if the user is a regional manager and creates a union to join the events that are in the users region based on the venue/locale combination
+		if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_group_admin') {
+			$is_regional_manager = true;
+			$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
+			if ( $group != '0' && !empty($group) ){
+				$group = unserialize($group);
+				
+				$sql = "(SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
+				$sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT, e.wp_user ";
+				
+				//Get the venue information
+				if ($use_venue_manager == true) {
+					$sql .= ", v.name AS venue_title, v.address AS venue_address, v.address2 AS venue_address2, v.city AS venue_city, v.state AS venue_state, v.zip AS venue_zip, v.country AS venue_country ";
+				} else {
+					$sql .= ", e.venue_title, e.phone, e.address, e.address2, e.city, e.state, e.zip, e.country ";
+				}
+				
+				//Get the locale fields
+				if ($use_venue_manager == true) {
+					$sql .= ", lc.name AS locale_name, e.wp_user ";
+				}
+				
+				$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
+				
+				//Join the categories
+				if ($_REQUEST['category_id'] != '') {
+					$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " cr ON cr.event_id = e.id ";
+					$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = cr.cat_id ";
+				}
+				
+				//Join the venues and locales
+				if (!empty($group) && $use_venue_manager == true) {
+					$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON vr.event_id = e.id ";
+					$sql .= " LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = vr.venue_id ";
+					$sql .= " LEFT JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = vr.venue_id ";
+					$sql .= " LEFT JOIN " . EVENTS_LOCALE_TABLE . " lc ON lc.id = l.locale_id ";
+				}
+				
+				//Event status filter
+				$sql .= ( isset($_POST['event_status']) && $_POST['event_status'] != '' && $_POST['event_status'] != 'IA') ? " WHERE e.event_status = '" . $_POST['event_status'] . "' " : " WHERE e.event_status != 'D' ";
+				
+				//Category filter
+				$sql .= $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
+				
+				//Find events in the locale
+				$sql .= !empty($group) && $use_venue_manager == true ? " AND l.locale_id IN (" . implode(",", $group) . ") " : '';
+				
+				//Month filter
+				if ($_POST['month_range'] != '') {
+					$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-31')) . "' ";
+				}
+				
+				//Todays events filter
+				if (isset($_REQUEST['today']) && $_REQUEST['today'] == 'true') {
+					$sql .= " AND e.start_date = '" . $curdate . "' ";
+				}
+				
+				//This months events filter
+				if ( isset( $_REQUEST['this_month'] ) && $_REQUEST['this_month'] == 'true') {
+					$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month)) . "' ";
+				}
+				$sql .= ") UNION ";
+			}
+		}
+		
+		//If the query above is empty, create a default variable
 		if (!isset($sql))
 			$sql = '';
+		
+		//This is the standard query to retrieve the events
 		$sql .= "(SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
-		$sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT ";
+		$sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT, e.wp_user ";
 
 		//Get the venue information
-		if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
+		if ($use_venue_manager == true) {
+			//If using the venue manager, we need to get those fields
 			$sql .= ", v.name AS venue_title, v.address AS venue_address, v.address2 AS venue_address2, v.city AS venue_city, v.state AS venue_state, v.zip AS venue_zip, v.country AS venue_country ";
 		} else {
+			//Otherwise we need to get the address fields from the individual events
 			$sql .= ", e.venue_title, e.phone, e.address, e.address2, e.city, e.state, e.zip, e.country ";
 		}
-		if (function_exists('espresso_is_admin') && espresso_is_admin() == true && $org_options['use_venue_manager'] == 'Y') {
+		
+		//get the locale fields
+		if (isset($is_regional_manager) && $is_regional_manager == true && $use_venue_manager == true) {
 			$sql .= ", lc.name AS locale_name, e.wp_user ";
 		}
+		
 		$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
+		
+		//Join the categories
 		if ($_REQUEST['category_id'] != '') {
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " cr ON cr.event_id = e.id ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = cr.cat_id ";
 		}
 
-		if (isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y') {
+		//Join the venues
+		if ($use_venue_manager == true) {
 			$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON vr.event_id = e.id ";
 			$sql .= " LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = vr.venue_id ";
 		}
-
-		if (function_exists('espresso_is_admin') && espresso_is_admin() == true && $org_options['use_venue_manager'] == 'Y') {
+		
+		//Join the locales
+		if (isset($is_regional_manager) && $is_regional_manager == true && $use_venue_manager == true) {
 			$sql .= " LEFT JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = vr.venue_id ";
 			$sql .= " LEFT JOIN " . EVENTS_LOCALE_TABLE . " lc ON lc.id = l.locale_id ";
 		}
+		
+		//Event status filter
 		$sql .= ( isset($_POST['event_status']) && ($_POST['event_status'] != '' && $_POST['event_status'] != 'IA')) ? " WHERE e.event_status = '" . $_POST['event_status'] . "' " : " WHERE e.event_status != 'D' ";
+		
+		//Category filter
 		$sql .= $_REQUEST['category_id'] != '' ? " AND c.id = '" . $_REQUEST['category_id'] . "' " : '';
+		
+		//Month filter
 		if ($_POST['month_range'] != '') {
 			$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-31')) . "' ";
 		}
+		
+		//Todays events filter
 		if (isset($_REQUEST['today']) && $_REQUEST['today'] == 'true') {
 			$sql .= " AND e.start_date = '" . $curdate . "' ";
 		}
+		
+		//This months events filter
 		if (isset($_REQUEST['this_month']) && $_REQUEST['this_month'] == 'true') {
 			$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month)) . "' ";
 		}
+		
 		//If user is an event manager, then show only their events
 		if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
 			$sql .= " AND e.wp_user = '" . espresso_member_data('id') . "' ";
 		}
+		
 		$sql .= ") ORDER BY start_date  ASC $records_to_show ";
 		
 		//Debug
 		//echo $sql;
+		
 		?>
-		<form id="form1" name="form1" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
+		<form id="form1" name="form1" method="post" action="admin.php?page=events<?php //echo $_SERVER["REQUEST_URI"] ?>">
 			<table id="table" class="widefat event-list" width="100%">
 				<thead>
 					<tr>
@@ -297,7 +356,7 @@ function event_espresso_edit_list() {
 								$user_organization = espresso_user_meta($wp_user, 'organization') != '' ? espresso_user_meta($wp_user, 'organization') : '';
 								$user_co_org = $user_company != '' ? $user_company : $user_organization;
 								?>
-								<td class="date"><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') : espresso_user_meta($wp_user, 'display_name'); ?>
+								<td class="date"><?php echo espresso_user_meta($wp_user, 'user_firstname') != '' ? espresso_user_meta($wp_user, 'user_firstname') . ' ' . espresso_user_meta($wp_user, 'user_lastname') . ' (<a href="user-edit.php?user_id='.$wp_user.'">' . espresso_user_meta($wp_user, 'user_nicename'). '</a>)' : espresso_user_meta($wp_user, 'display_name')  . ' (<a href="user-edit.php?user_id='.$wp_user.'">' . espresso_user_meta($wp_user, 'user_nicename'). '</a>)'; ?>
 									<?php echo $user_co_org != '' ? '<br />[' . espresso_user_meta($wp_user, 'company') . ']' : ''; ?>
 								</td>
 							<?php } ?>
@@ -347,7 +406,7 @@ function event_espresso_edit_list() {
 											break;
 
 										default:
-											//Don' show the event if any of the above are true
+											//Don't show the event if any of the above are true
 											break;
 									}
 									break;

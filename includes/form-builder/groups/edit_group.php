@@ -2,6 +2,8 @@
 
 //Function to edit a group of questions
 function event_espresso_form_group_edit() {
+    
+    
     global $wpdb;
     $g_sql = "SELECT qg.id, qg.group_name, qg.group_order, qg.group_identifier, qg.group_description, qg.show_group_name, qg.show_group_description, qg.wp_user ";
     $g_sql .= " FROM  " . EVENTS_QST_GROUP_TABLE . " qg ";
@@ -11,6 +13,7 @@ function event_espresso_form_group_edit() {
     //echo $g_sql;
 
     $groups = $wpdb->get_results($g_sql);
+    
     if ($wpdb->num_rows > 0) {
         foreach ($groups as $group) {
             $group_id = $group->id;
@@ -24,6 +27,19 @@ function event_espresso_form_group_edit() {
             $wp_user = $group->wp_user;
         }
     }
+    
+    if ( function_exists( 'espresso_member_data' ) ) {
+        if (function_exists( 'espresso_is_admin' ) ) {  
+            // If the user doesn't have admin access get only user's own question groups 
+            if ( !espresso_is_admin() ) { 
+                if ( espresso_member_data('id') != $wp_user ) {
+                    echo '<h2>' . __('Sorry, you do not have permission to edit this question group.', 'event_espresso') . '</h2>';
+                    return;
+                }
+            }
+        }
+    }
+    
     ?>
     <div id="add-edit-new-group" class="metabox-holder">
         <div class="postbox">

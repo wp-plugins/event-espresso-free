@@ -6,7 +6,7 @@ function isEmptyArray($array) {
 	return (count(array_filter($array, $my_not_empty)) == 0) ? 1 : 0;
 }
 
-function espresso_edit_attendee($registration_id, $attendee_id, $event_id=0, $type='', $text='') {
+function espresso_edit_attendee($registration_id, $attendee_id, $event_id = 0, $type = '', $text = '') {
 	global $org_options;
 	$html = '';
 	if ($text == '')
@@ -26,7 +26,7 @@ function espresso_edit_attendee($registration_id, $attendee_id, $event_id=0, $ty
 	return $html;
 }
 
-function espresso_reg_url($event_id=0) {
+function espresso_reg_url($event_id = 0) {
 	global $org_options;
 	if ($event_id > 0) {
 		//return espresso_getTinyUrl(home_url().'/?page_id='.$org_options['event_page_id'].'&regevent_action=register&event_id='.$event_id);
@@ -44,7 +44,7 @@ function espresso_getTinyUrl($url) {
 
 //Text formatting function.
 //This should fix all of the formatting issues of text output from the database.
-function espresso_format_content($content='') {
+function espresso_format_content($content = '') {
 	return wpautop(stripslashes_deep(html_entity_decode(do_shortcode($content), ENT_QUOTES, "UTF-8")));
 }
 
@@ -115,20 +115,24 @@ function espresso_reg_sessionid($registration_id) {
 
 if (!function_exists('event_espresso_additional_attendees')) {
 
-	function event_espresso_additional_attendees($event_id=0, $additional_limit=2, $available_spaces=999, $label='', $show_label = true, $event_meta = '') {
+	function event_espresso_additional_attendees($event_id = 0, $additional_limit = 2, $available_spaces = 999, $label = '', $show_label = true, $event_meta = '') {
 		$event_id = $event_id == 0 ? $_REQUEST['event_id'] : $event_id;
 
+		if ($event_meta == 'admin') {
+			$admin = true;
+			$event_meta = '';
+		}
 		if ($event_meta == '' && ($event_id != '' || $event_id != 0)) {
 			$event_meta = event_espresso_get_event_meta($event_id);
 		}
-		
+
 		//If the additional attednee questions are empty, then default to the first question group
 		if (empty($event_meta['add_attendee_question_groups']))
 			$event_meta['add_attendee_question_groups'] = array(1 => 1);
-			
-			
+
+
 		$i = 0;
-		if ($event_meta['additional_attendee_reg_info'] == 1) {
+		if (isset($event_meta['additional_attendee_reg_info']) && $event_meta['additional_attendee_reg_info'] == 1) {
 			$label = $label == '' ? __('Number of Tickets', 'event_espresso') : $label;
 			$html = '<span class="espresso_additional_limit">';
 			$html .= $show_label == true ? '<label for="num_people">' . $label . '</label>' : '';
@@ -147,56 +151,88 @@ if (!function_exists('event_espresso_additional_attendees')) {
 				$i++;
 			}
 			$i = $i - 1;
-			$html = '<p class="event_form_field additional_header" id="additional_header">';
+			$html = '<div class="event_form_field additional_header" id="additional_header">';
 			// fixed for translation string, previous string untranslatable - http://events.codebasehq.com/projects/event-espresso/tickets/11
 			//$html .= '<a onclick="return false;" href="#">' . __('Add More Attendees? (click to toggle, limit ' . $i . ')', 'event_espresso') . '</a>';
-			$html .= '<a onclick="return false;" href="#">' . __('Add More Attendees? (click to toggle, limit ', 'event_espresso');
+			$html .= '<a onclick="return false;" class="add" href="#">' . __('Add More Attendees? (click to toggle, limit ', 'event_espresso');
 			$html .= $i . ')</a>';
-			$html .= '</p>';
-			$html .= '<div id="additional_attendees">';
-			$html .= '<div class="clone espresso_add_attendee">';
+			$html .= '</div>';
+			//ob_start();
+			$htm = '<div id="additional_attendee_\' + attendee_num + \'" class="clone espresso_add_attendee">';
+			$htm .= '<h4>' . __('Additional Attendee #', 'event_espresso') . '\' + (attendee_num+1) + \'</h4>';
 			/*
 			 * Added for seating chart addon
 			 */
 			if (defined('ESPRESSO_SEATING_CHART')) {
 				if (seating_chart::check_event_has_seating_chart($_REQUEST['event_id']) !== false) {
-					$html .= '<p>';
-					$html .= '<label>' . __('Select a Seat:', 'event_espresso') . '</label>';
-					$html .= '<input type="text" name="x_seat_id[]" value="" class="ee_s_select_seat" event_id="' . $_REQUEST['event_id'] . '" readonly="readonly" />';
-					$html .= '<br/>[' . __('If you do not select a seat this attendee will not be added', 'event_espresso') . ']';
-					$html .= '</p>';
+					$htm .= '<p>';
+					$htm .= '<label>' . __('Select a Seat:', 'event_espresso') . '</label>';
+					$htm .= '<input type="text" name="x_seat_id[\' + attendee_num + \']" value="" class="ee_s_select_seat" event_id="' . $_REQUEST['event_id'] . '" readonly="readonly" />';
+					$htm .= '<br/>[' . __('If you do not select a seat this attendee will not be added', 'event_espresso') . ']';
+					$htm .= '</p>';
 				}
 			}
 			if ($event_meta['additional_attendee_reg_info'] == 2) {
-				$html .= '<p>';
-				$html .= '<label for="x_attendee_fname">' . __('First Name:', 'event_espresso') . '</label>';
-				$html .= '<input type="text" name="x_attendee_fname[]" class="input"/>';
-				$html .= '</p>';
-				$html .= '<p>';
-				$html .= '<label for="x_attendee_lname">' . __('Last Name:', 'event_espresso') . '</label>';
-				$html .= '<input type="text" name="x_attendee_lname[]" class="input"/>';
-				$html .= '</p>';
-				$html .= '<p>';
-				$html .= '<label for="x_attendee_email">' . __('Email:', 'event_espresso') . '</label>';
-				$html .= '<input type="text" name="x_attendee_email[]" class="input"/>';
-				$html .= '</p>';
+				$htm .= '<p>';
+				$htm .= '<label for="x_attendee_fname">' . __('First Name:', 'event_espresso') . '</label>';
+				$htm .= '<input type="text" name="x_attendee_fname[\' + attendee_num + \']" class="input"/>';
+				$htm .= '</p>';
+				$htm .= '<p>';
+				$htm .= '<label for="x_attendee_lname">' . __('Last Name:', 'event_espresso') . '</label>';
+				$htm .= '<input type="text" name="x_attendee_lname[\' + attendee_num + \']" class="input"/>';
+				$htm .= '</p>';
+				$htm .= '<p>';
+				$htm .= '<label for="x_attendee_email">' . __('Email:', 'event_espresso') . '</label>';
+				$htm .= '<input type="text" name="x_attendee_email[\' + attendee_num + \']" class="input"/>';
+				$htm .= '</p>';
 			} else {
-				$html .= event_espresso_add_question_groups($event_meta['add_attendee_question_groups'], '', null, 0, array("x_attendee" => true));
+				$meta = array("x_attendee" => true);
+				if(!empty($admin)) {
+					$meta['admin_only'] = true;
+				}
+				$htm .= event_espresso_add_question_groups($event_meta['add_attendee_question_groups'], '', null, 0, $meta);
 			}
-			$html .= '<a href="#" class="add" rel=".clone" title="' . __('Add an Additonal Attendee', 'event_espresso') . '"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/add.png" alt="' . __('Add an Additonal Attendee', 'event_espresso') . '" /></a>';
-			$html .= '</div>';
-			$html .= '<hr />';
-			$html .= '</div>';
-			ob_start();
-			?>
-			<script type="text/javascript">$jaer = jQuery.noConflict();jQuery(document).ready(function($jaer) { $jaer(function(){var removeLink = '<a style="" class="remove" href="#" onclick="$jaer(this).parent().slideUp(function(){ $jaer(this).remove() }); return false"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL . "images/icons/remove.gif"; ?>" alt="<?php _e('Remove Attendee', 'event_espresso'); ?>" /></a>';$jaer('a.add').relCopy({limit: <?php echo $i; ?>, append: removeLink});$jaer("#additional_attendees").hide();/*toggle the componenet with class msg_body*/$jaer("#additional_header").click(function(){$jaer(this).next("#additional_attendees").slideToggle(500);});});});</script>
-			<?php
-			$buffer = ob_get_contents();
-			ob_end_clean();
+			$htm .= '<a onclick="return false;" href="#" class="add" rel=".clone" title="' . __('Add an Additonal Attendee', 'event_espresso') . '"><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/add.png" alt="' . __('Add an Additonal Attendee', 'event_espresso') . '" /></a>';
+			$htm .= '<a onclick="return false;" style="" class="remove" href="#" ><img src="' . EVENT_ESPRESSO_PLUGINFULLURL . 'images/icons/remove.gif" alt="' . __('Remove Attendee', 'event_espresso') . '" /></a>';
+			$htm .= '</div>';
+			//ob_start();
+			//END STOP DO NOT ADD LINE BREAKS TO THIS SCRIPT
+			$html .= '<script type="text/javascript">$jaer = jQuery.noConflict();var attendee_num = 0;var additional_limit = '.$additional_limit.';var first_add_button = null;var selector = \'div#additional_attendee_\' + attendee_num;function markup(attendee_num) {return \''.stripslashes($htm).'\';}function remove_add() {attendee_num -= 1;selector = \'div#additional_attendee_\' + attendee_num;$jaer(selector).remove();if (attendee_num != 0) {var temp_selector = \'div#additional_attendee_\' + (attendee_num - 1);$jaer(temp_selector + \' a.add\').on(\'click\',add_add);$jaer(temp_selector + \' a.remove\').on(\'click\',remove_add);} else {first_add_button.on(\'click\',add_add);}}function add_add() {if (attendee_num == additional_limit) return;$jaer(this).parent().after(markup(attendee_num));$jaer(selector + \' a.add\').on(\'click\',add_add);$jaer(selector + \' a.remove\').on(\'click\',remove_add);$jaer(this).off(\'click\', add_add);if (attendee_num != 0) {var temp_selector = \'div#additional_attendee_\' + (attendee_num - 1);$jaer(temp_selector + \' a.remove\').off(\'click\', remove_add);}attendee_num += 1;selector = \'div#additional_attendee_\' + attendee_num;}jQuery(document).ready(function($jaer) {$jaer(\'a.add\').on(\'click\',add_add);first_add_button = $jaer(\'a.add\');});</script>';
+			//END STOP DO NOT ADD LINE BREAKS TO THIS SCRIPT
+			//$buffer = ob_get_contents();
+			//ob_end_clean();
 		}
-		return $html . $buffer;
+		return $html;
 	}
 
+}
+
+/* Helps keep the <p> tags from wrapping around our js scripts
+
+Add this to your themes function.php file:
+
+if ( !is_admin() ){
+	remove_filter('the_content', 'wpautop');
+	remove_filter('the_content', 'wptexturize');
+	add_filter('the_content', 'espresso_raw_formatter', 99);
+}
+
+ */
+function espresso_raw_formatter($content) {
+	$new_content = '';
+	$pattern_full = '{(\[raw\].*?\[/raw\])}is';
+	$pattern_contents = '{\[raw\](.*?)\[/raw\]}is';
+	$pieces = preg_split($pattern_full, $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+	foreach ($pieces as $piece) {
+		if (preg_match($pattern_contents, $piece, $matches)) {
+			$new_content .= $matches[1];
+		} else {
+			$new_content .= wptexturize(wpautop($piece));
+		}
+	}
+
+	return $new_content;
 }
 
 function event_espresso_get_event_meta($event_id) {
@@ -216,7 +252,7 @@ function event_espresso_get_event_meta($event_id) {
 //This function returns the condition of an event
 if (!function_exists('event_espresso_get_is_active')) {
 
-	function event_espresso_get_is_active($event_id, $event_meta='') {
+	function event_espresso_get_is_active($event_id, $event_meta = '') {
 		global $wpdb, $org_options;
 		//If the timezome is set in the wordpress database, then lets use it as the default timezone.
 		if (get_option('timezone_string') != '') {
@@ -361,7 +397,7 @@ if (!function_exists('event_espresso_get_is_active')) {
 //This function returns the overall status of an event
 if (!function_exists('event_espresso_get_status')) {
 
-	function event_espresso_get_status($event_id, $event_meta='') {
+	function event_espresso_get_status($event_id, $event_meta = '') {
 		$event_status = event_espresso_get_is_active($event_id, $event_meta);
 		switch ($event_status['status']) {
 			case 'EXPIRED':
@@ -561,7 +597,7 @@ if (!function_exists('get_number_of_attendees_reg_limit')) {
 
 }
 
-function event_espresso_update_alert($url='') {
+function event_espresso_update_alert($url = '') {
 	return wp_remote_retrieve_body(wp_remote_get($url));
 }
 
@@ -576,7 +612,7 @@ function espresso_registration_footer() {
 //Gets the current page url. Used for redirecting back to a page
 function event_espresso_cur_pageURL() {
 	$pageURL = 'http';
-	if ($_SERVER["HTTPS"] == "on") {
+	if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
 		$pageURL .= "s";
 	}
 	$pageURL .= "://";
@@ -601,8 +637,16 @@ if (!function_exists('event_espresso_management_capability')) {
 //Build the form questions. This function can be overridden using the custom files addon
 if (!function_exists('event_espresso_add_question_groups')) {
 
-	function event_espresso_add_question_groups($question_groups, $answer= '', $event_id = null, $multi_reg = 0, $meta = array()) {
-		global $wpdb;
+	function event_espresso_add_question_groups($question_groups, $answer = '', $event_id = null, $multi_reg = 0, $meta = array(), $class = 'my_class') {
+		global $wpdb, $member_options;
+		
+		//If memebers addon is installed, check to see if we want to disable the form fields for members
+		$disabled = '';
+		if ( function_exists('espresso_members_installed') && espresso_members_installed() == true ) {
+			if ( is_user_logged_in() && $member_options['autofilled_editable'] == 'N' )
+			$disabled = 'disabled="disabled"';
+		}
+				
 		$event_id = empty($_REQUEST['event_id']) ? $event_id : $_REQUEST['event_id'];
 		if (count($question_groups) > 0) {
 			$questions_in = '';
@@ -615,14 +659,14 @@ if (!function_exists('event_espresso_add_question_groups')) {
 			//Only personal inforamation for the additional attendees in each group
 			if (isset($meta['additional_attendee_reg_info']) && $meta['additional_attendee_reg_info'] == '2' && isset($meta['attendee_number']) && $meta['attendee_number'] > 1)
 				$FILTER .= " AND qg.system_group = 1 ";
-
+            
 			if (!is_array($question_groups) && !empty($question_groups)) {
 				$question_groups = unserialize($question_groups);
 			}
-			
+
 			//Debug
 			//echo "<pre>".print_r($question_groups,true)."</pre>";
-			
+
 			foreach ($question_groups as $g_id) {
 				$questions_in .= $g_id . ',';
 			}
@@ -658,11 +702,11 @@ if (!function_exists('event_espresso_add_question_groups')) {
 						if ($group_name != $question->group_name) {
 							$html .= '<div class="event_questions" id="' . $question->group_identifier . '">';
 							$html .= $question->show_group_name != 0 ? "<h4 class=\"reg-quest-title section-title\">$question->group_name</h4>" : '';
-							$html .= $question->show_group_description != 0 && $question->group_description == true ? "<p class='quest-group-descript'>$question->group_description</p>" : '';
+							$html .= $question->show_group_description != 0 && $question->group_description == true ? '<p class="quest-group-descript">' . $question->group_description . '</p>' : '';
 							$group_name = $question->group_name;
 						}
 
-						$html .= event_form_build($question, $answer, $event_id, $multi_reg, $meta);
+						$html .= event_form_build($question, $answer, $event_id, $multi_reg, $meta, $class, $disabled);
 					}
 					$html .= $counter == $num_rows ? '</div>' : '';
 				}
@@ -691,9 +735,9 @@ function ee_show_meta($meta, $name) {
 //This function returns an array of category data based on an event id
 if (!function_exists('espresso_event_category_data')) {
 
-	function espresso_event_category_data($event_id, $all_cats=FALSE) {
+	function espresso_event_category_data($event_id, $all_cats = FALSE) {
 		global $wpdb;
-		$sql = "SELECT c.category_identifier, c.category_name, c.category_desc, c.display_desc FROM " . EVENTS_DETAIL_TABLE . " e ";
+		$sql = "SELECT c.category_identifier, c.category_name, c.category_desc, c.display_desc, c.category_meta FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
 		$sql .= " WHERE e.id = '" . $event_id . "' ";
@@ -702,15 +746,16 @@ if (!function_exists('espresso_event_category_data')) {
 		$num_rows = $wpdb->num_rows;
 
 		if ($num_rows > 0 && $all_cats = FALSE) {
-			$category_data = array('category_identifier' => $wpdb->last_result[0]->category_identifier, 'category_name' => $wpdb->last_result[0]->category_name, 'category_desc' => $wpdb->last_result[0]->category_desc, 'display_desc' => $wpdb->last_result[0]->display_desc);
+			$category_data = array('category_identifier' => $wpdb->last_result[0]->category_identifier, 'category_name' => $wpdb->last_result[0]->category_name, 'category_desc' => $wpdb->last_result[0]->category_desc, 'display_desc' => $wpdb->last_result[0]->display_desc, 'category_meta' => $wpdb->last_result[0]->category_meta);
 			return $category_data;
 		} elseif ($num_rows > 0) {
-			$category_data = array('category_identifier' => '', 'category_name' => '', 'category_desc' => '', 'display_desc' => '');
+			$category_data = array( 'category_identifier' => '', 'category_name' => '', 'category_desc' => '', 'display_desc' => '', 'category_meta' => '' );
 			foreach ($wpdb->last_result as $result) {
 				$category_data['category_identifier'] .= $result->category_identifier . ' ';
 				$category_data['category_name'] .= $result->category_name . ' ';
 				$category_data['category_desc'] .= $result->category_desc . ' ';
 				$category_data['display_desc'] .= $result->display_desc . ' ';
+				$category_data['category_meta'] .= $result->category_meta . ' ';
 			}
 			return $category_data;
 		} else {
@@ -834,7 +879,7 @@ if (!function_exists("unkeyvaluepair")) {
 }
 
 function espresso_add_query_vars($aVars) {
-	$aVars[] = "searchdate";		// represents the name of the date as shown in the URL
+	$aVars[] = "searchdate"; // represents the name of the date as shown in the URL
 	return $aVars;
 }
 
@@ -904,7 +949,7 @@ function get_event_field($field, $table, $where) {
 
 if (!function_exists('espresso_show_personnel')) {
 
-	function espresso_show_personnel($event_id=0, $atts) {
+	function espresso_show_personnel($event_id = 0, $atts) {
 		global $espresso_premium;
 		if ($espresso_premium != true)
 			return;
@@ -980,7 +1025,7 @@ if (!function_exists('event_espresso_require_gateway')) {
 	 * Usage: event_espresso_require_gateway('PaymentGateway.php')
 	 */
 	function event_espresso_require_gateway($template_file_name, $must_exist = true, $as_require_once = true) {
-		event_espresso_require_file($template_file_name, EVENT_ESPRESSO_GATEWAY_DIR . '/', EVENT_ESPRESSO_PLUGINFULLPATH . '/gateways/', $must_exist, $as_require_once);
+		event_espresso_require_file($template_file_name, EVENT_ESPRESSO_GATEWAY_DIR . '/', EVENT_ESPRESSO_PLUGINFULLPATH . 'gateways/', $must_exist, $as_require_once);
 	}
 
 }
@@ -1009,6 +1054,7 @@ if (!function_exists('event_espresso_require_file')) {
 			$full_path = $path_else . $template_file_name;
 		}
 		if (file_exists($full_path) || $must_exist) {
+			$path = substr($full_path,0,strrpos($full_path, '/'));
 			($as_require_once == true) ? require_once($full_path) : require($full_path);
 		}
 	}
@@ -1147,7 +1193,10 @@ function espresso_ticket_links($registration_id, $attendee_id) {
 		$group = $wpdb->num_rows > 1 ? '<strong>' . sprintf(__('Tickets Purchased (%s):', 'event_espresso'), $wpdb->num_rows) . '</strong><br />' : '';
 		$break = '<br />';
 		foreach ($attendees as $attendee) {
-			$ticket_url = get_option('siteurl') . "/?download_ticket=true&amp;id=" . $attendee->id . "&amp;registration_id=" . $attendee->registration_id;
+			$ticket_url = get_option('siteurl') . "/?download_ticket=true&amp;id=" . $attendee->id . "&amp;r_id=" . $attendee->registration_id;
+			if (function_exists('espresso_ticket_launch')) {
+				$ticket_url = espresso_ticket_url($attendee->id, $attendee->registration_id);
+			}
 			$ticket_link .= '<a href="' . $ticket_url . '">' . __('Download/Print Ticket') . ' (' . $attendee->fname . ' ' . $attendee->lname . ')' . '</a>' . $break;
 		}
 		return '<p>' . $group . $ticket_link . '</p>';
@@ -1194,4 +1243,21 @@ function espresso_get_attendee_coupon_discount($attendee_id, $cost) {
 	return $cost;
 }
 
-//End
+//Returns the registration id from a url string
+function espresso_return_reg_id(){
+	if( isset($_REQUEST['registration_id']) && !empty($_REQUEST['registration_id']) ){
+		return $_REQUEST['registration_id'];
+	}elseif ( isset($_REQUEST['r_id']) && !empty($_REQUEST['r_id']) ){
+		return $_REQUEST['r_id'];
+	}else{
+		return false;
+	}
+}
+
+//Build the registration id
+function espresso_build_registration_id($event_id){
+	return uniqid($event_id . '-');
+}
+		
+//Registration id filter
+add_filter('filter_hook_espresso_registration_id', 'espresso_build_registration_id', 10, 1);

@@ -170,7 +170,11 @@ if (!function_exists('espresso_event_time_sc')) {
 		$event_id = "{$event_id}";
 		$type = "{$type}";
 		$format = "{$format}";
-		return espresso_event_time($event_id, $type, $format);
+		ob_start();
+		espresso_event_time($event_id, $type, $format);
+		$buffer = ob_get_contents();
+		ob_end_clean();
+		return $buffer;
 	}
 
 }
@@ -185,237 +189,41 @@ add_shortcode('EVENT_TIME', 'espresso_event_time_sc');
 if (!function_exists('espresso_reg_page_sc')) {
 
 	function espresso_reg_page_sc($atts) {
-		global $wpdb, $org_options;
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		extract(shortcode_atts(array('event_id' => '0'), $atts));
 		$event_id = "{$event_id}";
-		return register_attendees(NULL, $event_id);
+		ob_start();
+		register_attendees(NULL, $event_id);
+		$buffer = ob_get_contents();
+		ob_end_clean();
+		return $buffer;
 	}
 
 }
 add_shortcode('ESPRESSO_REG_PAGE', 'espresso_reg_page_sc');
 
+/*
+ *
+ * Registration Form
+ * Returns only the registration form for an event
+ *
+ */
 if (!function_exists('espresso_reg_form_sc')) {
 
 	function espresso_reg_form_sc($atts) {
-		global $wpdb, $org_options;
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
 		extract(shortcode_atts(array('event_id' => '0'), $atts));
 		$event_id = "{$event_id}";
-
-		//The following variables are used to get information about your organization
-		$event_page_id = $org_options['event_page_id'];
-		$Organization = stripslashes_deep($org_options['organization']);
-		$Organization_street1 = $org_options['organization_street1'];
-		$Organization_street2 = $org_options['organization_street2'];
-		$Organization_city = $org_options['organization_city'];
-		$Organization_state = $org_options['organization_state'];
-		$Organization_zip = $org_options['organization_zip'];
-		$contact = $org_options['contact_email'];
-		$registrar = $org_options['contact_email'];
-		$currency_format = $org_options['currency_format'];
-
-		$message = $org_options['message'];
-		$use_captcha = $org_options['use_captcha'];
-		$paypal_id = $org_options['paypal_id'];
-
-		$sql = "SELECT * FROM " . EVENTS_DETAIL_TABLE;
-		$sql.= " WHERE is_active='Y' ";
-		$sql.= " AND event_status != 'D' ";
-		$sql.= " AND id = '" . $event_id . "' LIMIT 0,1";
-
-		if ($wpdb->get_results($sql)) {
-			$events = $wpdb->get_results($sql);
-			//These are the variables that can be used throughout the regsitration page
-			foreach ($events as $event) {
-				$event_id = $event->id;
-				$event_name = stripslashes_deep($event->event_name);
-				$event_desc = stripslashes_deep($event->event_desc);
-				$display_desc = $event->display_desc;
-				$display_reg_form = $event->display_reg_form;
-				$event_address = $event->address;
-				$event_address2 = $event->address2;
-				$event_city = $event->city;
-				$event_state = $event->state;
-				$event_zip = $event->zip;
-				$event_country = $event->country;
-				$event_description = stripslashes_deep($event->event_desc);
-				$event_identifier = $event->event_identifier;
-				$event_cost = $event->event_cost;
-				$member_only = $event->member_only;
-				$reg_limit = $event->reg_limit;
-				$allow_multiple = $event->allow_multiple;
-				$start_date = $event->start_date;
-				$end_date = $event->end_date;
-				$allow_overflow = $event->allow_overflow;
-				$overflow_event_id = $event->overflow_event_id;
-
-				$virtual_url = stripslashes_deep($event->virtual_url);
-				$virtual_phone = stripslashes_deep($event->virtual_phone);
-
-				//Address formatting
-				$location = ($event_address != '' ? $event_address : '') . ($event_address2 != '' ? '<br />' . $event_address2 : '') . ($event_city != '' ? '<br />' . $event_city : '') . ($event_state != '' ? ', ' . $event_state : '') . ($event_zip != '' ? '<br />' . $event_zip : '') . ($event_country != '' ? '<br />' . $event_country : '');
-
-				//Google map link creation
-				$google_map_link = espresso_google_map_link(array('address' => $event_address, 'city' => $event_city, 'state' => $event_state, 'zip' => $event_zip, 'country' => $event_country, 'text' => 'Map and Directions', 'type' => 'text'));
-
-				$reg_start_date = $event->registration_start;
-				$reg_end_date = $event->registration_end;
-				$today = date("Y-m-d");
-
-				$reg_limit = $event->reg_limit;
-				$additional_limit = $event->additional_limit;
-
-
-				$question_groups = unserialize($event->question_groups);
-
-				global $all_meta;
-				$all_meta = array(
-						'event_name' => stripslashes_deep($event_name),
-						'event_desc' => stripslashes_deep($event_desc),
-						'event_address' => $event_address,
-						'event_address2' => $event_address2,
-						'event_city' => $event_city,
-						'event_state' => $event_state,
-						'event_zip' => $event_zip,
-						'is_active' => $event->is_active,
-						'event_status' => $event->event_status,
-						'start_time' => $event->start_time,
-						'registration_startT' => $event->registration_startT,
-						'registration_start' => $event->registration_start,
-						'registration_endT' => $event->registration_endT,
-						'registration_end' => $event->registration_end,
-						'is_active' => $is_active,
-						'event_country' => $event_country,
-						'start_date' => event_date_display($start_date, get_option('date_format')),
-						'end_date' => event_date_display($end_date, get_option('date_format')),
-						'time' => $event->start_time,
-						'google_map_link' => $google_map_link,
-						'price' => $event->event_cost,
-						'event_cost' => $event->event_cost,
-				);
-
-				//This function gets the status of the event.
-				$is_active = array();
-				$is_active = event_espresso_get_is_active(0, $all_meta);
-
-				//If the coupon code system is intalled then use it
-				if (function_exists('event_espresso_coupon_registration_page')) {
-					$use_coupon_code = $event->use_coupon_code;
-				}
-
-				//If the groupon code addon is installed, then use it
-				if (function_exists('event_espresso_groupon_payment_page')) {
-					$use_groupon_code = $event->use_groupon_code;
-				}
-
-				//Set a default value for additional limit
-				if ($additional_limit == '') {
-					$additional_limit = '5';
-				}
-			}//End foreach ($events as $event)
-		}
-
-//This is the registration form.
-//This is a template file for displaying a registration form for an event on a page.
-//There should be a copy of this file in your wp-content/uploads/espresso/ folder.
-		?>
-		<div id="event_espresso_registration_form">
-			<form method="post" action="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>" id="registration_form">
-				<?php
-				//print_r( event_espresso_get_is_active($event_id));
-
-				switch ($is_active['status']) {
-					case 'EXPIRED': //only show the event description.
-						_e('<h3 class="expired_event">This event has passed.</h3>', 'event_espresso');
-						break;
-
-					case 'REGISTRATION_CLOSED': //only show the event description.
-						// if todays date is after $reg_end_date
-						?>
-						<p class="event_full"><strong><?php _e('We are sorry but registration for this event is now closed.', 'event_espresso'); ?></strong></p>
-						<p class="event_full"><strong><?php _e('Please <a href="contact" title="contact us">contact us</a> if you would like to know if spaces are still available.', 'event_espresso'); ?></strong></p>
-						<?php
-						break;
-
-					case 'REGISTRATION_NOT_OPEN': //only show the event description.
-						// if todays date is after $reg_end_date
-						// if todays date is prior to $reg_start_date
-						?>
-						<p class="event_full"><strong><?php _e('We are sorry but this event is not yet open for registration.', 'event_espresso'); ?></strong></p>
-						<p class="event_full"><strong><?php _e('You will be able to register starting ', 'event_espresso');
-				echo event_espresso_no_format_date($reg_start_date, 'F d, Y'); ?></strong></p>
-							<?php
-							break;
-
-						default:
-							//If the event is in an active or ongoing status, then show the registration form.
-							//echo $is_active['status'];//Show event status
-							if ($display_reg_form == 'Y') {
-								?>
-							<p class="event_time">
-					<?php
-					//This block of code is used to display the times of an event in either a dropdown or text format.
-					if ($time_selected == true) {//If the customer is coming from a page where the time was preselected.
-						echo event_espresso_display_selected_time($time_id); //Optional parameters start, end, default
-					} else if ($time_selected == false) {
-						echo event_espresso_time_dropdown($event_id);
-					}//End time selected
-					?>
-							</p>
-
-							<p class="event_prices"><?php echo event_espresso_price_dropdown($event_id); //Show pricing in a dropdown or text ?></p>
-							<?php
-							//Outputs the custom form questions. This function can be overridden using the custom files addon
-							echo event_espresso_add_question_groups($question_groups);
-
-
-							//Coupons
-							if (function_exists('event_espresso_coupon_registration_page')) {
-								echo event_espresso_coupon_registration_page($use_coupon_code, $event_id);
-							}//End coupons display
-							//Groupons
-							if (function_exists('event_espresso_groupon_registration_page')) {
-								echo event_espresso_groupon_registration_page($use_groupon_code, $event_id);
-							}//End groupons display
-							?>
-							<input type="hidden" name="num_people" id="num_people-<?php echo $event_id; ?>" value="1">
-
-
-							<input type="hidden" name="regevent_action" id="regevent_action-<?php echo $event_id; ?>" value="post_attendee">
-							<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>">
-							<?php
-							//Recaptcha portion
-							if ($use_captcha == 'Y') {
-								if (!function_exists('recaptcha_get_html')) {
-									require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
-								}//End require captcha library
-								# the response from reCAPTCHA
-								$resp = null;
-								# the error code from reCAPTCHA, if any
-								$error = null;
-								?>
-								<p class="event_form_field" id="captcha-<?php echo $event_id; ?>"><?php _e('Anti-Spam Measure: Please enter the following phrase', 'event_espresso'); ?>
-								<?php echo recaptcha_get_html($org_options['recaptcha_publickey'], $error); ?>
-								</p>
-							<?php } //End use captcha ?>
-							<p class="event_form_submit" id="event_form_submit-<?php echo $event_id; ?>">
-
-								<input class="btn_event_form_submit" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit', 'event_espresso'); ?>">
-							</p>
-					<?php
-				}
-				break;
-		}//End Switch statement to check the status of the event
-		?>
-			</form>
-		</div><?php
+		ob_start();
+		register_attendees(NULL, $event_id, true);
+		$buffer = ob_get_contents();
+		ob_end_clean();
+		return $buffer;
 	}
 
 }
-
 add_shortcode('ESPRESSO_REG_FORM', 'espresso_reg_form_sc');
 
 /*
@@ -449,8 +257,11 @@ if (!function_exists('espresso_price_dd_sc')) {
 		global $wpdb, $org_options;
 		extract(shortcode_atts(array('event_id' => '0'), $atts));
 		$event_id = "{$event_id}";
-		$data = event_espresso_price_dropdown($event_id);
-		return $data['category_name'];
+		ob_start();
+		event_espresso_price_dropdown($event_id);
+		$buffer = ob_get_contents();
+		ob_end_clean();
+		return $buffer;
 	}
 
 }
@@ -468,8 +279,11 @@ if (!function_exists('get_espresso_price_sc')) {
 		extract(shortcode_atts(array('event_id' => '0', 'number' => '0'), $atts));
 		$event_id = "{$event_id}";
 		$number = "{$number}";
-
-		return espresso_return_single_price($event_id, $number);
+		ob_start();
+		espresso_return_single_price($event_id, $number);
+		$buffer = ob_get_contents();
+		ob_end_clean();
+		return $buffer;
 	}
 
 }
@@ -511,55 +325,58 @@ add_shortcode('ATTENDEE_NUMBERS', 'espresso_attendees_data_sc');
  */
 if (!function_exists('display_event_list_sc')) {
 
-	function display_event_list_sc($atts) {
-		global $wpdb, $org_options;
+	function display_event_list_sc($attributes) {
+//		global $wpdb, $org_options;
 		global $load_espresso_scripts;
 		$load_espresso_scripts = true; //This tells the plugin to load the required scripts
-		extract(shortcode_atts(array('category_identifier' => 'NULL', 'show_expired' => 'false', 'show_secondary' => 'false', 'show_deleted' => 'false', 'show_recurrence' => 'false', 'limit' => '0', 'order_by' => 'NULL', 'css_class' => 'NULL'), $atts));
-
-		if ($category_identifier != 'NULL') {
-			$type = 'category';
-		}
-
-		$show_expired = $show_expired == 'false' ? " AND (e.start_date >= '" . date('Y-m-d') . "' OR e.event_status = 'O' OR e.registration_end >= '" . date('Y-m-d') . "') " : '';
-		$show_secondary = $show_secondary == 'false' ? " AND e.event_status != 'S' " : '';
-		$show_deleted = $show_deleted == 'false' ? " AND e.event_status != 'D' " : '';
-		$show_recurrence = $show_recurrence == 'false' ? " AND e.recurrence_id = '0' " : '';
-		$limit = $limit > 0 ? " LIMIT 0," . $limit . " " : '';
-		$order_by = $order_by != 'NULL' ? " ORDER BY " . $order_by . " ASC " : " ORDER BY date(start_date), id ASC ";
-
-		if (!empty($type) && $type == 'category') {
-			$sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost ";
-			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
-			$sql .= " FROM " . EVENTS_CATEGORY_TABLE . " c ";
-			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
-			$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = r.event_id ";
-			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON vr.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = vr.venue_id " : '';
-			$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-			$sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
-			$sql .= " WHERE c.category_identifier = '" . $category_identifier . "' ";
-			$sql .= " AND e.is_active = 'Y' ";
-		} else {
-			$sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost ";
-			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
-			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
-			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
-			$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-			$sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
-			$sql .= " WHERE e.is_active = 'Y' ";
-		}
-
-		$sql .= $show_expired;
-		$sql .= $show_secondary;
-		$sql .= $show_deleted;
-		$sql .= $show_recurrence;
-		$sql .= " GROUP BY e.id ";
-		$sql .= $order_by;
-		$sql .= $limit;
+//      $events_per_page = 50;
+//      $num_page_links_to_display = 10;
+//		extract(shortcode_atts(array('category_identifier' => 'NULL', 'show_expired' => 'false', 'show_secondary' => 'false', 'show_deleted' => 'false', 'show_recurrence' => 'false', 'limit' => '0', 'order_by' => 'NULL', 'css_class' => 'NULL', 'events_per_page' => 50, 'num_page_links_to_display'=>10), $atts));
+//
+//		if ($category_identifier != 'NULL') {
+//			$type = 'category';
+//		}
+//
+//		$show_expired = $show_expired == 'false' ? " AND (e.start_date >= '" . date('Y-m-d') . "' OR e.event_status = 'O' OR e.registration_end >= '" . date('Y-m-d') . "') " : '';
+//		$show_secondary = $show_secondary == 'false' ? " AND e.event_status != 'S' " : '';
+//		$show_deleted = $show_deleted == 'false' ? " AND e.event_status != 'D' " : '';
+//		$show_recurrence = $show_recurrence == 'false' ? " AND e.recurrence_id = '0' " : '';
+//		$limit = $limit > 0 ? " LIMIT 0," . $limit . " " : '';
+//		$order_by = $order_by != 'NULL' ? " ORDER BY " . $order_by . " ASC " : " ORDER BY date(start_date), id ASC ";
+//
+//		if (!empty($type) && $type == 'category') {
+//			$sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost ";
+//			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
+//			$sql .= " FROM " . EVENTS_CATEGORY_TABLE . " c ";
+//			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
+//			$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = r.event_id ";
+//			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON vr.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = vr.venue_id " : '';
+//			$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
+//			$sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
+//			$sql .= " WHERE c.category_identifier = '" . $category_identifier . "' ";
+//			$sql .= " AND e.is_active = 'Y' ";
+//		} else {
+//			$sql = "SELECT e.*, ese.start_time, ese.end_time, p.event_cost ";
+//			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
+//			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
+//			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id " : '';
+//			$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
+//			$sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
+//			$sql .= " WHERE e.is_active = 'Y' ";
+//		}
+//
+//		$sql .= $show_expired;
+//		$sql .= $show_secondary;
+//		$sql .= $show_deleted;
+//		$sql .= $show_recurrence;
+//		$sql .= " GROUP BY e.id ";
+//		$sql .= $order_by;
+//		$sql .= $limit;
 		//template located in event_list_dsiplay.php
 		ob_start();
 		//echo $sql;
-		event_espresso_get_event_details($sql, $css_class, $allow_override = 1);
+		//event_espresso_get_event_details($sql, $css_class, $allow_override = 1, $events_per_page, $num_page_links_to_display);
+        event_espresso_get_event_details($attributes);
 		$buffer = ob_get_contents();
 		ob_end_clean();
 		return $buffer;
@@ -567,6 +384,92 @@ if (!function_exists('display_event_list_sc')) {
 
 }
 add_shortcode('EVENT_LIST', 'display_event_list_sc');
+
+
+//Search
+//Shortcode to create an autocomplete search tool.
+function ee_create_autocomplete_search(){
+	global $wpdb, $espresso_manager, $current_user, $org_options;
+	ob_start();
+	?>
+	<div class="ui-widget">
+		<form name="form" method="post" action="<?php echo $_SERVER["REQUEST_URI"] ?>">
+			<input id="ee_autocomplete" class="ui-autocomplete-input ui-corner-all" />
+			<input id="event_id" name="event_id" type="hidden">
+		</form>
+	</div>
+	<script type="text/javascript" charset="utf-8">
+			//<![CDATA[
+			jQuery(document).ready(function() {
+				//jQuery('#ee_autocomplete').css('width','400px');
+				//jQuery('.ui-autocomplete li').css(['width','400px');
+				//Auto complete
+				jQuery("input#ee_autocomplete").autocomplete({
+					
+					source: [
+						//Examples:
+						//"c++", "java", "php", "coldfusion", "javascript", "asp", "ruby"
+						//{ label: "Choice1", value: "value1" }
+		<?php 
+			$sql = "SELECT e.*, v.city venue_city, v.state venue_state";
+			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= ", v.name venue_name, v.address venue_address, v.city venue_city, v.state venue_state, v.zip venue_zip, v.country venue_country, v.meta venue_meta " : '';
+			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
+			//$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.cat_id = c.id ";
+			//$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id = r.event_id ";
+			isset($org_options['use_venue_manager']) && $org_options['use_venue_manager'] == 'Y' ? $sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON vr.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = vr.venue_id " : '';
+			//$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
+			//$sql .= " JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
+			//$sql .= " WHERE c.category_identifier = '" . $category_identifier . "' ";
+			$sql .= " WHERE e.is_active = 'Y' ";
+			$sql .= " AND e.event_status != 'D' ";
+			//echo '<p>$sql = '.$sql.'</p>';							
+			$events = $wpdb->get_results($sql);
+			$num_rows = $wpdb->num_rows;
+										
+			if ($num_rows > 0) {
+				foreach ($events as $event){
+					$venue_city = !empty($event->venue_city) ? stripslashes_deep($event->venue_city)  : '';
+					$venue_state = !empty($event->venue_state) ?  (!empty($event->venue_city) ? ', ' : '') .stripslashes_deep($event->venue_state)  : '';
+
+					$venue_name = !empty($event->venue_name) ?' @' . stripslashes_deep($event->venue_name)  . ' - ' . $venue_city . $venue_state . ''  : '';
+					//An Array of Objects with label and value properties:
+					echo '{ url:"?page_id=4&ee='.$event->id.'", value: "'.stripslashes_deep($event->event_name) . $venue_name .'", id: "'.$event->id.'" },';
+				}
+			}
+		?>
+							],
+							success: function(data) {
+							  response(jQuery.map(data, function(item) {
+								return {
+									url: item.url,
+									value: item.name
+								}
+							  }
+							))
+							},
+							select: function( event, ui ) {
+								window.location.href = ui.item.url;
+							},
+							minLength: 2
+
+
+				});
+						//End auto complete
+			});
+		
+			//]]>
+			
+		</script>
+	<?php
+	//echo '<p>$sql = '.$sql.'</p>';	
+	//Load scripts
+	add_action('wp_footer', 'ee_load_jquery_autocomplete_scripts');	
+	$buffer = ob_get_contents();
+	ob_end_clean();
+	return $buffer;		
+}
+add_shortcode('EVENT_SEARCH', 'ee_create_autocomplete_search');
+
 
 //Returns the price
 /* function espresso_get_price_sc($atts){
@@ -952,43 +855,47 @@ if (!function_exists('espresso_venue_event_list_sc')) {
 		if (empty($atts))
 			return 'No venue id supplied!';
 		extract($atts);
-		$order_by = (isset($order_by) && $order_by != '') ? " ORDER BY " . $order_by . " ASC " : " ORDER BY name, id ASC ";
-		$limit = $limit > 0 ? " LIMIT 0," . $limit . " " : '';
-
 		if (isset($id) && $id > 0) {
-			$sql = "SELECT e.*, ev.name venue_name, ese.start_time, ese.end_time, p.event_cost ";
-			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
-			$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON e.id = vr.event_id ";
-			$sql .= " LEFT JOIN " . EVENTS_VENUE_TABLE . " ev ON vr.venue_id = ev.id  ";
-			$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-			$sql .= " LEFT JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
-			$sql .= " WHERE e.event_status != 'D' AND e.is_active = 'Y' AND ev.id = '" . $id . "' ";
-
-			$sql .= $order_by;
-			$sql .= $limit;
-			//echo $sql;
-
-			$wpdb->get_results($sql);
-			$num_rows = $wpdb->num_rows;
-			if ($num_rows > 0) {
-
-				$name_before = isset($name_before) ? $name_before : '<p class="venue_name">';
-				$name_after = isset($name_after) ? $name_after : '</p>';
-
-				$venue_name = $wpdb->last_result[0]->venue_name;
+			$atts = array_merge($atts, array('venue_id'=>$id, 'use_venue_id'=>true));
+		}
+			
+//		$order_by = (isset($order_by) && $order_by != '') ? " ORDER BY " . $order_by . " ASC " : " ORDER BY name, id ASC ";
+//		$limit = $limit > 0 ? " LIMIT 0," . $limit . " " : '';
+//
+//		if (isset($id) && $id > 0) {
+//			$sql = "SELECT e.*, ev.name venue_name, ese.start_time, ese.end_time, p.event_cost ";
+//			$sql .= " FROM " . EVENTS_DETAIL_TABLE . " e ";
+//			$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " vr ON e.id = vr.event_id ";
+//			$sql .= " LEFT JOIN " . EVENTS_VENUE_TABLE . " ev ON vr.venue_id = ev.id  ";
+//			$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
+//			$sql .= " LEFT JOIN " . EVENTS_PRICES_TABLE . " p ON p.event_id=e.id ";
+//			$sql .= " WHERE e.event_status != 'D' AND e.is_active = 'Y' AND ev.id = '" . $id . "' ";
+//
+//			$sql .= $order_by;
+//			$sql .= $limit;
+//			//echo $sql;
+//
+//			$wpdb->get_results($sql);
+//			$num_rows = $wpdb->num_rows;
+//			if ($num_rows > 0) {
+//
+//				$name_before = isset($name_before) ? $name_before : '<p class="venue_name">';
+//				$name_after = isset($name_after) ? $name_after : '</p>';
+//
+//				$venue_name = $wpdb->last_result[0]->venue_name;
 
 				//template located in event_list_dsiplay.php
 				ob_start();
 				//echo $sql;
-				echo $name_before . $venue_name . $name_after;
-				event_espresso_get_event_details($sql, $css_class);
+				//echo $name_before . $venue_name . $name_after;
+				event_espresso_get_event_details($atts);
 				$buffer = ob_get_contents();
 				ob_end_clean();
 				return $buffer;
-			} else {
-				return 'No events in this venue';
-			}
-		}
+			//} else {
+//				return 'No events in this venue';
+//			}
+//		}
 	}
 
 }
@@ -1024,3 +931,29 @@ function ee_show_meta_sc($atts) {
 }
 
 add_shortcode('EE_META', 'ee_show_meta_Sc');
+
+if (!function_exists('espresso_questions_answers')) {
+	function espresso_questions_answers($atts) {
+		global $wpdb;
+		if (empty($atts))
+			return;
+
+		extract($atts);
+		//echo '<p>'.print_r($atts).'</p>';
+
+		$sql = "select qst.question as question, ans.answer as answer from " . EVENTS_ANSWER_TABLE . " ans inner join " . EVENTS_QUESTION_TABLE . " qst on ans.question_id = qst.id where ans.attendee_id = '" . $a . "' AND qst.id= '" . $q . "' ";
+		//echo '<p>'.$sql.'</p>';
+		//Get the questions and answers
+		$questions = $wpdb->get_results($sql, ARRAY_A);
+		//echo '<p>'.print_r($questions).'</p>';
+
+		if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->question != NULL) {
+			foreach ($questions as $q) {
+				//$k = $q['question'];
+				$v = $q['answer'];
+				return rtrim($v, ',');
+			}
+		}
+	}
+}
+add_shortcode('EE_ANSWER', 'espresso_questions_answers');

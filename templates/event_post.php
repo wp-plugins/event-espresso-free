@@ -275,9 +275,11 @@ global $wpdb;
 <p><?php echo $event_address ?></p>
 <p><img style="padding-right: 5px;" src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL?>/images/map.png" border="0" alt="<?php _e('View Map', 'event_espresso'); ?>" /><?php echo $google_map_link; ?> | <a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register', 'event_espresso'); ?></a></p>
 <?php
-if ($display_desc == "Y"){ ?>
+if ($display_desc == 'Y'){ ?>
 <?php /*?><!--more--><?php */ //Uncomment this part to show the Read More link?>
 <?php _e('Description:','event_espresso'); ?>
+<?php // if there's a cart link shortcode in the post, replace the shortcode with one that includes the event_id
+    if (preg_match("/ESPRESSO_CART_LINK/", $event_desc)) { $event_desc = preg_replace('/ESPRESSO_CART_LINK/', 'ESPRESSO_CART_LINK event_id=' . $event_id, $event_desc); } ?>
 <?php echo wpautop($event_desc); ?>
 <p><a class="a_register_link" id="a_register_link-<?php echo $event_id ?>" href="<?php echo $registration_url; ?>" title="<?php echo stripslashes_deep($event_name) ?>"><?php _e('Register', 'event_espresso'); ?></a></p>
 <?php }//End display description ?>

@@ -7,13 +7,13 @@ if (!class_exists('Event_Espresso_Widget')) {
 
             /* Widget settings. */
 
-            $widget_options = array('classname' => 'events', 'description' => __('A widget to display your upcoming events.', 'events'));
+            $widget_options = array('classname' => 'events', 'description' => __('A widget to display your upcoming events.', 'event_espresso'));
             /* Widget control settings. */
 
             $control_options = array('width' => 300, 'height' => 350, 'id_base' => 'events-widget');
             /* Create the widget. */
 
-            $this->WP_Widget('events-widget', __('Event Espresso Widget', 'events'), $widget_options, $control_options);
+            $this->WP_Widget('events-widget', __('Event Espresso Upcoming Events Widget', 'event_espresso'), $widget_options, $control_options);
         }
 
         function widget($args, $instance) {
@@ -113,7 +113,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 
                 //End
 
-                if (!is_user_logged_in() && get_option('events_members_active') == 'true' && !empty($member_only) && $member_only == 'Y') {
+                if (!is_user_logged_in() && defined('EVENTS_MEMBER_REL_TABLE') && !empty($member_only) && $member_only == 'Y') {
                     //Display a message if the user is not logged in.
                     //_e('Member Only Event. Please ','event_espresso') . event_espresso_user_login_link() . '.';
                 } else {
@@ -172,7 +172,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 
                 /* Set up some default widget settings. */
 
-                $defaults = array('title' => __('Upcoming Events', 'events'), 'category_name' => '', 'show_expired' => __('false', 'events'), 'show_secondary' => __('false', 'events'), 'show_deleted' => __('false', 'events'), 'show_recurrence' => __('false', 'events'));
+                $defaults = array('title' => __('Upcoming Events', 'event_espresso'), 'category_name' => '', 'show_expired' => 'false', 'show_secondary' => 'false', 'show_deleted' => 'false', 'show_recurrence' => 'false');
 
                 $instance = wp_parse_args((array) $instance, $defaults);
 
@@ -186,7 +186,7 @@ if (!class_exists('Event_Espresso_Widget')) {
 
             <p>
                 <label for="<?php echo $this->get_field_id('title'); ?>">
-            <?php _e('Title:', 'Upcoming Events'); ?>
+            <?php _e('Title:', 'event_espresso'); ?>
                 </label>
                 <input id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php echo $instance['title']; ?>" size="20" type="text" />
             </p>

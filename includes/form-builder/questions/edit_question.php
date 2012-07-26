@@ -21,6 +21,19 @@ function event_espresso_form_builder_edit(){
 			} else {
 				$system_question = false;
 			}
+            $wp_user = $question->wp_user;
+            
+            if ( function_exists( 'espresso_member_data' ) ) {
+                if (function_exists( 'espresso_is_admin' ) ) {  
+                    // If the user doesn't have admin access get only user's own question groups 
+                    if ( !espresso_is_admin() ) { 
+                        if ( espresso_member_data('id') != $wp_user ) {
+                            echo '<h2>' . __('Sorry, you do not have permission to edit this question group.', 'event_espresso') . '</h2>';
+                            return;
+                        }
+                    }
+                }
+            }
 ?>
 
 <div class="metabox-holder">

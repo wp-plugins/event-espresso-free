@@ -352,7 +352,6 @@ ul#espresso_payment_buttons li form {
 	text-align: left;
 }
 .event_prices select {
-	width: 200px;
 }
 .copy_dropdown_wrapper label {
 	margin-right: 0;
@@ -373,20 +372,31 @@ ul#espresso_payment_buttons li form {
 	border: 1px solid #ccc;
 }
 .event_espresso_form_wrapper label.error,
-.event_espresso_form_wrapper span.error { 
+.event_espresso_form_wrapper span.error {
+	float: none;
+	display: block;
+	margin: auto;
+	text-align: center;
+	color: #C00;
+}
+.event_espresso_form_wrapper fieldset.single-radio label.error,
+.event_espresso_form_wrapper fieldset.single-radio span.error,
+.event_espresso_form_wrapper fieldset.multi-checkbox label.error,
+.event_espresso_form_wrapper fieldset.multi-checkbox span.error {
+	display: inline;
+	float: right!important;
 	position: absolute;
-	top: -20px;
-	left: 170px;
-	color: #C00; 
-	width: auto;
+	top: 2px;
+	left: 200px;
+	width: 150px!important;
 }
 .event_espresso_form_wrapper label em,
-.event_espresso_form_wrapper span.label em { 
-	position: absolute; 
-	right: 0; 
+.event_espresso_form_wrapper span.label em,
+.event_espresso_form_wrapper legend em { 
 	font-size: 120%; 
 	font-style: normal; 
 	color: #C00; 
+	padding: 0 3px;
 }
 .event_espresso_form_wrapper input.error { 
 	border-color: #C00; 
@@ -411,6 +421,15 @@ ul#espresso_payment_buttons li form {
 }
 .event_form_field {
 	clear: both;
+}
+.event_form_field li { 	
+	width: 100px;
+	margin-right: 10px;
+}
+.event_form_field textarea {
+	width: 70%;
+	margin: auto;
+	display: block;
 }
 .btn_event_form_submit {
 	background: #FAF9EF;
@@ -556,11 +575,6 @@ table.price_list td.selection {
 table.price_list td.reg-allowed-limit {
 	font-size: 84.60%;
 	text-align: center;
-}
-pre {
-	height: 200px;
-	overflow: auto;
-	border: 2px solid orange;
 }
 .pending_event{
 	border: 2px solid yellow; 

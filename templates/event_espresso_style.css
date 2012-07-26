@@ -5,42 +5,42 @@
 /*** Please move this file to: 'wp-content/uploads/espresso/templates directory before editing ****/
 
 /**
-    Multi registration form style
+	Multi registration form style
 */
 
 #event_espresso_checkout_form {
-    margin: 5px 0;
-    padding: 5px;
+	margin: 5px 0;
+	padding: 5px;
 }
 
 .event_total_price{
-    font-size: 25px;
-    float: right;
-    text-align: right;
-    padding:5px;
+	font-size: 25px;
+	float: right;
+	text-align: right;
+	padding:5px;
 }
 
 .multi_reg_cart_block{
-    margin:5px;
-    padding:5px;
+	margin:5px;
+	padding:5px;
 }
 
 
 #event_espresso_coupon_wrapper {
-    margin:5px;
-    padding:5px;
+	margin:5px;
+	padding:5px;
 }
 #event_espresso_total_wrapper {
-    margin:5px;
-    padding:5px;
+	margin:5px;
+	padding:5px;
 }
 
 #event_espresso_shopping_cart table{
-    text-align: left;
+	text-align: left;
 }
 
 #event_espresso_registration_form {
-    margin: 10px 3px;
+	margin: 10px 3px;
 }
 /**
 * End Multi registration form style
@@ -48,7 +48,7 @@
 
 
 /**
-    Errors and notices
+	Errors and notices
 */
 .event_espresso_error { margin: 0 0 10px 0; padding: 5px 10px; border: #ff6666 1px solid; background-color:  #ffcccc; color: #000;}
 .event_espresso_error p { margin: 0; color: #333; }
@@ -61,20 +61,21 @@
 .event_espresso_form_wrapper label.error,
 .event_espresso_form_wrapper span.error { color: #C00; width: auto;}
 .event_espresso_form_wrapper label em,
-.event_espresso_form_wrapper span.label em { font-style: normal; color: #C00; padding-left: 3px;}
+.event_espresso_form_wrapper span.label em,
+.event_espresso_form_wrapper legend em { font-style: normal; color: #C00; padding-left: 3px;}
 .event_espresso_form_wrapper input.error { border-color: #C00; background-color: #FEF; }
 /**
-    End errors and notices
+	End errors and notices
 */
 
 /**
-    Form styles
+	Form styles
 */
-.event_espresso_form_wrapper form legend { font-weight: bold; background: #ffffff; padding: 0 5px; }
+.event_espresso_form_wrapper form legend { background: #ffffff; padding: 0 5px; }
 .event_espresso_form_wrapper form fieldset div { padding: 0.25em 0; }
 .event_espresso_form_wrapper label,
 .event_espresso_form_wrapper span.label {
-    display: block;
+	display: block;
 	margin-right: 10px;
 	padding-right: 10px;
 	position: relative;
@@ -83,8 +84,8 @@
 
 .event_espresso_form_wrapper div.buttonrow { margin-left: 180px; }
 .submit {
-    margin:5px;
-    padding: 0.3em;
+	margin:5px;
+	padding: 0.3em;
 
 }
 .event_form_field{
@@ -104,31 +105,31 @@
 }
 
 .event_espresso_form_wrapper ul{
-    margin-left:125px;
+	margin-left:125px;
 }
 .event_espresso_form_wrapper ul li{
-    list-style: none;
+	list-style: none;
 }
 
 .event_espresso_form_wrapper h1{
-    padding: 5px;
+	padding: 5px;
 }
 .event_espresso_form_wrapper h2{
-    padding: 5px;
+	padding: 5px;
 }
 
 .event_espresso_form_wrapper h3{
-    padding: 5px;
+	padding: 5px;
 }
 
 .event_espresso_form_wrapper .copy_dropdown_wrapper{
-    padding: 10px;
+	padding: 10px;
 }
 
 .recaptchatable #recaptcha_response_field {left:0 !important;}
 
 /**
-    Confirmation page display
+	Confirmation page display
 */
 table#event_espresso_attendee_verify th,
 table#event_espresso_attendee_verify_questions th { text-align: right; width: 40%; }
@@ -137,18 +138,72 @@ table#event_espresso_attendee_verify_questions tr { text-align: left; width: 60%
 
 
 table.price_list{
-    margin: 10px auto;
-    border: 1px;
+	margin: 10px auto;
+	border: 1px;
 }
 
 table.price_list td{
-    padding: 5px;
+	padding: 5px;
+}
+
+/* For the event list page pagination */
+
+.page_navigation .no_more{
+	background-color: white;
+	color: gray;
+	cursor: default;
+}
+
+.ellipse{
+	float: left;
+}
+.page_navigation , .alt_page_navigation{
+	padding-bottom: 10px;
+}
+
+.page_navigation a, .alt_page_navigation a{
+	padding:3px 5px;
+	margin:2px;
+	/*color:white;*/
+	text-decoration:none;
+	float: left;
+	font-family: Tahoma;
+	font-size: 12px;
+	/*background-color:#DB5C04;*/
+}
+.active_page{
+	/*background-color:white !important;*/
+	color:black !important;
+ }
+ 
+ .ajx_loading {
+	
+	width:400px;
+	height:400px;
+	background:url('../images/ajax-loader-large.gif') center no-repeat;
+ }
+/* End pagination css */
+
+/* Autocomplete */
+input#ee_autocomplete, input#ee_fes_autocomplete{
+	width:400px;
+}
+input#ee_autocomplete{
+	margin-left:15px;
+}
+ul.ui-autocomplete{
+	width:400px;
+	background:#E0E0E0;
+}
+ul.ui-autocomplete li{
+	list-style:none;
+	padding: 5px 10px;
 }
 
 /*
-    Colors and other defiations from what's inherited from the theme's form styles
-    added in 3.1.18.P by Chris Reynolds
-    Uncomment these lines if you want to use these styles
+	Colors and other definitions from what's inherited from the theme's form styles
+	added in 3.1.18.P by Chris Reynolds
+	Uncomment these lines if you want to use these styles
 */
 /*
 #event_espresso_checkout_form { border: 2px solid #e8e8e8; }

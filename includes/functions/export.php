@@ -1,8 +1,10 @@
 <?php
+
 // Export data for event, called by excel request below
 if (!function_exists('espresso_event_export')){
 	function espresso_event_export($ename){
 		global $wpdb, $org_options;
+        $sql = '';
 		$htables = array();
 		$htables[] = 'Event Id';
 		$htables[] = 'Name';
@@ -12,14 +14,14 @@ if (!function_exists('espresso_event_export')){
 		$htables[] = 'DoW';
 		$htables[] = 'Reg Begins';
 		
-		if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true){
+		if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && (isset($espresso_premium) && $espresso_premium == true)){
 			$htables[] = 'Submitter';
 		}
 		
 		$htables[] = 'Status';
 		$htables[] = 'Attendees';
 
-		if ($_REQUEST['month_range']){
+		if (isset($_REQUEST['month_range'])){
 			$pieces = explode('-',$_REQUEST['month_range'], 3);
 			$year_r = $pieces[0];
 			$month_r = $pieces[1];
@@ -80,7 +82,7 @@ if (!function_exists('espresso_event_export')){
 		
 		
 		$sql .= "(SELECT e.id event_id, e.event_name, e.event_identifier, e.reg_limit, e.registration_start, ";
-		$sql .= " e.start_date, e.is_active, e.recurrence_id, e.registration_startT, ";
+		$sql .= " e.start_date,  e.end_date, e.is_active, e.recurrence_id, e.registration_startT, ";
 		$sql .= " e.address, e.address2, e.city, e.state, e.zip, e.country, ";
 		$sql .= " e.venue_title, e.phone, e.wp_user ";
 		
@@ -94,23 +96,23 @@ if (!function_exists('espresso_event_export')){
 			$sql .= " LEFT JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id LEFT JOIN " . EVENTS_VENUE_TABLE . " v ON v.id = r.venue_id ";
 		}
 		
-		if ($_REQUEST[ 'category_id' ] !=''){
+		if (isset($_REQUEST[ 'category_id' ]) && $_REQUEST[ 'category_id' ] !=''){
 			$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
 			$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON  c.id = r.cat_id ";
 		}
 		
-		$sql .= ($_POST[ 'event_status' ] !='' && $_POST[ 'event_status' ] !='IA')  ? " WHERE event_status = '" . $_POST[ 'event_status' ] ."' ":" WHERE event_status != 'D' ";
-		$sql .= $_REQUEST[ 'category_id' ] !='' ? " AND c.id = '" . $_REQUEST[ 'category_id' ] . "' " : '';
+		$sql .= (isset($_POST[ 'event_status' ]) && $_POST[ 'event_status' ] !='' && $_POST[ 'event_status' ] !='IA')  ? " WHERE event_status = '" . $_POST[ 'event_status' ] ."' ":" WHERE event_status != 'D' ";
+		$sql .= isset($_REQUEST[ 'category_id' ]) && $_REQUEST[ 'category_id' ] !='' ? " AND c.id = '" . $_REQUEST[ 'category_id' ] . "' " : '';
 		
-		if ($_POST[ 'month_range' ] !=''){
+		if (isset($_POST[ 'month_range' ]) && $_POST[ 'month_range' ] !=''){
 			$sql .= " AND start_date BETWEEN '".date('Y-m-d', strtotime($year_r. '-' .$month_r . '-01'))."' AND '".date('Y-m-d', strtotime($year_r . '-' .$month_r. '-31'))."' ";
 		}		
 		
-		if ($_REQUEST[ 'today' ]=='true'){
+		if (isset($_REQUEST[ 'today' ]) && $_REQUEST[ 'today' ]=='true'){
 			$sql .= " AND start_date = '" . $curdate ."' ";
 		}			
 		
-		if ($_REQUEST[ 'this_month' ]=='true'){
+		if (isset($_REQUEST[ 'this_month' ]) && $_REQUEST[ 'this_month' ]=='true'){
 			$sql .= " AND start_date BETWEEN '".date('Y-m-d', strtotime($this_year_r. '-' .$this_month_r . '-01'))."' AND '".date('Y-m-d', strtotime($this_year_r . '-' .$this_month_r. '-' . $days_this_month))."' ";
 		}
 		
@@ -123,7 +125,7 @@ if (!function_exists('espresso_event_export')){
 		ob_start();
 		
 		//echo $sql;
-		
+		$today = date("Y-m-d-Hi",time());
 		$filename = $_REQUEST['all_events'] == "true"? __('all-events', 'event_espresso') :	sanitize_title_with_dashes($event_name);
 		$filename = $filename . "-" . $today ;
 		switch ($_REQUEST['type']) 
@@ -205,7 +207,7 @@ if (!function_exists('espresso_event_export')){
 					. $s . $dow
 					. $s . str_replace ( ',', ' ', event_date_display($registration_start,get_option('date_format'))); // ticket 570
 					
-			if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && $espresso_premium == true) {
+			if (function_exists('espresso_is_admin')&&espresso_is_admin()==true && (isset($espresso_premium) && $espresso_premium == true)) {
 					$user_company = espresso_user_meta($wp_user, 'company') !=''?espresso_user_meta($wp_user, 'company'):'';
 					$user_organization = espresso_user_meta($wp_user, 'organization') !=''?espresso_user_meta($wp_user, 'organization'):'';
 					$user_co_org = $user_company !=''?$user_company:$user_organization;
@@ -231,17 +233,17 @@ if (!function_exists('espresso_export_stuff')){
 			 case "report";
 				global $wpdb;
 		
-				$event_id= $_REQUEST['event_id'];
+				$event_id= isset($_REQUEST['event_id'])?$_REQUEST['event_id']:0;
 				$today = date("Y-m-d-Hi",time());
 		
 				$sql_x = "SELECT id, event_name, event_desc, event_identifier, question_groups, event_meta FROM " . EVENTS_DETAIL_TABLE;
-				$sql_x .= $_REQUEST['all_events'] == "true"? '' :	" WHERE id = '" . $event_id . "' ";
+				$sql_x .= (isset($_REQUEST['all_events']) && $_REQUEST['all_events']) == "true"? '' :	" WHERE id = '" . $event_id . "' ";
 				//echo $sql_x;
 				$results = $wpdb->get_row($sql_x, ARRAY_N);
 		
 				list($event_id, $event_name, $event_description, $event_identifier, $question_groups, $event_meta) = $results;
 		
-				$basic_header = array(__('Group','event_espresso'),__('Reg ID','event_espresso'), __('Last Name','event_espresso'), __('First Name','event_espresso'), __('Email','event_espresso'), __('Address','event_espresso'), __('Address 2','event_espresso'), __('City','event_espresso'), __('State','event_espresso'), __('Zip','event_espresso'), __('Phone','event_espresso'), __('Payment Method','event_espresso'), __('Reg Date','event_espresso'), __('Pay Status','event_espresso'), __('Type of Payment','event_espresso'), __('Transaction ID','event_espresso'), __('Payment','event_espresso'), __('Coupon Code','event_espresso'), __('# Attendees','event_espresso'), __('Date Paid','event_espresso'), __('Event Name','event_espresso'), __('Price Option','event_espresso'), __('Event Date','event_espresso'), __('Event Time','event_espresso'), __('Website Check-in','event_espresso'), __('Tickets Scanned','event_espresso') );
+				$basic_header = array(__('Group','event_espresso'),__('ID','event_espresso'), __('Reg ID','event_espresso'), __('Payment Method','event_espresso'), __('Reg Date','event_espresso'), __('Pay Status','event_espresso'), __('Type of Payment','event_espresso'), __('Transaction ID','event_espresso'), __('Payment','event_espresso'), __('Coupon Code','event_espresso'), __('# Attendees','event_espresso'), __('Date Paid','event_espresso'), __('Event Name','event_espresso'), __('Price Option','event_espresso'), __('Event Date','event_espresso'), __('Event Time','event_espresso'), __('Website Check-in','event_espresso'), __('Tickets Scanned','event_espresso') );
 		
 				$question_groups = unserialize($question_groups);
 				$event_meta = unserialize($event_meta);
@@ -287,7 +289,8 @@ if (!function_exists('espresso_export_stuff')){
 							}		
 							//Fix from Jesse in the forums (http://eventespresso.com/forums/2010/10/form-questions-appearing-in-wrong-columns-in-excel-export/)
 							//$quest_sql .= " AND q.system_name is null ORDER BY qg.id, q.id ASC ";
-							$quest_sql .= " AND q.system_name is null ORDER BY q.sequence, q.id ASC ";
+							//$quest_sql .= " AND q.system_name is null ";
+							$quest_sql .= " ORDER BY q.sequence, q.id ASC ";
 		
 							$questions = $wpdb->get_results($quest_sql);
 		
@@ -317,10 +320,9 @@ if (!function_exists('espresso_export_stuff')){
 							$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
 							$group = unserialize($group);
 							$group = implode(",",$group);
-							$sql .= "SELECT ed.event_name, ed.start_date, a.id, a.registration_id, a.lname, a.fname, a.email, a.address, a.address2, a.city";
-							$sql .= ", a.state, a.zip, a.phone, a.payment, a.date, a.payment_status, a.txn_type, a.txn_id";
+							$sql .= "SELECT ed.event_name, ed.start_date, a.id, a.registration_id, a.payment, a.date, a.payment_status, a.txn_type, a.txn_id";
 							$sql .= ", a.amount_pd, a.quantity, a.coupon_code, a.checked_in, a.checked_in_quantity";
-							$sql .= ", a.payment_date, a.event_time, a.price_option";
+							$sql .= ", a.payment_date, a.event_time, a.price_option, ac.cost a_cost, ac.quantity a_quantity";
 							$sql .= " FROM " . EVENTS_ATTENDEE_TABLE . " a ";
 							$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " ed ON ed.id=a.event_id ";
 							if ($group !='')
@@ -332,14 +334,14 @@ if (!function_exists('espresso_export_stuff')){
 							$sql .= $group !='' ? " AND  l.locale_id IN (" . $group . ") " : '';
 							$sql .= ") UNION (";
 						}		
-						$sql .= "SELECT ed.event_name, ed.start_date, a.id, a.registration_id, a.lname, a.fname, a.email, a.address, a.address2, a.city";
-						$sql .= ", a.state, a.zip, a.phone, a.payment, a.date, a.payment_status, a.txn_type, a.txn_id";
-						$sql .= ", a.amount_pd, a.quantity, a.coupon_code, a.checked_in, a.checked_in_quantity";
+						$sql .= "SELECT ed.event_name, ed.start_date, a.id, a.registration_id, a.payment, a.date, a.payment_status, a.txn_type, a.txn_id";
+						$sql .= ", a.amount_pd, a.quantity, a.coupon_code, a.checked_in, a.checked_in_quantity, ac.cost a_cost, ac.quantity a_quantity";
 		
 						$sql .= ", a.payment_date, a.event_time, a.price_option";
 						$sql .= " FROM " . EVENTS_ATTENDEE_TABLE . " a ";
 						$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " ed ON ed.id=a.event_id ";
-						$sql .= $_REQUEST['all_events'] == "true"? '' :	" WHERE ed.id = '" . $event_id . "' ";
+						$sql .= " JOIN " . EVENTS_ATTENDEE_COST_TABLE . " ac ON a.id=ac.attendee_id ";
+						$sql .= (isset($_REQUEST['all_events']) && $_REQUEST['all_events'] == "true")? '' :	" WHERE ed.id = '" . $event_id . "' ";
 						if(  function_exists('espresso_member_data') && ( espresso_member_data('role')=='espresso_event_manager' || espresso_member_data('role')=='espresso_group_admin') )
 						{
 							$sql .= " AND ed.wp_user = '" . espresso_member_data('id') ."' ";
@@ -348,7 +350,7 @@ if (!function_exists('espresso_export_stuff')){
 		
 						$participants = $wpdb->get_results($sql);
 		
-						$filename = $_REQUEST['all_events'] == "true"? __('all-events', 'event_espresso') :	sanitize_title_with_dashes($event_name);
+						$filename = (isset($_REQUEST['all_events']) && $_REQUEST['all_events'] == "true")? __('all-events', 'event_espresso') :	sanitize_title_with_dashes($event_name);
 		
 						$filename = $filename . "-" . $today ;
 						switch ($_REQUEST['type']) {
@@ -411,21 +413,23 @@ if (!function_exists('espresso_export_stuff')){
 	
 								echo $attendees_group
 								. $s . $participant->id
-								. $s . escape_csv_val(stripslashes($participant->lname))
+								. $s . $participant->registration_id
+								/*. $s . escape_csv_val(stripslashes($participant->lname))
 								. $s . escape_csv_val(stripslashes($participant->fname))
 								. $s . stripslashes($participant->email)
 								. $s . escape_csv_val(stripslashes($participant->address))
 								. $s . escape_csv_val(stripslashes($participant->address2))
 								. $s . escape_csv_val(stripslashes($participant->city))
 								. $s . escape_csv_val(stripslashes($participant->state))
+								. $s . escape_csv_val(stripslashes($participant->country))
 								. $s . escape_csv_val(stripslashes($participant->zip))
-								. $s . escape_csv_val(stripslashes($participant->phone))
+								. $s . escape_csv_val(stripslashes($participant->phone))*/
 								. $s . escape_csv_val(stripslashes($participant->payment))
 								. $s . event_date_display($participant->date, 'Y-m-d')
 								. $s . stripslashes($participant->payment_status)
 								. $s . stripslashes($participant->txn_type)
 								. $s . stripslashes($participant->txn_id)
-								. $s . $participant->amount_pd
+								. $s . $participant->a_cost * $participant->a_quantity
 								. $s . escape_csv_val($participant->coupon_code)
 								. $s . $participant->quantity
 								. $s . event_date_display($participant->payment_date, 'Y-m-d')
@@ -437,26 +441,28 @@ if (!function_exists('espresso_export_stuff')){
 								. $s . $participant->checked_in_quantity
 								;
 	
-	
-								$answers = $wpdb->get_results("SELECT a.question_id, a.answer FROM " . EVENTS_ANSWER_TABLE . " a WHERE question_id IN ($question_filter) AND attendee_id = '" . $participant->id . "'", OBJECT_K);
-								foreach($question_list as $k=>$v) 
-								{
-									/*
-									 * in case the event organizer removes a question from a question group,
-									 * the orphaned answers will remian in the answers table.  This check will make sure they don't get exported.
-									 */
-									/*if (array_key_exists($k, $answers))
-									{*/
-										$search = array("\r", "\n", "\t");
-										$clean_answer = str_replace($search, " ", $answers[$k]->answer);
-										$clean_answer = escape_csv_val($clean_answer);
-										echo $s . $clean_answer;
-									/*} 
-									else 
-									{
-										echo $s;
-									}*/
-								}
+                                if ( count($question_filter) > 0 ) {
+                                    $answers = $wpdb->get_results("SELECT a.question_id, a.answer FROM " . EVENTS_ANSWER_TABLE . " a WHERE question_id IN ($question_filter) AND attendee_id = '" . $participant->id . "'", OBJECT_K);
+                                    foreach($question_list as $k=>$v) 
+                                    {
+                                        /*
+                                        * in case the event organizer removes a question from a question group,
+                                        * the orphaned answers will remian in the answers table.  This check will make sure they don't get exported.
+                                        */
+                                        /*if (array_key_exists($k, $answers))
+                                        {*/
+                                            $search = array("\r", "\n", "\t");
+                                            $clean_answer = str_replace($search, " ", $answers[$k]->answer);
+											$clean_answer = str_replace("&#039;", "'", $clean_answer);
+                                            $clean_answer = escape_csv_val($clean_answer);
+                                            echo $s . $clean_answer;
+                                        /*} 
+                                        else 
+                                        {
+                                            echo $s;
+                                        }*/
+                                    }
+                                }
 								switch ($_REQUEST['type']) 
 								{
 									case "csv" :

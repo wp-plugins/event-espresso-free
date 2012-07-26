@@ -37,7 +37,8 @@ background: #c9de96;
 	-webkit-box-shadow: inset 0 0 5px #C4E3A7;
 	box-shadow: inset 0 0  5px #C4E3A7;
 }
-	
+
+.register-link-footer a.a_register_link, .register-link-footer a.ee_add_item_to_cart { color: #fff; }
 /*___Event pages ___*/
 
 /** Registeration event **/

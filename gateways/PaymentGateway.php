@@ -200,7 +200,7 @@ if (!class_exists('PaymentGateway')) {
             // add_field() function.
 							global $gateway_name;
             // echo  '<h3>PaymentGateway->dump_fields() Output:</h3>';
-            echo '<table style="background: #000;" width="95%" border="1" cellpadding="2" cellspacing="0">';
+            echo '<table style="background: #000;" width="70%" class="debug-table" border="1" cellpadding="2" cellspacing="0">';
 							echo '<caption style="background: #000; color: #fff; font-weight: bold;">' . $gateway_name . ' debug output</caption>';
 							echo '<thead>';
 							echo '<tr>';
@@ -214,7 +214,7 @@ if (!class_exists('PaymentGateway')) {
 
 							echo '<tr>';
 							echo '<td style="color: #fff; border-right: 1px solid #ccc;">' . $key . '</td>';
-							echo '<td style="color: #fff;">' . urldecode($value) .'&nbsp;</td>';
+							echo '<td style="color: #fff; max-width: 500px; overflow: auto; font-family: monospace; white-space: pre-wrap; word-wrap: break-word; ">' . htmlspecialchars($value) .'&nbsp;</td>';
 							echo '</tr>';
             }
 							echo '</tbody>';

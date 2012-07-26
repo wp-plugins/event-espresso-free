@@ -1,6 +1,6 @@
 <?php
 function event_list_attendees() {
-    global $wpdb, $org_options, $ticketing_installed;
+    global $wpdb, $org_options, $ticketing_installed, $espresso_premium;
 	
 	//Dates
 	$curdate = date("Y-m-d");
@@ -47,11 +47,11 @@ function event_list_attendees() {
 						</strong></p>
 					</div>
 					<?php
-									} else {
-										$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET checked_in = $checker WHERE id = '$del_id'";
-										$wpdb->query($sql);
-										//echo $sql;
-										?>
+				} else {
+					$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET checked_in = $checker WHERE id = '$del_id'";
+					$wpdb->query($sql);
+					//echo $sql;
+?>
 					<div id="message" class="updated fade">
 					  <p><strong>
 						<?php _e('Customer(s) attendance data successfully updated for this event.', 'event_espresso'); ?>
@@ -116,22 +116,22 @@ function event_list_attendees() {
           <?php _e('Attended', 'event_espresso'); ?>
           </span> <span class="sorting-indicator"></span> </th>
         <?php } ?>
-        <th class="manage-column column-title" id="event" scope="col" title="Click to Sort" style="width: 8%;"> <span>
+        <th class="manage-column column-title" id="event" scope="col" title="Click to Sort" style="width: 13%;"> <span>
           <?php _e('Option', 'event_espresso'); ?>
           </span> <span class="sorting-indicator"></span> </th>
         <th align="center" class="manage-column column-date" id="amount" style="width: 10%;" title="Click to Sort" scope="col"> <span>
           <?php _e('Payment', 'event_espresso'); ?>
           </span> <span class="sorting-indicator"></span> </th>
-        <th class="manage-column column-date" id="payment_type" scope="col" title="Click to Sort" style="width: 10%;"> <span>
+        <th class="manage-column column-date" id="payment_type" scope="col" title="Click to Sort" style="width: 8%;"> <span>
           <?php _e('Type', 'event_espresso'); ?>
           </span> <span class="sorting-indicator"></span> </th>
-        <th class="manage-column column-date" id="coupon" scope="col" title="Click to Sort" style="width: 12%;"> <span>
+        <th class="manage-column column-date" id="coupon" scope="col" title="Click to Sort" style="width: 10%;"> <span>
           <?php _e('Coupon', 'event_espresso'); ?>
           </span> <span class="sorting-indicator"></span> </th>
-        <th class="manage-column column-date" id="txn_id" scope="col" title="Click to Sort" style="width: 15%;"> <span>
+        <th class="manage-column column-date" id="txn_id" scope="col" title="Click to Sort" style="width: 10%;"> <span>
           <?php _e('Transaction ID', 'event_espresso'); ?>
           </span> <span class="sorting-indicator"></span> </th>
-        <th class="manage-column column-date" id="action" scope="col" title="Click to Sort"style="width: 8%;"><?php _e('Action', 'event_espresso'); ?></th>
+        <th class="manage-column column-date" id="action" scope="col" title="" style="width: 12%;"><?php _e('Action', 'event_espresso'); ?></th>
       </tr>
     </thead>
     <tbody>
@@ -264,24 +264,24 @@ function event_list_attendees() {
 					$phone = $attendee->phone;
 					$quantity = $attendee->quantity > 1 ? '<br />(' . __('Total Attendees', 'event_espresso') . ': ' . $attendee->quantity . ')' : '';
 					//if ($temp_reg_id == '') {
-						$id = $attendee->id;
+					$id = $attendee->id;
 						//$temp_reg_id = $registration_id;
 						//echo 'Temp Reg. Id: '.$registration_id.'<br />';
 		
-						$attended = $attendee->checked_in;
-						$ticket_scanned = $attendee->checked_in_quantity;
-						$amount_pd = $attendee->amount_pd;
-						$payment_status = $attendee->payment_status;
-						$payment_date = $attendee->payment_date;
-						$date = $attendee->date;
-						$event_id = $attendee->event_id;
-						$coupon_code = $attendee->coupon_code;
-						$txn_id = $attendee->txn_id;
-						$txn_type = $attendee->txn_type;
-						$price_option = $attendee->price_option;
-						$event_time = $attendee->event_time;
-						$event_name = $attendee->event_name;
-						$event_date = $attendee->start_date;
+					$attended = $attendee->checked_in;
+					$ticket_scanned = $attendee->checked_in_quantity;
+					$amount_pd = $attendee->amount_pd;
+					$payment_status = $attendee->payment_status;
+					$payment_date = $attendee->payment_date;
+					$date = $attendee->date;
+					$event_id = $attendee->event_id;
+					$coupon_code = $attendee->coupon_code;
+					$txn_id = $attendee->txn_id;
+					$txn_type = $attendee->txn_type;
+					$price_option = $attendee->price_option;
+					$event_time = $attendee->event_time;
+					$event_name = $attendee->event_name;
+					$event_date = $attendee->start_date;
 						
 						
                 ?>
@@ -313,9 +313,12 @@ function event_list_attendees() {
                     <a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;registration_id=<?php echo $registration_id ?>&amp;event_id=<?php echo $event_id ?>&amp;form_action=edit_attendee" title="<?php _e('Edit Attendee', 'event_espresso'); ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/user_edit.png" width="16" height="16" alt="<?php _e('Edit Attendee', 'event_espresso'); ?>" /></a>
                     
                     <a href="admin.php?page=events&amp;event_admin_reports=resend_email&amp;registration_id=<?php echo $registration_id ?>&amp;event_id=<?php echo $event_id ?>&amp;form_action=resend_email" title="<?php _e('Resend Registration Details', 'event_espresso'); ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/email_link.png" width="16" height="16" alt="<?php _e('Resend Registration Details', 'event_espresso'); ?>" /></a>
-                    
+                    <?php if ($espresso_premium == true){ ?>
                     <a href="<?php echo home_url(); ?>/?download_invoice=true&amp;admin=true&amp;registration_id=<?php echo $registration_id ?>" target="_blank"  title="<?php _e('Download Invoice', 'event_espresso'); ?>"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/icons/page_white_acrobat.png" width="16" height="16" alt="<?php _e('Download Invoice', 'event_espresso'); ?>" /></a>
+					<?php } ?>
+					<?php echo $ticketing_installed == true && function_exists('espresso_ticket_url') ? '<a href="'.espresso_ticket_url($id, $registration_id).'" target="_blank"  title="'. __('View/Download Ticket', 'event_espresso').'"><img src="'. EVENT_ESPRESSO_PLUGINFULLURL .'images/icons/ticket-arrow-icon.png" width="16" height="16" alt="'. __('Download Ticket', 'event_espresso').'" /></a>' : ''; ?>
           <?php 
+				
 				if ($org_options["use_attendee_pre_approval"] == "Y") { 
 			?>
           <br/>

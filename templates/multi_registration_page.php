@@ -166,14 +166,36 @@ if (!function_exists('multi_register_attendees')) {
 				} else {
 					//If enough spaces exist then show the form
 					//Check to see if the Members plugin is installed.
-					if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only == 'Y') {
+					if (!is_user_logged_in() && defined('EVENTS_MEMBER_REL_TABLE') && $member_only == 'Y') {
 						event_espresso_user_login();
 					} else {
 						//Serve up the registration form
 						//As of version 3.0.17 the registration details have been moved to registration_form.php
 
 						include('multi_registration_page_display.php');
-
+						//Recaptcha portion
+						//if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true') { ?>
+						<?php /* this is probably superfluous because it's already being loaded elsewhere...trying to cover all my bases ~c  ?>
+							<script type="text/javascript">
+								var RecaptchaOptions = {
+									theme : '<?php echo $org_options['recaptcha_theme'] == '' ? 'red' : $org_options['recaptcha_theme']; ?>',
+									lang : '<?php echo $org_options['recaptcha_language'] == '' ? 'en' : $org_options['recaptcha_language']; ?>'
+								};
+							</script>
+						<?php
+							if (!function_exists('recaptcha_get_html')) {
+								require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
+							}//End require captcha library
+							# the response from reCAPTCHA
+							$resp = true;
+							# the error code from reCAPTCHA, if any
+							$error = null;
+							?>
+							<p class="event_form_field" id="captcha-<?php echo $event_id; ?>">
+								<?php _e('Anti-Spam Measure: Please enter the following phrase', 'event_espresso'); ?>
+							<?php echo recaptcha_get_html($org_options['recaptcha_publickey'], $error, is_ssl() ? true : false); ?> </p>
+			<?php } //End use captcha
+			*/
 						$event_counter++;
 						echo '<input type="hidden" name="regevent_action" value="post_multi_attendee" />';
 					}

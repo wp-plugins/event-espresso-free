@@ -10,14 +10,12 @@ function enter_attendee_payments() {
 	$registration_id = $_REQUEST['registration_id'];
 	$registration_ids = array();
 	$check = $wpdb->get_row("select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where registration_id = '$registration_id' ");
-	if ( $check !== NULL )
-	{
+	if ( $check !== NULL ) {
 		$registration_id = $check->primary_registration_id;
 		$registration_ids = $wpdb->get_results("select * from ".EVENTS_MULTI_EVENT_REGISTRATION_ID_GROUP_TABLE." where primary_registration_id = '$registration_id' ", ARRAY_A);
 		$multi_reg = true;
 	}
-    switch ( $_REQUEST[ 'form_action' ] )
-    {
+    switch ( $_REQUEST[ 'form_action' ] ) {
         //Add payment info
         case 'payment':
             if ( isset($_REQUEST[ 'attendee_action' ]) && $_REQUEST[ 'attendee_action' ] == 'post_payment' ){
@@ -38,39 +36,48 @@ function enter_attendee_payments() {
 
 				$wpdb->query( $sql );
 
-				if ( count($registration_ids) > 0 )
-				{
-					foreach($registration_ids as $reg_id)
-					{
+				if ( count($registration_ids) > 0 ) {
+				
+					foreach($registration_ids as $reg_id) {
 						// Update payment status information for all attendees
 						$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '$payment_status', txn_type = '$txn_type', txn_id = '$txn_id', payment_date ='$payment_date', coupon_code ='$coupon_code' WHERE registration_id ='" . $reg_id['registration_id']. "' ";
 						$wpdb->query( $sql );
 					}
-				}
-				else
-				{
+					
+				} else {
 					// Update payment status information for all attendees
 					$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '$payment_status', txn_type = '$txn_type', txn_id = '$txn_id', payment_date ='$payment_date', coupon_code ='$coupon_code' WHERE registration_id ='" . $registration_id . "' ";
 					$wpdb->query( $sql );
 				}
 
                 //Send Payment Recieved Email
-                if ( $_REQUEST[ 'send_payment_rec' ] == "send_message" )
-                {
+                if ( $_REQUEST[ 'send_payment_rec' ] == "send_message" ) {
                     /*
                      * @todo Do we send an email to each attendee in a group or just the main?
                      */
                     //event_espresso_send_payment_notification( $id );
 //Added by Imon
-					if ( count($registration_ids) > 0 )
-					{
-						foreach($registration_ids as $reg_id)
-						{
-							event_espresso_send_payment_notification(array('registration_id'=>$reg_id['registration_id']));
+					if ( count($registration_ids) > 0 ) {
+
+						$reg_attendees = array();
+
+						foreach($registration_ids as $reg_id) {			
+					
+							$SQL = 'SELECT * FROM ' . EVENTS_ATTENDEE_TABLE . ' WHERE registration_id =%s';
+							$more_reg_attendees = $wpdb->get_results( $wpdb->prepare( $SQL, $reg_id['registration_id'] ), 'OBJECT_K' );
+
+							foreach ( $more_reg_attendees as $another_reg_attendee ) {
+								$reg_attendees[ $another_reg_attendee->email ] = $another_reg_attendee;			
+							}
+							
 						}
-					}
-					else
-					{
+						
+						foreach ( $reg_attendees as $reg_attendee ){
+							event_espresso_send_payment_notification( array( 'registration_id'=>$reg_attendee->registration_id ));
+						}
+
+						
+					} else {
 						event_espresso_send_payment_notification(array('registration_id'=>$registration_id));
 					}
                 }
@@ -79,19 +86,17 @@ function enter_attendee_payments() {
 
         //Send Invoice
         case 'send_invoice':
-            //Added by Imon
+
+           //Added by Imon
 			if ( $org_options["use_attendee_pre_approval"] == "Y" ) {
 				$pre_approve = $_REQUEST['pre_approve'];
-				if ( count($registration_ids) > 0 )
-				{
-					foreach($registration_ids as $reg_id)
-					{
+				if ( count($registration_ids) > 0 ) {
+					foreach($registration_ids as $reg_id) {
 						$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET pre_approve = '$pre_approve' WHERE registration_id ='" . $reg_id['registration_id'] . "'";
 						$wpdb->query( $sql );
 					}
-				}
-				else
-				{
+					
+				} else {
 					$sql = "UPDATE " . EVENTS_ATTENDEE_TABLE . " SET pre_approve = '$pre_approve' WHERE registration_id ='" . $registration_id . "'";
 					$wpdb->query( $sql );
 				}
@@ -101,15 +106,27 @@ function enter_attendee_payments() {
 			}
 			if ( $pre_approve == "0" ) {
 
-				if ( count($registration_ids) > 0 )
-				{
-					foreach($registration_ids as $reg_id)
-					{
-						event_espresso_send_invoice( $reg_id['registration_id'], $_REQUEST[ 'invoice_subject' ], $_REQUEST[ 'invoice_message' ] );
-					}
-				}
-				else
-				{
+				if ( count($registration_ids) > 0 ) {
+
+					$reg_attendees = array();
+
+					foreach($registration_ids as $reg_id) {			
+					
+							$SQL = 'SELECT * FROM ' . EVENTS_ATTENDEE_TABLE . ' WHERE registration_id =%s';
+							$more_reg_attendees = $wpdb->get_results( $wpdb->prepare( $SQL, $reg_id['registration_id'] ), 'OBJECT_K' );
+
+							foreach ( $more_reg_attendees as $another_reg_attendee ) {
+								$reg_attendees[ $another_reg_attendee->email ] = $another_reg_attendee;			
+							}
+							
+						}
+						
+						foreach ( $reg_attendees as $reg_attendee ){
+							event_espresso_send_invoice( $reg_attendee->registration_id, $_REQUEST[ 'invoice_subject' ], $_REQUEST[ 'invoice_message' ] );
+						}
+
+					
+				} else {
 					event_espresso_send_invoice( $registration_id , $_REQUEST[ 'invoice_subject' ], $_REQUEST[ 'invoice_message' ] );
 				}
 				echo '<div id="message" class="updated fade"><p><strong>'.__('Invoice Sent', 'event_espresso').'</strong></p></div>';
@@ -303,12 +320,12 @@ function enter_attendee_payments() {
                 <input type="hidden" name="event_id" value="<?php echo $event_id ?>">
                 <input type="hidden" name="attendee_action" value="post_payment">
                 <li>
-                  <input type="submit" name="Submit" value="Update Payment">
+                  <input type="submit" name="Submit" class="button-primary action"   value="Update Payment">
                 </li>
               </ul>
             </fieldset>
           </form></td>
-        <td valign="top"><form method='post' action="<?php echo $_SERVER[ 'REQUEST_URI' ] ?>&status=invoiced">
+        <td valign="top"><form class="espresso_form" method='post' action="<?php echo $_SERVER[ 'REQUEST_URI' ] ?>&status=invoiced">
             <input type="hidden" name="id" value="<?php echo $id ?>">
             <input type="hidden" name="form_action" value="send_invoice">
             <input type="hidden" name="event_id" value="<?php echo $event_id ?>">
@@ -375,7 +392,7 @@ function enter_attendee_payments() {
               </li>
               <?php } ?>
               <li>
-                <input type="submit" name="Submit" value="Send Invoice">
+                <input type="submit" class="button-primary action"   name="Submit" value="Send Invoice">
               </li>
             </ul>
           </form></td>

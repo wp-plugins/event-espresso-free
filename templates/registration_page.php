@@ -5,8 +5,16 @@
 //Note: This entire function can be overridden using the "Custom Files" addon
 if (!function_exists('register_attendees')) {
 
-    function register_attendees($single_event_id = NULL, $event_id_sc =0) {
-        if ((isset($_REQUEST['form_action']) && $_REQUEST['form_action'] == 'edit_attendee') || (isset($_REQUEST['edit_attendee']) && $_REQUEST['edit_attendee'] == 'true')) {
+    function register_attendees($single_event_id = NULL, $event_id_sc =0, $reg_form_only = false) {
+		
+		//Run code for the seating chart addon
+		if ( function_exists('espresso_seating_version') ){
+			do_action('ee_seating_chart_css');
+			do_action('ee_seating_chart_js');
+			do_action('ee_seating_chart_flush_expired_seats');
+		}
+        
+		if ((isset($_REQUEST['form_action']) && $_REQUEST['form_action'] == 'edit_attendee') || (isset($_REQUEST['edit_attendee']) && $_REQUEST['edit_attendee'] == 'true')) {
             require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/attendee_edit_record.php');
             attendee_edit_record();
             return;
@@ -17,7 +25,7 @@ if (!function_exists('register_attendees')) {
             $_REQUEST['event_id'] = $_REQUEST['ee'];
         }
 
-        $event_id = $event_id_sc != '0' ? $event_id_sc : ($_REQUEST['event_id']);
+        $event_id = $event_id_sc != '0' ? $event_id_sc : $_REQUEST['event_id'];
 
         if (!empty($_REQUEST['event_id_time'])) {
             $pieces = explode('|', $_REQUEST['event_id_time'], 3);
@@ -83,6 +91,9 @@ if (!function_exists('register_attendees')) {
             $event_name = stripslashes_deep($data->event->event_name);
             $event_desc = stripslashes_deep($data->event->event_desc);
             $display_desc = $data->event->display_desc;
+			if ( $reg_form_only == true )
+				$display_desc = "N";
+			
             $display_reg_form = $data->event->display_reg_form;
             $event_address = $data->event->address;
             $event_address2 = $data->event->address2;
@@ -237,13 +248,13 @@ if (!function_exists('register_attendees')) {
                 //'registration' => event_espresso_add_question_groups($question_groups),
                 //'additional_attendees' => $allow_multiple == "Y" && $number_available_spaces > 1 ? event_espresso_additional_attendees($event_id, $additional_limit, $number_available_spaces, '', false, $event_meta) : '<input type="hidden" name="num_people" id="num_people-' . $event_id . '" value="1">',
             );
-            //print_r($all_meta);
-//This function gets the status of the event.
-                $is_active = array();
-                $is_active = event_espresso_get_is_active(0, $all_meta);
-
-				//echo '<p>'.print_r(event_espresso_get_is_active($event_id, $all_meta)).'</p>';;
-
+			
+			//print_r($all_meta);
+			//This function gets the status of the event.
+			$is_active = array();
+			$is_active = event_espresso_get_is_active(0, $all_meta);
+			//echo '<p>'.print_r(event_espresso_get_is_active($event_id, $all_meta)).'</p>';;
+			
             if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true') {
                 ?>
                 <script type="text/javascript">
@@ -275,9 +286,11 @@ if (!function_exists('register_attendees')) {
 
                     <?php
                 } else {
+					global $member_options;
+					//echo "<pre>".print_r($member_options,true)."</pre>";
                     //If enough spaces exist then show the form
                     //Check to see if the Members plugin is installed.
-                    if (!is_user_logged_in() && get_option('events_members_active') == 'true' && $member_only == 'Y') {
+                    if ( function_exists('espresso_members_installed') && espresso_members_installed() == true && !is_user_logged_in() && ($member_only == 'Y' || $member_options['member_only_all'] == 'Y') ) {
                         event_espresso_user_login();
                     } else {
                         //Serve up the registration form
@@ -286,7 +299,7 @@ if (!function_exists('register_attendees')) {
                     }
                 }//End if ($num_attendees >= $reg_limit) (Shows the regsitration form if enough spaces exist)
             } else {//If there are no results from the query, display this message
-                _e('<h3>This event has expired or is no longer available.</h3>', 'event_espresso');
+                 echo '<h3>'.__('This event has expired or is no longer available.', 'event_espresso').'</h3>';
             }
 
             echo espresso_registration_footer();

@@ -11,7 +11,7 @@ global $wpdb, $current_user;
 				$event_name=$result->event_name;
 				$event_desc=$result->event_desc;
 				$display_desc=$result->display_desc;
-				$event_identifier=$result->event_identifier.'-'.time();
+				$event_identifier= substr($result->event_identifier, 0,13).uniqid('-');
 				$reg_limit = $result->reg_limit;
 				$allow_multiple = $result->allow_multiple;
 				$additional_limit = $result->additional_limit;

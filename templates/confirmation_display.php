@@ -7,10 +7,11 @@
 $attendee_num = 1;
 ?>
 			<form id="form1" name="form1" method="post" action="<?php echo home_url()?>/?page_id=<?php echo $event_page_id?>">
-				<div class="event-conf-block event-display-boxes" >
-							<h2 class="event_title">
+				<div class="event-conf-block event-display-boxes ui-widget" >
+	<h3 class="event_title ui-widget-header ui-corner-top">
               <?php _e('Please verify your registration details:','event_espresso'); ?>
-            </h2>
+            </h3>
+<div class="event-data-display ui-widget-content ui-corner-bottom">
             <table class="event-display-tables grid"  id="event_espresso_attendee_verify">
 								
               <tr>
@@ -24,19 +25,18 @@ $attendee_num = 1;
 				 * Added for seating chart addon
 				 */
 				$display_price = true;
-				if ( defined('ESPRESSO_SEATING_CHART') )
-				{
+				if ( defined('ESPRESSO_SEATING_CHART') ){
 					$seating_chart_id = seating_chart::check_event_has_seating_chart($event_id);
 					if ( $seating_chart_id !== false )
 					{
 						$display_price = false;
 					}
 				}
-				if ( $display_price )
-				{
 				/*
 				 * End
 				 */
+				if ( $display_price ){
+				
 			   ?>	
                <tr>
                 <th scope="row" class="header">
@@ -48,9 +48,7 @@ $attendee_num = 1;
 				/*
 				 * Added for seating chart addon
 				 */
-				 }
-				 else
-				 {
+				 }else{
 					$price_range = seating_chart::get_price_range($event_id);
 					$price = "";
 					if ( $price_range['min'] != $price_range['max'] )
@@ -62,10 +60,10 @@ $attendee_num = 1;
 						$price = $org_options['currency_symbol']. number_format($price_range['min'], 2);
 					}
 				 ?>
-			  <tr>
-                <td><strong class="event_espresso_name">Price : </strong></td>
-                <td><?php echo $price; ?></td>
-              </tr>
+						<tr>
+						<th scope="row" class="header"><?php _e('Price:', 'event_espresso'); ?></th>
+						<td><?php echo $price; ?></td>
+						</tr>
 				 <?php
 				 }
 				 /*
@@ -77,8 +75,9 @@ $attendee_num = 1;
                   <?php _e('Attendee Name:','event_espresso'); ?>
 									</th>
                 <td  valign="top">
-										<span class="event_espresso_value"><?php echo stripslashes_deep($attendee_name)?> (<?php echo $attendee_email?>) <?php echo '<a href="'.home_url().'/?page_id='.$event_page_id.'&amp;registration_id='.$registration_id.'&amp;id='.$attendee_id.'&amp;regevent_action=register&amp;form_action=edit_attendee&amp;primary='.$attendee_id.'&amp;p_id='.$p_id.'&amp;event_id='.$event_id.'&amp;coupon_code='.$coupon_code.'&amp;groupon_code='.$groupon_code.'&amp;attendee_num='.$attendee_num.'">'. __('Edit', 'event_espresso').'</a>'; ?>
-    								<?php
+					<span class="event_espresso_value"><?php echo stripslashes_deep($attendee_name)?> (<?php echo $attendee_email?>) <?php 
+					/* //removing edit links for now...will fix edit attendee page in 3.2 cb #830 echo '<a href="'.home_url().'/?page_id='.$event_page_id.'&amp;registration_id='.$registration_id.'&amp;id='.$attendee_id.'&amp;regevent_action=register&amp;form_action=edit_attendee&amp;primary='.$attendee_id.'&amp;p_id='.$p_id.'&amp;event_id='.$event_id.'&amp;coupon_code='.$coupon_code.'&amp;groupon_code='.$groupon_code.'&amp;attendee_num='.$attendee_num.'">'. __('Edit', 'event_espresso').'</a>'; */ ?>
+					<?php
     								//Create additional attendees
     								$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE;
     								$sql .= " WHERE registration_id = '" . espresso_registration_id( $attendee_id ) . "' AND id != '".$attendee_id."' ";
@@ -93,9 +92,11 @@ $attendee_num = 1;
     										if ($x_attendee['email'] != '') { echo "(" . $x_attendee['email']  . ") "; }
     
     										//Create edit link
+                        /* //removing edit links for now...will fix edit attendee page in 3.2 cb #830
     										echo '<a href="'.home_url().'/?page_id='.$event_page_id.'&amp;registration_id='.$registration_id.'&amp;id='.$x_attendee['id'].'&amp;regevent_action=register&amp;form_action=edit_attendee&amp;primary='.$attendee_id.'&amp;p_id='.$p_id.'&amp;coupon_code='.$coupon_code.'&amp;groupon_code='.$groupon_code.'&amp;attendee_num='.$attendee_num.'">'. __('Edit', 'event_espresso').'</a>';
+
     										//Create delete link
-    										echo ' | <a href="'.home_url().'/?page_id='.$event_page_id.'&amp;registration_id='.$registration_id.'&amp;id='.$x_attendee['id'].'&amp;regevent_action=register&amp;form_action=edit_attendee&amp;primary='.$attendee_id.'&amp;delete_attendee=true&amp;p_id='.$p_id.'&amp;coupon_code='.$coupon_code.'&amp;groupon_code='.$groupon_code.'">'. __('Delete', 'event_espresso').'</a>';						
+    										echo ' | <a href="'.home_url().'/?page_id='.$event_page_id.'&amp;registration_id='.$registration_id.'&amp;id='.$x_attendee['id'].'&amp;regevent_action=register&amp;form_action=edit_attendee&amp;primary='.$attendee_id.'&amp;delete_attendee=true&amp;p_id='.$p_id.'&amp;coupon_code='.$coupon_code.'&amp;groupon_code='.$groupon_code.'">'. __('Delete', 'event_espresso').'</a>'; */
     									}
     								}	?>
 										</span>
@@ -112,19 +113,20 @@ $attendee_num = 1;
               <tr valign="top">
                 <th scope="row" class="header">
                   <?php _e('Total Price:','event_espresso'); ?>
-                 </td>
-                <td><span class="event_espresso_value"><?php echo $org_options['currency_symbol']?><?php echo $event_price_x_attendees;  echo $event_discount_label;?></span></td>
+                 </th>
+                <td><span class="event_espresso_value"><?php echo $org_options['currency_symbol']?><?php echo $event_cost;  echo $event_discount_label;?></span></td>
               </tr>
 
               </table>
 							</div>
 							
-            <p class="espresso_confirm_registration"><input class="btn_event_form_submit" type="submit" name="confirm" id="confirm" value="<?php _e('Confirm Registration', 'event_espresso'); ?>" /></p>
+            <p class="espresso_confirm_registration"><input class="btn_event_form_submit ui-priority-primary ui-widget-content ui-corner-all" type="submit" name="confirm" id="confirm" value="<?php _e('Confirm Registration', 'event_espresso'); ?>" /></p>
             
 								
 							<?php		if ($display_questions != ''){ ?>
 							<div id="additional-conf-info" class="event-display-boxes">
-              <h2 class="event_title"><?php _e('Additional Information for:', 'event_espresso'); ?> <?php echo stripslashes_deep($attendee_name)?></h2>
+              <h3 class="event_title ui-widget-header ui-corner-top"><?php _e('Additional Information for:', 'event_espresso'); ?> <?php echo stripslashes_deep($attendee_name)?></h3>
+<div id="additional-conf-info" class="event-data-display ui-widget-content ui-corner-bottom">
               
 								<table id="event_espresso_attendee_verify_questions" class="event-display-tables grid">
 								
@@ -137,8 +139,9 @@ $attendee_num = 1;
             	</table>              
 
 
-							</div>      
-							<p class="espresso_confirm_registration"><input class="btn_event_form_submit" type="submit" name="confirm2" id="confirm2" value="<?php _e('Confirm Registration', 'event_espresso'); ?>" /></p>
+							</div><!-- / .event-data-display -->   
+						</div><!-- / .event-display-boxes -->   
+							<p class="espresso_confirm_registration"><input class="btn_event_form_submit ui-priority-primary ui-widget-content ui-corner-all" type="submit" name="confirm2" id="confirm2" value="<?php _e('Confirm Registration', 'event_espresso'); ?>" /></p>
 				<?php	} ?>					
 					
 					<?php /* This form builds the confirmation buttons */?>
@@ -149,4 +152,6 @@ $attendee_num = 1;
         <input type="hidden" name="registration_id" id="registration_id" value="<?php echo $registration_id ?>" />
         <input type="hidden" name="regevent_action" id="regevent_action-<?php echo $event_id;?>" value="post_attendee">
         <input type="hidden" name="event_id" id="event_id-<?php echo $event_id;?>" value="<?php echo $event_id;?>">
+				<?php wp_nonce_field('reg_nonce', 'reg_form_nonce'); ?>
+</div>
     </form>

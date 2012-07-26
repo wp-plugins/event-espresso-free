@@ -6,11 +6,11 @@ Donate link: http://eventespresso.com
 
 Tags: event registration, events planner, events calendar, wordpress events, event ticketing, class registration, conference registration, online registration, event management, buddypress, tickets, ticketing, ticket, registration, wordcamp, event manager, training, sports, booking
 
-Requires at least: 3.1
+Requires at least: 3.4.1
 
 Tested up to: 3.3
 
-Stable tag: 3.1.20.L
+Stable tag: 3.1.25.L
 
 Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
 
@@ -145,4 +145,4 @@ This plugin is provided "as is" and without any warranty or expectation of funct
 
 == Changelog ==
 
-The changelog for the premium version [can be found here](http://eventespresso.com/forums/2011/08/version-3-1/).
+The changelog for the premium version [can be found here](http://eventespresso.com/wiki/change-log/).
