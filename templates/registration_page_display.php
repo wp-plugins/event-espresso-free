@@ -3,10 +3,19 @@
 //This is a template file for displaying a registration form for an event on a page.
 //There should be a copy of this file in your wp-content/uploads/espresso/ folder.
 ?>
-<div id="event_espresso_registration_form" class="event-display-boxes">
-  <div class="event_espresso_form_wrapper event-data-display">
-		<h2 class="event_title" id="event_title-<?php echo $event_id; ?>"> <?php echo $event_name ?> <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h2>
-
+<div id="event_espresso_registration_form" class="event-display-boxes ui-widget">
+	
+<?php
+$ui_corner = 'ui-corner-all'; 
+//This tells the system to hide the event title if we only need to display the registration form.
+if ($reg_form_only == false) { 
+?>
+	<h3 class="event_title ui-widget-header ui-corner-top" id="event_title-<?php echo $event_id; ?>"> <?php echo $event_name ?> <?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?> <?php echo $is_active['status'] == 'PENDING' ? ' - <span class="expired_event">Event is Pending</span>' : ''; ?> <?php echo $is_active['status'] == 'DRAFT' ? ' - <span class="expired_event">Event is a Draft</span>' : ''; ?> </h3>
+<?php 
+	$ui_corner = 'ui-corner-bottom';
+}
+?>
+ <div class="event_espresso_form_wrapper event-data-display ui-widget-content <?php echo $ui_corner ?>">
 		<?php
 		echo apply_filters('filter_hook_espresso_display_add_to_calendar_by_event_id', $event_id);
 		/* Venue details. Un-comment first and last lines & any venue details you wish to display or use the provided shortcodes. */ ?>
@@ -38,7 +47,8 @@
 			case 'REGISTRATION_CLOSED': //only show the event description.
 				// if todays date is after $reg_end_date
 				?>
-				<div class="event-registration-closed event-messages">
+				<div class="event-registration-closed event-messages ui-corner-all ui-state-highlight">
+					<span class="ui-icon ui-icon-alert"></span>
 
 					<p class="event_full">
 						<strong>
@@ -58,7 +68,8 @@
 				// if todays date is after $reg_end_date
 				// if todays date is prior to $reg_start_date
 				?>
-				<div class="event-registration-pending event-messages">
+				<div class="event-registration-pending event-messages ui-corner-all ui-state-highlight">
+<span class="ui-icon ui-icon-alert"></span>
 					<p class="event_full">
 						<strong>
 							<?php _e('We are sorry but this event is not yet open for registration.', 'event_espresso'); ?>
@@ -77,7 +88,11 @@
 			default: //This will display the registration form
 				?>
 				<form method="post" action="<?php echo home_url() ?>/?page_id=<?php echo $event_page_id ?>" id="registration_form">
-					<?php
+				<?php
+				
+				//This hides the date/times and location when usign custom post types or the ESPRESSO_REG_FORM shortcode
+				if ( $reg_form_only == false ){	
+					
 					/* Display the address and google map link if available */
 					if ($location != '' && (empty($org_options['display_address_in_regform']) || $org_options['display_address_in_regform'] != 'N')) {
 						?>
@@ -110,7 +125,8 @@
 						} ?>
 					</p>
 
-					<?php
+				<?php
+				}
 					/*
 					 * * This section shows the registration form if it is an active event * *
 					 */
@@ -171,14 +187,14 @@
 									<h3 style="clear:both"><?php _e('Seating chart', 'event_espresso'); ?></h3>
 									<p></p>
 									<p class="event_form_field">
-										<label style="height:60px;">Select a Seat:</label>
+										<label style="height:60px;"><?php _e('Select a Seat:', 'event_espresso'); ?></label>
 										<input type="text" name="seat_id" value="" class="ee_s_select_seat required" title="<?php _e('Please select a seat.', 'event_espresso'); ?>" event_id="<?php echo $event_id; ?>" readonly="readonly"  />
 										<?php
 										$seating_chart = $wpdb->get_row("select * from " . EVENTS_SEATING_CHART_TABLE . " where id = $seating_chart_id");
 										if (trim($seating_chart->image_name) != "" && file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'seatingchart/images/' . $seating_chart->image_name)) {
 											?>
 											<br/>
-											<a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL . 'seatingchart/images/' . $seating_chart->image_name; ?>" target="_blank">Seating chart image</a>
+											<a href="<?php echo EVENT_ESPRESSO_UPLOAD_URL . 'seatingchart/images/' . $seating_chart->image_name; ?>" target="_blank"><?php _e('Seating Chart Image', 'event_espresso'); ?></a>
 											<?php
 										}
 										?>
@@ -227,8 +243,9 @@
 						<input type="hidden" name="regevent_action" id="regevent_action-<?php echo $event_id; ?>" value="post_attendee">
 						<input type="hidden" name="event_id" id="event_id-<?php echo $event_id; ?>" value="<?php echo $event_id; ?>">
 						<?php
+						wp_nonce_field('reg_nonce', 'reg_form_nonce');
 						//Recaptcha portion
-						if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true') {
+						if ($org_options['use_captcha'] == 'Y' && $_REQUEST['edit_details'] != 'true' && !is_user_logged_in()) {
 							if (!function_exists('recaptcha_get_html')) {
 								require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/recaptchalib.php');
 							}//End require captcha library
@@ -242,7 +259,7 @@
 							<?php echo recaptcha_get_html($org_options['recaptcha_publickey'], $error, is_ssl() ? true : false); ?> </p>
 			<?php } //End use captcha  ?>
 						<p class="event_form_submit" id="event_form_submit-<?php echo $event_id; ?>">
-							<input class="btn_event_form_submit" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit', 'event_espresso'); ?>">
+							<input class="btn_event_form_submit ui-button ui-button-big ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" id="event_form_field-<?php echo $event_id; ?>" type="submit" name="Submit" value="<?php _e('Submit', 'event_espresso'); ?>">
 						</p>
 						<?php
 					}

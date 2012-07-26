@@ -134,8 +134,9 @@ function event_espresso_txn() {
 		wp_mail($org_options['contact_email'], $subject, $body);
 		return;
 	}
+	
 	foreach ($active_gateways as $gateway => $path) {
-		require_once($path . "/init.php");
+		event_espresso_require_gateway($gateway . "/init.php");
 	}
 	$payment_data['attendee_id'] = apply_filters('filter_hook_espresso_transactions_get_attendee_id', '');
 	if ($payment_data['attendee_id'] == "") {
@@ -144,11 +145,9 @@ function event_espresso_txn() {
 		$payment_data = apply_filters('filter_hook_espresso_prepare_payment_data_for_gateways', $payment_data);
 		$payment_data = apply_filters('filter_hook_espresso_get_total_cost', $payment_data);
 		$payment_data = apply_filters('filter_hook_espresso_prepare_event_link', $payment_data);
-		if(empty($_GET['registration_id']) || $payment_data['registration_id'] != $_GET['registration_id']) die("Cheaters never win!");
+		if(espresso_return_reg_id() == false || $payment_data['registration_id'] != espresso_return_reg_id()) die(__('There was a problem finding your Registration ID', 'event_espresso'));
 		$payment_data = apply_filters('filter_hook_espresso_transactions_get_payment_data', $payment_data);
-		if(!empty($payment_data['debug'])) {
-			do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, $payment_data['debug']);
-		}
+		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => 'Payment for: '. $payment_data['lname'] . ', ' . $payment_data['fname'] . '|| registration id: ' . $payment_data['registration_id'] . '|| transaction details: ' . $payment_data['txn_details']));
 		$payment_data = apply_filters('filter_hook_espresso_update_attendee_payment_data_in_db', $payment_data);
 		do_action('action_hook_espresso_email_after_payment', $payment_data);
 		extract($payment_data);
@@ -167,8 +166,9 @@ function deal_with_ideal() {
 	if (!empty($_POST['bank_id'])) {
 		$active_gateways = get_option('event_espresso_active_gateways', array());
 		if (!empty($active_gateways['ideal'])) {
-			$path = $active_gateways['ideal'];
-			require_once($path . '/init.php');
+			foreach ($active_gateways as $gateway => $path) {
+				event_espresso_require_gateway($gateway . "/init.php");
+			}
 			$payment_data['attendee_id'] = apply_filters('filter_hook_espresso_transactions_get_attendee_id', '');
 			espresso_process_ideal($payment_data);
 		}
@@ -180,9 +180,16 @@ add_action('wp_loaded', 'deal_with_ideal');
 function espresso_email_after_payment($payment_data) {
 	global $org_options;
 	if ($payment_data['payment_status'] == 'Completed') {
-		event_espresso_send_payment_notification(array('attendee_id' => $payment_data['attendee_id']));
+		event_espresso_send_payment_notification(array('attendee_id' => $payment_data['attendee_id'], 'registration_id' => $payment_data['registration_id']));
 		if ($org_options['email_before_payment'] == 'N') {
 			event_espresso_email_confirmations(array('session_id' => $payment_data['attendee_session'], 'send_admin_email' => 'true', 'send_attendee_email' => 'true'));
 		}
 	}
+}
+// Needed for WorldPay processing
+if ( isset( $_POST[ 'name' ] ) && isset( $_POST[ 'MC_type'] ) && 'worldpay' == $_POST[ 'MC_type' ] ) {
+	$_POST['_name'] = $_POST['name'];
+	$_REQUEST['_name'] = $_POST['name'];
+	unset($_POST['name']);
+	unset($_REQUEST['name']);
 }

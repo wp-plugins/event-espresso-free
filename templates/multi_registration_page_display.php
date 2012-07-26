@@ -5,12 +5,12 @@
 global $this_event_id;
 $this_event_id = $event_id;
 ?>
-<div id="event_espresso_registration_form" class="event-display-boxes">
+<div id="event_espresso_registration_form" class="event-display-boxes multi-reg-page ui-widget">
 
 	<?php
 	$num_attendees = ' - ' . $_SESSION['espresso_session']['events_in_session'][$event_id]['attendee_quantitiy'] . __(' attendees', 'event_espresso');
 	?>
-	<h2 class="event_title" id="event_title-<?php echo $event_id; ?>">
+	<h3 class="event_title ui-widget-header ui-corner-top" id="event_title-<?php echo $event_id; ?>">
 		<?php echo stripslashes_deep($event_name) ?>
 		<?php echo $is_active['status'] == 'EXPIRED' ? ' - <span class="expired_event">Event Expired</span>' : ''; ?>
 		-
@@ -19,10 +19,10 @@ $this_event_id = $event_id;
 		<?php
 		printf(_n('%d attendee', '%d attendees', $meta['attendee_quantity'], 'event_espresso'), $meta['attendee_quantity']);
 		?>
-	</h2>
+	</h3>
 
 
-	<div class="multi_regis_form_fields" id="multi_regis_form_fields-<?php echo $event_id . '-' . $meta['price_id']; ?>">
+	<div class="multi_regis_form_fields event-data-display ui-widget-content ui-corner-bottom" id="multi_regis_form_fields-<?php echo $event_id . '-' . $meta['price_id']; ?>">
 
 		<?php
 		if ($display_desc == "Y" && $org_options['display_description_on_multi_reg_page'] != 'N') {//Show the description or not

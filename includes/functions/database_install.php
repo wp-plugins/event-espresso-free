@@ -23,6 +23,16 @@ function events_data_tables_install() {
 
 		$system_names = $wpdb->get_results($system_name_data);
 
+		$fname = false;
+		$lname = false;
+		$email = false;
+		$adress = false;
+		$adress2 = false;
+		$city = false;
+		$state = false;
+		$zip = false;
+		$phone = false;
+
 		foreach ($system_names as $system_name) {
 			switch ($system_name->system_name) {
 				case 'fname':
@@ -173,14 +183,17 @@ function events_data_tables_install() {
 		}
 	}
 
+	//This function was creating a new psot everytime EE was activated
 	function espresso_add_cancel_shortcode() {
 		global $org_options;
 		$org_options = get_option('events_organization_settings');
-		$cancel_page = get_page($org_options['cancel_return'], ARRAY_A);
-		$test = strpos($cancel_page['post_content'], '[ESPRESSO_CANCELLED]');
-		if ($test === false) {
-			$cancel_page['post_content'] = $cancel_page['post_content'] . '[ESPRESSO_CANCELLED]';
-			wp_update_post($cancel_page);
+		if (!empty($org_options['cancel_return'])) {
+			$cancel_page = get_page($org_options['cancel_return'], ARRAY_A);
+			$test = strpos($cancel_page['post_content'], '[ESPRESSO_CANCELLED]');
+			if ($test === false) {
+				$cancel_page['post_content'] = $cancel_page['post_content'] . '[ESPRESSO_CANCELLED]';
+				wp_update_post($cancel_page);
+			}
 		}
 	}
 
@@ -432,6 +445,7 @@ function events_data_tables_install() {
 					require_pre_approval int(11) DEFAULT '0',
 					timezone_string VARCHAR(250) DEFAULT NULL,
 					likes int(22) DEFAULT NULL,
+					ticket_id int(22) DEFAULT '0',
 					submitted datetime NOT NULL,
 				 PRIMARY KEY  (`id`),
 				 KEY `event_code` (`event_code`),
@@ -476,6 +490,7 @@ function events_data_tables_install() {
 				category_name VARCHAR(100) DEFAULT NULL,
 				category_identifier VARCHAR(45) DEFAULT NULL,
 				category_desc TEXT,
+				category_meta TEXT,
 				display_desc VARCHAR (4) DEFAULT NULL,
 				wp_user int(22) DEFAULT '1',
 				UNIQUE KEY id (id),

@@ -14,7 +14,7 @@ function update_event($recurrence_arr = array()) {
      * Will clean up in V 1.2.0
      *
      */
-    if (get_option('event_espresso_re_active') == 1) {
+    if (defined('EVENT_ESPRESSO_RECURRENCE_TABLE')) {
         require_once(EVENT_ESPRESSO_RECURRENCE_FULL_PATH . "functions/re_functions.php");
 
         if ($_POST['recurrence_id'] > 0) {
@@ -25,21 +25,21 @@ function update_event($recurrence_arr = array()) {
 
                 // Prepare the parameters array for use with various RE functions
                 $re_params = array(
-                    'start_date' => $_POST['recurrence_start_date'],
-                    'event_end_date' => $_POST['recurrence_event_end_date'],
-                    'end_date' => $_POST['recurrence_end_date'],
-                    'registration_start' => $_POST['recurrence_regis_start_date'],
-                    'registration_end' => $_POST['recurrence_regis_end_date'],
-                    'frequency' => $_POST['recurrence_frequency'],
-                    'interval' => $_POST['recurrence_interval'],
-                    'recurrence_type' => $_POST['recurrence_type'],
-                    'weekdays' => $_POST['recurrence_weekday'],
-                    'repeat_by' => $_POST['recurrence_repeat_by'],
-                    'recurrence_regis_date_increment' => $_POST['recurrence_regis_date_increment'],
-                    'recurrence_manual_dates' => $_POST['recurrence_manual_dates'],
-                    'recurrence_manual_end_dates' => $_POST['recurrence_manual_end_dates'],
-                    'recurrence_visibility' => $_POST['recurrence_visibility'],
-                    'recurrence_id' => $_POST['recurrence_id']
+                    'start_date' => !empty($_POST['recurrence_start_date']) ? $_POST['recurrence_start_date'] :'',
+                    'event_end_date' => !empty($_POST['recurrence_event_end_date']) ? $_POST['recurrence_event_end_date'] : '',
+                    'end_date' => !empty($_POST['recurrence_end_date']) ? $_POST['recurrence_end_date'] : '',
+                    'registration_start' => !empty($_POST['recurrence_regis_start_date']) ? $_POST['recurrence_regis_start_date'] : '',
+                    'registration_end' => !empty($_POST['recurrence_regis_end_date']) ? $_POST['recurrence_regis_end_date'] : '',
+                    'frequency' => !empty($_POST['recurrence_frequency']) ? $_POST['recurrence_frequency'] : '',
+                    'interval' => !empty($_POST['recurrence_interval']) ? $_POST['recurrence_interval'] : '',
+                    'recurrence_type' => !empty($_POST['recurrence_type']) ? $_POST['recurrence_type'] : '',
+                    'weekdays' => !empty($_POST['recurrence_weekday']) ? $_POST['recurrence_weekday'] : '',
+                    'repeat_by' => !empty($_POST['recurrence_repeat_by']) ? $_POST['recurrence_repeat_by'] : '',
+                    'recurrence_regis_date_increment' => !empty($_POST['recurrence_regis_date_increment']) ? $_POST['recurrence_regis_date_increment'] : '',
+                    'recurrence_manual_dates' => !empty($_POST['recurrence_manual_dates']) ? $_POST['recurrence_manual_dates'] : '',
+                    'recurrence_manual_end_dates' => !empty($_POST['recurrence_manual_end_dates']) ? $_POST['recurrence_manual_end_dates'] : '',
+                    'recurrence_visibility' => ''/*$_POST['recurrence_visibility']*/,
+                    'recurrence_id' => !empty($_POST['recurrence_id']) ? $_POST['recurrence_id'] : ''
                 );
 
                 //$re_params['adding_to_db'] = 'Y';
@@ -105,13 +105,13 @@ function update_event($recurrence_arr = array()) {
                                 ON EDT.id = EAT.event_id
                             WHERE EAT.id IS NULL
                             AND EDT.start_date >='" . $wpdb->escape($_POST['start_date']) . "'
-                            AND start_date NOT IN (" . $delete_in . ")
+                            AND EDT.start_date NOT IN (" . $delete_in . ")
                             AND recurrence_id = " . $_POST['recurrence_id'];
                         $UPDATE_SQL = "SELECT id,start_date,event_identifier FROM " . EVENTS_DETAIL_TABLE . " WHERE start_date >='" . $wpdb->escape($_POST['start_date']) . "' AND recurrence_id = %d AND NOT event_status = 'D'  ORDER BY start_date";
                     }
 
                     if ($delete_in != '')
-                        $wpdb->query($DEL_SQL);
+                        $wpdb->query($wpdb->prepare($DEL_SQL));
 
                     /*
                      * Add the new records based on the new formula
@@ -128,7 +128,7 @@ function update_event($recurrence_arr = array()) {
                             add_event_to_db(array(
                                 'recurrence_id' => $_POST['recurrence_id'],
                                 'recurrence_start_date' => $v['start_date'],
-                                'recurrence_event_end_date' => $v['end_date'],
+                                'recurrence_event_end_date' => $v['event_end_date'],
                                 'recurrence_end_date' => $v['start_date'],
                                 'registration_start' => $v['registration_start'],
                                 'registration_end' => $v['registration_end']));
@@ -165,7 +165,7 @@ function update_event($recurrence_arr = array()) {
 //skip the first update
     } else {
 
-        $event_mata = array(); //will be used to hold event meta data
+        $event_meta = array(); //will be used to hold event meta data
 
         $event_id = array_key_exists('event_id', $recurrence_arr) ? $recurrence_arr['event_id'] : $_REQUEST['event_id'];
         $event_name = $_REQUEST['event'];
@@ -219,8 +219,10 @@ function update_event($recurrence_arr = array()) {
         $alt_email = $_REQUEST['alt_email'];
 
         $send_mail = $_REQUEST['send_mail'];
-        $email_id = empty($_REQUEST['email_name']) ? '' : $_REQUEST['email_name'];
-
+        $email_id = isset($_REQUEST['email_name']) ? $_REQUEST['email_name'] : '0';
+		
+		$ticket_id = isset($_REQUEST['ticket_id']) ? $_REQUEST['ticket_id'] : '0';
+		
 
         $event_category = serialize(empty($_REQUEST['event_category']) ? '' : $_REQUEST['event_category']);
         $event_discount = serialize(empty($_REQUEST['event_discount']) ? '' : $_REQUEST['event_discount']);
@@ -249,13 +251,13 @@ function update_event($recurrence_arr = array()) {
         }
 
         $question_groups = serialize($_REQUEST['question_groups']);
-        $add_attendee_question_groups = serialize(empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups']);
+        $add_attendee_question_groups = empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups'];
 
-        $event_mata['default_payment_status'] = $_REQUEST['default_payment_status'];
-        $event_mata['venue_id'] = empty($_REQUEST['venue_id']) ? '' : $_REQUEST['venue_id'][0];
-        $event_mata['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
-        $event_mata['add_attendee_question_groups'] = empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups'];
-        $event_mata['date_submitted'] = $_REQUEST['date_submitted'];
+        $event_meta['default_payment_status'] = $_REQUEST['default_payment_status'];
+        $event_meta['venue_id'] = empty($_REQUEST['venue_id']) ? '' : $_REQUEST['venue_id'][0];
+        $event_meta['additional_attendee_reg_info'] = $_REQUEST['additional_attendee_reg_info'];
+        $event_meta['add_attendee_question_groups'] = $add_attendee_question_groups;//empty($_REQUEST['add_attendee_question_groups']) ? '' : $_REQUEST['add_attendee_question_groups'];
+        $event_meta['date_submitted'] = $_REQUEST['date_submitted'];
 		
 		/*
 		 * Added for seating chart addon
@@ -269,7 +271,7 @@ function update_event($recurrence_arr = array()) {
 			{
 				if ( $seating_chart_result === false )
 				{
-					$tmp_seating_chart_row = $wpdb->get_row("select seating_chart_id from ".EVENTS_SEATING_CHART_EVENT_TABLE." where event_id = $event_id");
+					$tmp_seating_chart_row = $wpdb->get_row($wpdb->prepare("select seating_chart_id from ".EVENTS_SEATING_CHART_EVENT_TABLE." where event_id = $event_id"));
 					if ( $tmp_seating_chart_row !== NULL )
 					{
 						$tmp_seating_chart_id = $tmp_seating_chart_row->seating_chart_id;
@@ -284,7 +286,7 @@ function update_event($recurrence_arr = array()) {
 				if ( $_REQUEST['allow_multiple'] == 'Y' && isset($_REQUEST['seating_chart_id']) && $tmp_seating_chart_id > 0 )
 				{
 					
-					$event_mata['additional_attendee_reg_info'] = 3;
+					$event_meta['additional_attendee_reg_info'] = 3;
 				}
 			}
 		}
@@ -292,13 +294,17 @@ function update_event($recurrence_arr = array()) {
 		 * End
 		 */
 		 
-
+		if (isset($_REQUEST['upload_image']) && !empty($_REQUEST['upload_image']) )
+			 $event_meta['event_thumbnail_url'] = $_REQUEST['upload_image'];
+			
         if ($_REQUEST['emeta'] != '') {
             foreach ($_REQUEST['emeta'] as $k => $v) {
-                $event_mata[$v] = $_REQUEST['emetad'][$k];
+                $event_meta[$v] = $_REQUEST['emetad'][$k];
             }
         }
-        $event_mata = serialize($event_mata);
+		
+		//print_r($_REQUEST['emeta'] );
+        $event_meta = serialize($event_meta);
         ############ Added by wp-developers ######################
         $require_pre_approval = 0;
         if (isset($_REQUEST['require_pre_approval'])) {
@@ -316,11 +322,11 @@ function update_event($recurrence_arr = array()) {
             'early_disc' => $early_disc, 'early_disc_date' => $early_disc_date, 'early_disc_percentage' => $early_disc_percentage, 'alt_email' => $alt_email,
             'question_groups' => $question_groups, 'allow_overflow' => $allow_overflow,
             'overflow_event_id' => $overflow_event_id, 'additional_limit' => $additional_limit,
-            'reg_limit' => $reg_limit, 'email_id' => $email_id, 'registration_startT' => $registration_startT, 'registration_endT' => $registration_endT, 'event_meta' => $event_mata, 'require_pre_approval' => $require_pre_approval, 'timezone_string' => $timezone_string);
+            'reg_limit' => $reg_limit, 'email_id' => $email_id, 'registration_startT' => $registration_startT, 'registration_endT' => $registration_endT, 'event_meta' => $event_meta, 'require_pre_approval' => $require_pre_approval, 'timezone_string' => $timezone_string, 'ticket_id' => $ticket_id);
 
         $sql_data = array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
             '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-            '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s');
+            '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d');
 
         $update_id = array('id' => $event_id);
 
@@ -337,13 +343,13 @@ function update_event($recurrence_arr = array()) {
             ///print count ($sql);
             $sql_data = array_merge((array) $sql_data, (array) '%s');
             //print count($sql_data);
-            $wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d'));
+            $wpdb->prepare($wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d')));
             /* echo 'Debug: <br />';
               print 'Number of vars: ' . count ($sql);
               echo '<br />';
               print 'Number of cols: ' . count($sql_data); */
         } else {
-            $wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d'));
+            $wpdb->prepare($wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d')));
             /* echo 'Debug: <br />';
               print 'Number of vars: ' . count ($sql);
               echo '<br />';
@@ -352,40 +358,40 @@ function update_event($recurrence_arr = array()) {
         //print $wpdb->print_error();
 
         $del_cats = "DELETE FROM " . EVENTS_CATEGORY_REL_TABLE . " WHERE event_id = '" . $event_id . "'";
-        $wpdb->query($del_cats);
+        $wpdb->query($wpdb->prepare($del_cats));
 
         if (!empty($_REQUEST['event_category'])) {
             foreach ($_REQUEST['event_category'] as $k => $v) {
                 if ($v != '') {
                     $sql_cat = "INSERT INTO " . EVENTS_CATEGORY_REL_TABLE . " (event_id, cat_id) VALUES ('" . $event_id . "', '" . $v . "')";
                     //echo "$sql_cat <br>";
-                    $wpdb->query($sql_cat);
+                    $wpdb->query($wpdb->prepare($sql_cat));
                 }
             }
         }
 
         $del_ppl = "DELETE FROM " . EVENTS_PERSONNEL_REL_TABLE . " WHERE event_id = '" . $event_id . "'";
-        $wpdb->query($del_ppl);
+        $wpdb->query($wpdb->prepare($del_ppl));
 
         if (!empty($_REQUEST['event_person'])) {
             foreach ($_REQUEST['event_person'] as $k => $v) {
                 if ($v != '') {
                     $sql_ppl = "INSERT INTO " . EVENTS_PERSONNEL_REL_TABLE . " (event_id, person_id) VALUES ('" . $event_id . "', '" . $v . "')";
                     //echo "$sql_ppl <br>";
-                    $wpdb->query($sql_ppl);
+                    $wpdb->query($wpdb->prepare($sql_ppl));
                 }
             }
         }
 
         $del_venues = "DELETE FROM " . EVENTS_VENUE_REL_TABLE . " WHERE event_id = '" . $event_id . "'";
-        $wpdb->query($del_venues);
+        $wpdb->query($wpdb->prepare($del_venues));
 
         if (!empty($_REQUEST['venue_id'])) {
             foreach ($_REQUEST['venue_id'] as $k => $v) {
                 if ($v != '' && $v != 0) {
                     $sql_venues = "INSERT INTO " . EVENTS_VENUE_REL_TABLE . " (event_id, venue_id) VALUES ('" . $event_id . "', '" . $v . "')";
                     //echo "$sql_venues <br>";
-                    $wpdb->query($sql_venues);
+                    $wpdb->query($wpdb->prepare($sql_venues));
                 }
             }
         }
@@ -398,7 +404,7 @@ function update_event($recurrence_arr = array()) {
                 if ($v != '') {
                     $sql_discount = "INSERT INTO " . EVENTS_DISCOUNT_REL_TABLE . " (event_id, discount_id) VALUES ('" . $event_id . "', '" . $v . "')";
                     //echo "$sql_discount <br>";
-                    $wpdb->query($sql_discount);
+                    $wpdb->query($wpdb->prepare($sql_discount));
                 }
             }
         }
@@ -412,7 +418,7 @@ function update_event($recurrence_arr = array()) {
                     $time_qty = empty($_REQUEST['time_qty'][$k]) ? '0' : "'" . $_REQUEST['time_qty'][$k] . "'";
                     $sql_times = "INSERT INTO " . EVENTS_START_END_TABLE . " (event_id, start_time, end_time, reg_limit) VALUES ('" . $event_id . "', '" . event_date_display($v, 'H:i') . "', '" . event_date_display($_REQUEST['end_time'][$k], 'H:i') . "', " . $time_qty . ")";
                     //echo "$sql_times <br>";
-                    $wpdb->query($sql_times);
+                    $wpdb->query($wpdb->prepare($sql_times));
                 }
             }
         }
@@ -428,18 +434,18 @@ function update_event($recurrence_arr = array()) {
                     $member_price = !empty($_REQUEST['member_price'][$k]) ? $_REQUEST['member_price'][$k] : $v;
                     $sql_prices = "INSERT INTO " . EVENTS_PRICES_TABLE . " (event_id, event_cost, surcharge, surcharge_type, price_type, member_price, member_price_type) VALUES ('" . $event_id . "', '" . $v . "', '" . $_REQUEST['surcharge'][$k] . "', '" . $_REQUEST['surcharge_type'][$k] . "', '" . $price_type . "', '" . $member_price . "', '" . $member_price_type . "')";
                     //echo "$sql_prices <br>";
-                    $wpdb->query($sql_prices);
+                    $wpdb->query($wpdb->prepare($sql_prices));
                 }
             }
         } else {
             $sql_price = "INSERT INTO " . EVENTS_PRICES_TABLE . " (event_id, event_cost, surcharge, price_type, member_price, member_price_type) VALUES ('" . $event_id . "', '0.00', '0.00', '" . __('Free', 'event_espresso') . "', '0.00', '" . __('Free', 'event_espresso') . "')";
-            if (!$wpdb->query($sql_price)) {
+            if ( !$wpdb->prepare($wpdb->query($sql_price)) ) {
                 $error = true;
             }
         }
 
         ############# MailChimp Integration ###############
-        if (get_option('event_mailchimp_active') == 'true' && $espresso_premium == true) {
+        if (defined('EVENTS_MAILCHIMP_ATTENDEE_REL_TABLE') && $espresso_premium == true) {
             MailChimpController::update_event_list_rel($event_id);
         }
         if (function_exists('espresso_fb_createevent') == 'true' && $espresso_premium == true) {
@@ -447,136 +453,143 @@ function update_event($recurrence_arr = array()) {
         }
 
         /// Create Event Post Code Here
-        switch ($_REQUEST['create_post']) {
-            case $_REQUEST['create_post'] == 'N':
-                $sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
-                $sql .= " WHERE id = '" . $event_id . "' ";
-                $wpdb->get_results($sql);
-                $post_id = $wpdb->last_result[0]->post_id;
-                if ($wpdb->num_rows > 0 && !empty($_REQUEST['delete_post']) && $_REQUEST['delete_post'] == 'Y') {
-                    $sql = array('post_id' => '', 'post_type' => '');
-                    $sql_data = array('%d', '%s');
-                    $update_id = array('id' => $event_id);
-                    $wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d'));
-                    wp_delete_post($post_id, 'true');
-                }
-                break;
+        if ( isset( $_REQUEST[ 'create_post' ] ) ) {
+            switch ( $_REQUEST[ 'create_post' ] ) {
+                case 'N':
+                    $sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
+                    $sql .= " WHERE id = '" . $event_id . "' ";
+                    $wpdb->get_results($wpdb->prepare($sql));
+                    $post_id = $wpdb->last_result[0]->post_id;
+                    if ($wpdb->num_rows > 0 && !empty($_REQUEST['delete_post']) && $_REQUEST['delete_post'] == 'Y') {
+                        $sql = array('post_id' => '', 'post_type' => '');
+                        $sql_data = array('%d', '%s');
+                        $update_id = array('id' => $event_id);
+                        $wpdb->prepare($wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d')));
+                        wp_delete_post($post_id, 'true');
+                    }
+                    break;
 
-            case $_REQUEST['create_post'] == 'Y':
-                $post_type = $_REQUEST['espresso_post_type'];
-                if ($post_type == 'post') {
-                    if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
-                        // Load message from template into message post variable
-                        ob_start();
-                        if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php")) {
-                            require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php");
+                case 'Y':
+                    $post_type = $_REQUEST['espresso_post_type'];
+                    if ($post_type == 'post') {
+                        if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php") || file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php")) {
+                            // Load message from template into message post variable
+                            ob_start();
+                            if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php")) {
+                                require_once(EVENT_ESPRESSO_TEMPLATE_DIR . "event_post.php");
+                            } else {
+                                require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php");
+                            }
+                            $post_content = ob_get_contents();
+                            ob_end_clean();
                         } else {
-                            require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "templates/event_post.php");
+                            _e('There was error finding a post template. Please verify your post templates are available.', 'event_espresso');
                         }
+                    } elseif ($post_type == 'espresso_event') {
+                        ob_start();
+                        echo $event_desc;
                         $post_content = ob_get_contents();
                         ob_end_clean();
-                    } else {
-                        _e('There was error finding a post template. Please verify your post templates are available.', 'event_espresso');
+                        // if there's a cart link shortcode in the post, replace the shortcode with one that includes the event_id
+                        if (preg_match("/ESPRESSO_CART_LINK/", $post_content)) { $post_content = preg_replace('/ESPRESSO_CART_LINK/', 'ESPRESSO_CART_LINK event_id=' . $event_id, $post_content); }
                     }
-                } elseif ($post_type == 'espresso_event') {
-                    ob_start();
-                    echo $event_desc;
-                    $post_content = ob_get_contents();
-                    ob_end_clean();
-                }
 
-                $my_post = array();
+                    $my_post = array();
 
-                $sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
-                $sql .= " WHERE id = '" . $event_id . "' ";
-                $wpdb->get_results($sql);
-                $post_id = $wpdb->last_result[0]->post_id;
+                    $sql = " SELECT * FROM " . EVENTS_DETAIL_TABLE;
+                    $sql .= " WHERE id = '" . $event_id . "' ";
+                    $wpdb->get_results($wpdb->prepare($sql));
+                    $post_id = $wpdb->last_result[0]->post_id;
 
 
-                $post_type = $_REQUEST['espresso_post_type'];
+                    $post_type = $_REQUEST['espresso_post_type'];
 
-                if ($post_id > 0)
-                    $my_post['ID'] = $post_id;
+                    if ($post_id > 0)
+                        $my_post['ID'] = $post_id;
 
-                $my_post['post_title'] = esc_html($_REQUEST['event']);
-                $my_post['post_content'] = $post_content;
-                $my_post['post_status'] = 'publish';
-                $my_post['post_author'] = $_REQUEST['user'];
-                $my_post['post_category'] = $_REQUEST['post_category'];
-                //print_r ($my_post['post_category']);
-                $my_post['tags_input'] = $_REQUEST['post_tags'];
-                $my_post['post_type'] = $post_type;
-                //print_r($my_post);
-                // Insert the post into the database
+                    $my_post['post_title'] = esc_html($_REQUEST['event']);
+                    $my_post['post_content'] = $post_content;
+                    $my_post['post_status'] = 'publish';
+					$my_post['post_author'] = !empty($_REQUEST['user']) ? $_REQUEST['user'] : '';
+          			$my_post['post_category'] = !empty($_REQUEST['post_category']) ? $_REQUEST['post_category'] : '';
+            		$my_post['tags_input'] = !empty($_REQUEST['post_tags']) ? $_REQUEST['post_tags'] : '';
+           			$my_post['post_type'] = !empty($post_type) ? $post_type : 'post';
+					
+					
+                    //print_r($my_post);
+                    // Insert the post into the database
 
 
-                if ($post_id > 0) {
-                    $post_id = wp_update_post($my_post);
-                    update_post_meta($post_id, 'event_id', $event_id);
-                    update_post_meta($post_id, 'event_identifier', $event_identifier);
-                    update_post_meta($post_id, 'event_start_date', $start_date);
-                    update_post_meta($post_id, 'event_end_date', $end_date);
-                    update_post_meta($post_id, 'event_location', $event_location);
-                    update_post_meta($post_id, 'virtual_url', $virtual_url);
-                    update_post_meta($post_id, 'virtual_phone', $virtual_phone);
-                    //
-                    update_post_meta($post_id, 'event_address', $address);
-                    update_post_meta($post_id, 'event_address2', $address2);
-                    update_post_meta($post_id, 'event_city', $city);
-                    update_post_meta($post_id, 'event_state', $state);
-                    update_post_meta($post_id, 'event_country', $country);
-                    update_post_meta($post_id, 'event_phone', $phone);
-                    update_post_meta($post_id, 'venue_title', $venue_title);
-                    update_post_meta($post_id, 'venue_url', $venue_url);
-                    update_post_meta($post_id, 'venue_phone', $venue_phone);
-                    update_post_meta($post_id, 'venue_image', $venue_image);
-                    update_post_meta($post_id, 'event_externalURL', $externalURL);
-                    update_post_meta($post_id, 'event_reg_limit', $reg_limit);
-                    update_post_meta($post_id, 'event_start_time', time_to_24hr($start_time));
-                    update_post_meta($post_id, 'event_end_time', time_to_24hr($end_time));
-                    update_post_meta($post_id, 'event_registration_start', $registration_start);
-                    update_post_meta($post_id, 'event_registration_end', $registration_end);
-                    update_post_meta($post_id, 'event_registration_startT', $registration_startT);
-                    update_post_meta($post_id, 'event_registration_endT', $registration_endT);
-                    //update_post_meta( $post_id, 'timezone_string', $timezone_string );
-                } else {
-                    $post_id = wp_insert_post($my_post);
-                    add_post_meta($post_id, 'event_id', $event_id);
-                    add_post_meta($post_id, 'event_identifier', $event_identifier);
-                    add_post_meta($post_id, 'event_start_date', $start_date);
-                    add_post_meta($post_id, 'event_end_date', $end_date);
-                    add_post_meta($post_id, 'event_location', $event_location);
-                    add_post_meta($post_id, 'virtual_url', $virtual_url);
-                    add_post_meta($post_id, 'virtual_phone', $virtual_phone);
-                    //
-                    add_post_meta($post_id, 'event_address', $address);
-                    add_post_meta($post_id, 'event_address2', $address2);
-                    add_post_meta($post_id, 'event_city', $city);
-                    add_post_meta($post_id, 'event_state', $state);
-                    add_post_meta($post_id, 'event_country', $country);
-                    add_post_meta($post_id, 'event_phone', $phone);
-                    add_post_meta($post_id, 'venue_title', $venue_title);
-                    add_post_meta($post_id, 'venue_url', $venue_url);
-                    add_post_meta($post_id, 'venue_phone', $venue_phone);
-                    add_post_meta($post_id, 'venue_image', $venue_image);
-                    add_post_meta($post_id, 'event_externalURL', $externalURL);
-                    add_post_meta($post_id, 'event_reg_limit', $reg_limit);
-                    add_post_meta($post_id, 'event_start_time', time_to_24hr($start_time));
-                    add_post_meta($post_id, 'event_end_time', time_to_24hr($end_time));
-                    add_post_meta($post_id, 'event_registration_start', $registration_start);
-                    add_post_meta($post_id, 'event_registration_end', $registration_end);
-                    add_post_meta($post_id, 'event_registration_startT', $registration_startT);
-                    add_post_meta($post_id, 'event_registration_endT', $registration_endT);
-                    //add_post_meta( $post_id, 'timezone_string', $timezone_string );
-                }
+                    if ($post_id > 0) {
+                        $post_id = wp_update_post($my_post);
+                        update_post_meta($post_id, 'event_id', $event_id);
+                        update_post_meta($post_id, 'event_identifier', $event_identifier);
+                        update_post_meta($post_id, 'event_start_date', $start_date);
+                        update_post_meta($post_id, 'event_end_date', $end_date);
+                        update_post_meta($post_id, 'event_location', $event_location);
+						update_post_meta($post_id, 'event_thumbnail_url', $event_meta['event_thumbnail_url']);
+                        update_post_meta($post_id, 'virtual_url', $virtual_url);
+                        update_post_meta($post_id, 'virtual_phone', $virtual_phone);
+                        //
+                        update_post_meta($post_id, 'event_address', $address);
+                        update_post_meta($post_id, 'event_address2', $address2);
+                        update_post_meta($post_id, 'event_city', $city);
+                        update_post_meta($post_id, 'event_state', $state);
+                        update_post_meta($post_id, 'event_country', $country);
+                        update_post_meta($post_id, 'event_phone', $phone);
+                        update_post_meta($post_id, 'venue_title', $venue_title);
+                        update_post_meta($post_id, 'venue_url', $venue_url);
+                        update_post_meta($post_id, 'venue_phone', $venue_phone);
+                        update_post_meta($post_id, 'venue_image', $venue_image);
+                        update_post_meta($post_id, 'event_externalURL', $externalURL);
+                        update_post_meta($post_id, 'event_reg_limit', $reg_limit);
+                        update_post_meta($post_id, 'event_start_time', time_to_24hr($start_time));
+                        update_post_meta($post_id, 'event_end_time', time_to_24hr($end_time));
+                        update_post_meta($post_id, 'event_registration_start', $registration_start);
+                        update_post_meta($post_id, 'event_registration_end', $registration_end);
+                        update_post_meta($post_id, 'event_registration_startT', $registration_startT);
+                        update_post_meta($post_id, 'event_registration_endT', $registration_endT);
+                        //update_post_meta( $post_id, 'timezone_string', $timezone_string );
+                    } else {
+                        $post_id = wp_insert_post($my_post);
+                        add_post_meta($post_id, 'event_id', $event_id);
+                        add_post_meta($post_id, 'event_identifier', $event_identifier);
+                        add_post_meta($post_id, 'event_start_date', $start_date);
+                        add_post_meta($post_id, 'event_end_date', $end_date);
+                        add_post_meta($post_id, 'event_location', $event_location);
+						add_post_meta($post_id, 'event_thumbnail_url', $event_meta['event_thumbnail_url']);
+                        add_post_meta($post_id, 'virtual_url', $virtual_url);
+                        add_post_meta($post_id, 'virtual_phone', $virtual_phone);
+                        //
+                        add_post_meta($post_id, 'event_address', $address);
+                        add_post_meta($post_id, 'event_address2', $address2);
+                        add_post_meta($post_id, 'event_city', $city);
+                        add_post_meta($post_id, 'event_state', $state);
+                        add_post_meta($post_id, 'event_country', $country);
+                        add_post_meta($post_id, 'event_phone', $phone);
+                        add_post_meta($post_id, 'venue_title', $venue_title);
+                        add_post_meta($post_id, 'venue_url', $venue_url);
+                        add_post_meta($post_id, 'venue_phone', $venue_phone);
+                        add_post_meta($post_id, 'venue_image', $venue_image);
+                        add_post_meta($post_id, 'event_externalURL', $externalURL);
+                        add_post_meta($post_id, 'event_reg_limit', $reg_limit);
+                        add_post_meta($post_id, 'event_start_time', time_to_24hr($start_time));
+                        add_post_meta($post_id, 'event_end_time', time_to_24hr($end_time));
+                        add_post_meta($post_id, 'event_registration_start', $registration_start);
+                        add_post_meta($post_id, 'event_registration_end', $registration_end);
+                        add_post_meta($post_id, 'event_registration_startT', $registration_startT);
+                        add_post_meta($post_id, 'event_registration_endT', $registration_endT);
+                        //add_post_meta( $post_id, 'timezone_string', $timezone_string );
+                    }
 
-                // Store the POST ID so it can be displayed on the edit page
-                $sql = array('post_id' => $post_id, 'post_type' => $post_type);
-                $sql_data = array('%d', '%s');
-                $update_id = array('id' => $event_id);
-                $wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d'));
+                    // Store the POST ID so it can be displayed on the edit page
+                    $sql = array('post_id' => $post_id, 'post_type' => $post_type);
+                    $sql_data = array('%d', '%s');
+                    $update_id = array('id' => $event_id);
+                    $wpdb->prepare($wpdb->update(EVENTS_DETAIL_TABLE, $sql, $update_id, $sql_data, array('%d')));
 
-                break;
+                    break;
+            }
         }
         ?>
         <div id="message" class="updated fade"><p><strong><?php _e('Event details updated for', 'event_espresso'); ?> <a href="<?php echo espresso_reg_url($event_id); ?>" target="_blank"><?php echo stripslashes_deep($_REQUEST['event']) ?> for <?php echo date("m/d/Y", strtotime($start_date)); ?></a>.</strong></p></div>
@@ -585,18 +598,9 @@ function update_event($recurrence_arr = array()) {
 			/*
 			 * Added for seating chart addon
 			 */
-			if ( isset($seating_chart_result) && $seating_chart_result === false )
-			{
-		?>
-        <p>Failed to associate new seating chart with this event. (Seats from current seating chart might have been used by some attendees)</p>
-        <?php	
+			if ( isset($seating_chart_result) && $seating_chart_result === false ){
+				echo '<p>Failed to associate new seating chart with this event. (Seats from current seating chart might have been used by some attendees)</p>';
 			}
-			/*
-			 * End
-			 */
-		?>   
-        
-        <?php
     }
 
     /*
@@ -625,4 +629,3 @@ function update_event($recurrence_arr = array()) {
      * End recursion, as part of recurring events.
      */
 }
-?>

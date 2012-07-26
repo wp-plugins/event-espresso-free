@@ -6,11 +6,11 @@ Donate link: http://eventespresso.com
 
 Tags: event registration, events planner, events calendar, wordpress events, event ticketing, class registration, conference registration, online registration, event management, buddypress, tickets, ticketing, ticket, registration, wordcamp, event manager, training, sports, booking
 
-Requires at least: 3.1
+Requires at least: 3.3
 
-Tested up to: 3.3
+Tested up to: 3.4.1
 
-Stable tag: 3.1.20.L
+Stable tag: 3.1.25.L
 
 Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
 
@@ -60,7 +60,7 @@ But just in case you want some **advanced features**, you can grab a copy of our
 That's not all! If you want to turbo-charge your event management, we've made it possible for you to process event registrations using your very own smartphones to scan QR codes!
 
 = Support =
-We monitor the WordPress.org support forums, but for faster support you can visit our [forum](http://www.eventespresso.com/forums/). You can also visit the Help/Support menu from the Event Espresso admin. Please visit the forums  or visit the "Help/Support" menu within the Event Espresso admin.
+We monitor the WordPress.org support forums, but for faster support you can visit our [forum](http://eventespresso.com/support/forums/). You can also visit the Help/Support menu from the Event Espresso admin. Please visit the forums  or visit the "Help/Support" menu within the Event Espresso admin.
 
 If your support issue is urgent, we also offer [priority event management support](http://eventespresso.com/support/premium-support-options/).
 
@@ -96,7 +96,7 @@ You will be able to fully manage basic events with Event Espresso lite. This wil
 
 **Do you monitor the WordPress.org support forums?**
 
-We do, although you'll find a faster response time at the [support forums on our homepage](http://www.eventespresso.com/forums/).
+We do, although you'll find a faster response time at the [support forums on our homepage](http://eventespresso.com/support/forums/).
 
 **How do I display a single event on my page?**
 
@@ -145,4 +145,4 @@ This plugin is provided "as is" and without any warranty or expectation of funct
 
 == Changelog ==
 
-The changelog for the premium version [can be found here](http://eventespresso.com/forums/2011/08/version-3-1/).
+The changelog for the premium version [can be found here](http://eventespresso.com/wiki/change-log/).

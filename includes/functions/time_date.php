@@ -195,7 +195,7 @@ if (!function_exists('event_espresso_time_dropdown')) {
         }
         $event_times = $wpdb->get_results($sql);
         if ($wpdb->num_rows == 1) {//If one result, then display the times.
-            $html .= $label == 1 ? '<span class="span_event_time_label">' . __('Start Time:', 'event_espresso') . '</span>' : '';
+            $html .= $label == 1 ? '<span class="span_event_time_label">' . __('Start Time:', 'event_espresso') . '</span> ' : '';
             foreach ($event_times as $time) {
                 $html .= '<span class="span_event_time_value">' . event_date_display($time->start_time, get_option('time_format')) . '</span>';
                 $html .= $label == 1 ? '<br /><span class="span_event_time_label">' . __('End Time: ', 'event_espresso') . '</span>' : __(' to ', 'event_espresso');
@@ -353,7 +353,7 @@ if (!function_exists('event_espresso_no_format_date')) {
     function event_espresso_no_format_date($date, $format = '') {
         $format = $format == '' ? get_option('date_format') : $format;
         if (empty($date)) {
-            echo NULL;
+            $event_date_display = NULL;
         } else {
             $event_date_display = date_i18n($format, strtotime($date)); //Fixed for international use
         }

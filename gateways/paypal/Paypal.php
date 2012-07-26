@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Paypal Class
+ * PayPal Class
  *
  * Author 		Seth Shoultes
  * @package		Event Espresso PayPal Gateway
@@ -12,7 +12,7 @@ class EE_Paypal extends PaymentGateway {
 	public $gateway_version = '1.0';
 
 	/**
-	 * Initialize the Paypal gateway
+	 * Initialize the PayPal gateway
 	 *
 	 * @param none
 	 * @return void

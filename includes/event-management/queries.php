@@ -10,20 +10,22 @@ function espresso_total_events(){
 	$this_month_r = $pieces[1];
 	$days_this_month = date('t', strtotime($curdate));
 	
-	$group = '';
+	$group = '0';
 	if (function_exists('espresso_member_data')&&espresso_member_data('role')=='espresso_group_admin'){
 		$group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
-		$group = unserialize($group);
-		$group = implode(",",$group);
+		if ($group > 0){
+			$group = unserialize($group);
+			$group = implode(",",$group);
+		}
 	}
 	
 	$sql1 = "(";
-	if ( $group != '' ){
+	if ( $group > 0 ){
 		$sql1 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
 		$sql1 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql1 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 		$sql1 .= " WHERE event_status != 'D'";
-		$sql1 .= $group != '' ? " AND l.locale_id IN (" . $group . ") " : '';
+		$sql1 .= $group > 0 ? " AND l.locale_id IN (" . $group . ") " : '';
 		$sql1 .= ") UNION (";
 	}
 	$sql1 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
@@ -56,7 +58,7 @@ function espresso_total_events_today(){
 		$sql2 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql2 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 		$sql2 .= " WHERE e.event_status != 'D' AND e.start_date = '" . $curdate . "' ";
-		$sql2 .= $group != '' ? " AND l.locale_id IN (" . $group . ") " : '';
+		$sql2 .= !empty($group) ? " AND l.locale_id IN (" . $group . ") " : '';
 		$sql2 .= ") UNION (";
 	}
 	$sql2 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
@@ -89,7 +91,7 @@ function espresso_total_events_this_month(){
 		$sql3 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql3 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 		$sql3 .= " WHERE event_status != 'D' AND start_date BETWEEN '".date('Y-m-d', strtotime($this_year_r. '-' .$this_month_r . '-01'))."' AND '".date('Y-m-d', strtotime($this_year_r . '-' .$this_month_r. '-' . $days_this_month))."' ";
-		$sql3 .= $group != '' ? " AND l.locale_id IN (" . $group . ") " : '';
+		$sql3 .= !empty($group) ? " AND l.locale_id IN (" . $group . ") " : '';
 		$sql3 .= ") UNION (";
 	}
 	$sql3 .= "SELECT e.id FROM ". EVENTS_DETAIL_TABLE." e ";
@@ -119,13 +121,13 @@ function espresso_total_events_this_month(){
 			$group = unserialize($group);
 			$asql1 .= "SELECT SUM(a.quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE. " a ";
 			$asql1 .= " JOIN ". EVENTS_DETAIL_TABLE ." e ON e.id=a.event_id ";
-			if ($group !=''){
+			if (!empty($group)){
 				$asql1 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 				$asql1 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 				$asql1 .= " $WHERE l.locale_id IN (" . implode(",",$group) . ") " ;
 				$WHERE = " AND ";
 			}
-			//$asql1 .= $group !='' ? " WHERE l.locale_id IN (" . implode(",",$group) . ") " : '';
+			//$asql1 .= !empty($group) ? " WHERE l.locale_id IN (" . implode(",",$group) . ") " : '';
 			//$asql1 .= " AND quantity >= 1 ";
 			// AND (payment_status='Completed' OR payment_status='Pending') ";
 			$asql1 .= " $WHERE event_status != 'D' ";
@@ -164,12 +166,12 @@ function espresso_total_events_this_month(){
 			$group = unserialize($group);
 			$asql2 .= "SELECT SUM(a.quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE. " a ";
 			$asql2 .= " LEFT JOIN ". EVENTS_DETAIL_TABLE ." e ON e.id=a.event_id ";
-			if ($group !=''){
+			if (!empty($group)){
 				$asql2 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 				$asql2 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 			}
 			$asql2 .= " WHERE date BETWEEN '". $curdate.' 00:00:00'."' AND '". $curdate.' 23:59:59' ."' ";
-			$asql2 .= $group !='' ? " AND l.locale_id IN (" . implode(",",$group) . ") " : '';
+			$asql2 .= !empty($group) ? " AND l.locale_id IN (" . implode(",",$group) . ") " : '';
 			$asql2 .= " AND quantity >= 1";
 			// AND (payment_status='Completed' OR payment_status='Pending') ";
 			$asql2 .= " AND event_status != 'D' ";
@@ -212,12 +214,12 @@ function espresso_total_events_this_month(){
 			$group = unserialize($group);
 			$asql3 .= "SELECT SUM(a.quantity) quantity FROM " . EVENTS_ATTENDEE_TABLE. " a ";
 			$asql3 .= " LEFT JOIN ". EVENTS_DETAIL_TABLE ." e ON e.id=a.event_id ";
-			if ($group !=''){
+			if (!empty($group)){
 				$asql3 .= " JOIN " . EVENTS_VENUE_REL_TABLE . " r ON r.event_id = e.id ";
 				$asql3 .= " JOIN " . EVENTS_LOCALE_REL_TABLE . " l ON  l.venue_id = r.venue_id ";
 			}
 			$asql3 .= " WHERE date BETWEEN '".event_espresso_no_format_date($this_year_r. '-' .$this_month_r . '-01',$format = 'Y-m-d')."' AND '".event_espresso_no_format_date($this_year_r . '-' .$this_month_r. '-' . $days_this_month,$format = 'Y-m-d')."' ";
-			$asql3 .= $group !='' ? " AND l.locale_id IN (" . implode(",",$group) . ") " : '';
+			$asql3 .= !empty($group) ? " AND l.locale_id IN (" . implode(",",$group) . ") " : '';
 			$asql3 .= " AND a.quantity >= 1 ";
 			//AND (a.payment_status='Completed' OR a.payment_status='Pending') ";
 			$asql3 .= " AND e.event_status != 'D' ";
