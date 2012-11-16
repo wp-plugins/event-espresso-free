@@ -148,4 +148,8 @@ This plugin is provided "as is" and without any warranty or expectation of funct
 
 == Changelog ==
 
+= Important Note =
+
+Backup your database before installing any updates. I recommend using a plugin like [WP DB Backup](http://wordpress.org/extend/plugins/wp-db-backup/).
+
 The changelog for the premium version [can be found here](http://eventespresso.com/wiki/change-log/).
