@@ -10,7 +10,7 @@ if (!function_exists('add_event_espresso_menus')) {
 			global $espresso_manager;
 			//echo "<pre>".print_r($espresso_manager,true)."</pre>";
 		} else {
-			$espresso_manager = array('espresso_manager_events' => '', 'espresso_manager_categories' => '', 'espresso_manager_form_groups' => '', 'espresso_manager_form_builder' => '', 'espresso_manager_groupons' => '', 'espresso_manager_discounts' => '', 'espresso_manager_event_emails' => '', 'espresso_manager_personnel_manager' => '', 'espresso_manager_general' => '', 'espresso_manager_calendar' => '', 'espresso_manager_members' => '', 'espresso_manager_payment_gateways' => '', 'espresso_manager_social' => '', 'espresso_manager_addons' => '', 'espresso_manager_support' => '', 'espresso_manager_venue_manager' => '', 'espresso_manager_event_pricing' => '', 'espresso_manager_ticketing' => '');
+			$espresso_manager = array('espresso_manager_events' => '', 'espresso_manager_categories' => '', 'espresso_manager_form_groups' => '', 'espresso_manager_form_builder' => '', 'espresso_manager_groupons' => '', 'espresso_manager_discounts' => '', 'espresso_manager_event_emails' => '', 'espresso_manager_personnel_manager' => '', 'espresso_manager_general' => '', 'espresso_manager_calendar' => '', 'espresso_manager_members' => '', 'espresso_manager_payment_gateways' => '', 'espresso_manager_social' => '', 'espresso_manager_addons' => '', 'espresso_manager_support' => '', 'espresso_manager_venue_manager' => '', 'espresso_manager_event_pricing' => '', 'espresso_manager_ticketing' => '', 'espresso_manager_seating' => '');
 		}
 
         //Main menu tab
@@ -24,7 +24,7 @@ if (!function_exists('add_event_espresso_menus')) {
 		
 		//Seating chart management
 		if ( defined('ESPRESSO_SEATING_CHART') ){
-			add_submenu_page('event_espresso', __('Event Espresso - Seating Chart','event_espresso'), __('Seating chart','event_espresso'), 'administrator', 'seating_chart', 'event_espresso_manage_seating_chart');
+			add_submenu_page('event_espresso', __('Event Espresso - Seating Chart','event_espresso'), __('Seating Chart','event_espresso'), apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_seating']), 'seating_chart', 'event_espresso_manage_seating_chart');
 		}
 		
         //Venues
@@ -45,6 +45,8 @@ if (!function_exists('add_event_espresso_menus')) {
 
         //EventCategories
         add_submenu_page('event_espresso', __('Event Espresso - Manage Event Categories', 'event_espresso'), __('Categories', 'event_espresso'), apply_filters('espresso_management_capability', 'administrator', $espresso_manager['espresso_manager_categories']), 'event_categories', 'event_espresso_categories_config_mnu');
+
+		do_action( 'action_hook_espresso_add_new_ee_submenu' );
 
         //Discounts
         if (function_exists('event_espresso_discount_config_mnu') && $espresso_premium == true) {
@@ -99,6 +101,16 @@ if (!function_exists('add_event_espresso_menus')) {
 		//Reports
 		if (function_exists('espresso_reports') && $espresso_premium == true) {
 			add_submenu_page('event_espresso', __('Event Espresso - Reports','event_espresso'), __('Reports','event_espresso'), 'administrator', 'espresso_reports', 'espresso_reports');
+		}
+		
+		//Attendee Import
+		if (function_exists('espresso_attendee_import') && $espresso_premium == true) {
+			add_submenu_page('event_espresso', __('Event Espresso - Attendee Import Tool','event_espresso'), __('Attendee Import','event_espresso'), 'administrator', 'espresso_attendee_import', 'espresso_attendee_import');
+		}
+		
+		//Voucher Import
+		if (function_exists('espresso_voucher_import') && $espresso_premium == true) {
+			add_submenu_page('event_espresso', __('Event Espresso - Voucher Import Tool','event_espresso'), __('Voucher Import','event_espresso'), 'administrator', 'espresso_voucher_import', 'espresso_voucher_import');
 		}
 
 

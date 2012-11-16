@@ -19,6 +19,18 @@ class espresso_log {
 		$folder = EVENT_ESPRESSO_UPLOAD_DIR . 'logs/';
 		//echo $folder;
 		$this->file = $folder . 'espresso_log.txt';
+		
+		$uploads = wp_upload_dir();
+		if (!is_dir(EVENT_ESPRESSO_UPLOAD_DIR) && is_writable($uploads['baseurl'])) {
+			mkdir(EVENT_ESPRESSO_UPLOAD_DIR);
+		}
+		if (!is_dir(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && is_writable(EVENT_ESPRESSO_UPLOAD_DIR)) {
+			mkdir(EVENT_ESPRESSO_UPLOAD_DIR.'logs');
+		}
+		
+		if (is_writable(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && !file_exists($this->file)) {
+			touch($this->file);
+		}
 	}
 
 	public static function singleton() {
@@ -30,9 +42,32 @@ class espresso_log {
 	}
 
 	public function log($message) {
-		$fh = fopen($this->file, 'a') or die("Cannot open file! " . $this->file);
-		fwrite($fh, '[' . date("m.d.y H:i:s") . ']' . '[' . basename($message['file']) . ']' . '[' . $message['function'] . ']' . ' [' . $message['status'] . ']//end ' . "\n");
-		fclose($fh);
+		if (is_writable($this->file)) {
+			$fh = fopen($this->file, 'a') or die("Cannot open file! " . $this->file);
+			
+			$message['file'] = ! empty( $message['file'] ) ? basename( $message['file'] ) : '';
+			$message['function'] = ! empty( $message['function'] ) ? '  -> ' . basename( $message['function'] ) : '';
+			
+			if ( is_array( $message['status'] )) {
+				$msg = '';
+				foreach ( $message['status'] as $key => $value ) {
+					$msg .= ' & ' . $key . ' = ' . $value ;
+				}
+				$message['status'] = "\n\tVARS : " . ltrim( $msg, ' & ' );				
+			} else {
+				$message['status'] = ! empty( $message['status'] ) ? "\n\t" . $message['status'] : '';
+			}			
+			
+			if ( ! empty( $message['file'] )) {
+				fwrite( $fh, '[ ' . date("Y-m-d H:i:s") . ' ]  ' . $message['file'] . $message['function'] . $message['status'] . "\n" );
+			} else {
+				fwrite( $fh, "\n\n" );
+			}
+			fclose($fh);
+		} else {
+			global $notices;
+			$notices['errors'][] = sprintf(__('Your log file is not writable. Check if your server is able to write to %s.', 'event_espresso'), $this->file);
+		}
 	}
 
 	public function __clone() {

@@ -12,9 +12,12 @@ function event_list_attendees() {
     if (!empty($_POST['delete_customer'])) {
         if (is_array($_POST['checkbox'])) {
             while (list($key, $value) = each($_POST['checkbox'])):
-                $del_id = $key;
-                $sql = "DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = '$del_id'";
-                $wpdb->query($sql);
+                $sql = "DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = '%d'";
+                $wpdb->query($wpdb->prepare($sql, $key));
+								$sql = "DELETE FROM " . EVENTS_ATTENDEE_META_TABLE . " WHERE attendee_id = '%d'";
+								$wpdb->query($wpdb->prepare($sql, $key));
+								$sql = "DELETE FROM " . EVENTS_ANSWER_TABLE . " WHERE attendee_id = '%d'";
+								$wpdb->query($wpdb->prepare($sql, $key));
             endwhile;
         }
         ?>
@@ -98,7 +101,7 @@ function event_list_attendees() {
         <th class="manage-column column-cb check-column" id="cb" scope="col" style="width: 4%;"><input type="checkbox"></th>
         <th class="manage-column column-title" id="name" scope="col" title="Click to Sort"style="width: 10%;"> <span>
           <?php _e('Attendee Name', 'event_espresso'); ?>
-          <span> <span class="sorting-indicator"></span> </th>
+          </span> <span class="sorting-indicator"></span> </th>
         <th class="manage-column column-date" id="registrationid" scope="col" title="Click to Sort" style="width: 10%;"> <span>
           <?php _e('Reg ID', 'event_espresso'); ?>
           </span> <span class="sorting-indicator"></span> </th>
@@ -144,7 +147,6 @@ function event_list_attendees() {
     $sql_a = "(";
     if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_group_admin') {
         $group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
-        $group = unserialize($group);
         $group = implode(",", $group);
         $sql_a .= "SELECT a.*, e.id event_id, e.event_name, checked_in FROM " . EVENTS_ATTENDEE_TABLE . " a ";
         $sql_a .= " LEFT JOIN " . EVENTS_DETAIL_TABLE . " e ON e.id=a.event_id ";
@@ -254,11 +256,11 @@ function event_list_attendees() {
 				
 					//echo 'Reg. Id: '.$registration_id.'<br />';
 					$registration_id = $attendee->registration_id;
-					$lname = $attendee->lname;
-					$fname = $attendee->fname;
-					$address = $attendee->address;
-					$city = $attendee->city;
-					$state = $attendee->state;
+					$lname = htmlspecialchars( stripslashes( $attendee->lname ), ENT_QUOTES, 'UTF-8' );
+					$fname = htmlspecialchars( stripslashes( $attendee->fname ), ENT_QUOTES, 'UTF-8' );
+					$address = htmlspecialchars( stripslashes( $attendee->address ), ENT_QUOTES, 'UTF-8' );
+					$city = htmlspecialchars( stripslashes( $attendee->city ), ENT_QUOTES, 'UTF-8' );
+					$state = htmlspecialchars( stripslashes( $attendee->state ), ENT_QUOTES, 'UTF-8' );
 					$zip = $attendee->zip;
 					$email = '<span style="visibility:hidden">' . $attendee->email . '</span>';
 					$phone = $attendee->phone;
@@ -287,7 +289,7 @@ function event_list_attendees() {
                 ?>
                   <tr>
                     <td class="check-column" style="padding:7px 0 22px 7px; vertical-align:top;"><input name="checkbox[<?php echo $id ?>]" type="checkbox"  title="Delete <?php echo $fname ?><?php echo $lname ?>"></td>
-                    <td class="row-title"  nowrap="nowrap"><a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;id=<?php echo $id ?>" title="<?php echo'ID#:'.$id.' [ REG#: ' . $registration_id.' ]'; ?>"><?php echo $fname ?> <?php echo $lname ?>
+                    <td class="row-title"  nowrap="nowrap"><a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;id=<?php echo $id ?>" title="<?php echo 'ID#:'.$id.' [ REG#: ' . $registration_id.' ] Email: '.$attendee->email; ?>"><?php echo $fname ?> <?php echo $lname ?> <?php echo $email ?>
                       <?php /*?><ul>
                          <?php echo $attendees_group ?>
                       </ul><?php */?>
@@ -357,12 +359,15 @@ function event_list_attendees() {
     <input name="attended_customer" type="submit" class="button-secondary" id="attended_customer" value="<?php _e('Mark as Attended', 'event_espresso'); ?>" style="margin:10px 0 0 10px;" />
     <input name="unattended_customer" type="submit" class="button-secondary" id="attended_customer" value="<?php _e('Unmark as Attended', 'event_espresso'); ?>" style="margin:10px 0 0 10px;" />
     <?php } ?>
-    <a style="margin-left:5px" class="button-primary" href="admin.php?page=events&amp;action=csv_import">
-    <?php _e('Import CSV', 'event_espresso'); ?>
-    </a> <a class="button-primary" style="margin-left:5px" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;event_id=" . $_REQUEST['event_id'] . "&amp;export=report&action=payment&amp;type=excel";
-                                    echo $_REQUEST['event_id'] == '' ? '&amp;all_events=true' : ''; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>">
+    <a style="margin-left:5px" class="button-secondary" href="admin.php?page=events&amp;action=csv_import">
+    <?php _e('Import Events', 'event_espresso'); ?>
+    </a> 
+	
+	<?php if (function_exists('espresso_attendee_import') && $espresso_premium == true) {?><a style="margin-left:5px" class="button-secondary" href="admin.php?page=espresso_attendee_import"><?php _e('Import Attendees', 'event_espresso'); ?></a><?php } ?>
+	
+	<a class="button-secondary" style="margin-left:5px" href="#" onclick="window.location='<?php echo get_bloginfo('wpurl') . "/wp-admin/admin.php?event_espresso&amp;event_id=" . $_REQUEST['event_id'] . "&amp;export=report&action=payment&amp;type=excel"; echo $_REQUEST['event_id'] == '' ? '&amp;all_events=true' : ''; ?>'" title="<?php _e('Export to Excel', 'event_espresso'); ?>">
     <?php _e('Export to Excel', 'event_espresso'); ?>
-    </a> <?php echo isset($_REQUEST['event_id']) ? '<a style="margin-left:5px"  class="button-primary"  href="admin.php?page=events&amp;event_admin_reports=add_new_attendee&amp;event_id=' . $_REQUEST['event_id'] . '">' . __('Add Attendee', 'event_espresso') . '</a>' : ''; ?> <?php echo isset($_REQUEST['event_id']) ? '<a style="margin-left:5px" class="button-primary" href="admin.php?page=events&amp;action=edit&amp;event_id=' . $_REQUEST['event_id'] . '">' . __('Edit Event', 'event_espresso') . '</a>' : ''; ?> </div>
+    </a> <?php echo isset($_REQUEST['event_id']) ? '<a style="margin-left:5px"  class="button-secondary"  href="admin.php?page=events&amp;event_admin_reports=add_new_attendee&amp;event_id=' . $_REQUEST['event_id'] . '">' . __('Add Attendee', 'event_espresso') . '</a>' : ''; ?> <?php echo isset($_REQUEST['event_id']) ? '<a style="margin-left:5px" class="button-primary" href="admin.php?page=events&amp;action=edit&amp;event_id=' . $_REQUEST['event_id'] . '">' . __('Edit Event', 'event_espresso') . '</a>' : ''; ?> </div>
 </form>
  <h4 style="clear:both"><?php _e('Legend', 'event_espresso'); ?></h4>
 <dl style="float:left; margin-left:10px; width:200px">

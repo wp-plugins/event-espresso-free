@@ -1,6 +1,6 @@
 === Event Espresso Lite - Event Management and Registration System ===
 
-Contributors: sethshoultes
+Contributors: sethshoultes,eventespresso
 
 Donate link: http://eventespresso.com
 
@@ -10,7 +10,7 @@ Requires at least: 3.3
 
 Tested up to: 3.4.1
 
-Stable tag: 3.1.25.L
+Stable tag: 3.1.28.4.L
 
 Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
 

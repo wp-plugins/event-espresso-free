@@ -890,15 +890,15 @@ function event_espresso_display_right_column() {
 							echo '<h4 style="margin:0">' . __('From the Blog', 'event_espresso') . '</h4>';
 
 							// Get RSS Feed(s)
-							@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date' => 0, 'items' => 6));
+							@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date' => 0, 'items' => 5));
 
-							echo '<h4 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h4>';
+							/*echo '<h4 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h4>';
 
 							if ($espresso_premium == true){
 								@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-support/feed', array('show_date' => 0, 'items' => 4));
 							}else{
 								@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-public/feed', array('show_date' => 0, 'items' => 4));
-							}
+							}*/
 							?>
 						</div>
 					</div>
@@ -913,27 +913,36 @@ function event_espresso_display_right_column() {
 				<div class="inside">
 					<div class="padding">
 						<ul class="infolinks">
-							<li><a href="http://eventespresso.com/support/installation/" target="_blank">
-									<?php _e('Installation &amp; Usage Guide', 'event_espresso'); ?>
+							<li>
+								<?php echo '<a href="http://eventespresso.com/wiki/installation/" target="_blank">'.__('Installation', 'event_espresso') . '</a>  &amp; <a href="http://eventespresso.com/wiki/setting-up-event-espresso/" target="_blank">' . __('Usage Guide').'</a>'; ?>
+								</li>
+							<li><a href="http://eventespresso.com/wiki/put-custom-templates/" target="_blank">
+									<?php _e('Template Customization', 'event_espresso'); ?>
 								</a></li>
-							<li><a href="http://eventespresso.com/forums/2010/09/css-classes/" target="_blank">
-									<?php _e('Customization Forums', 'event_espresso'); ?>
+							<li><a href="http://eventespresso.com/support/forums/" target="_blank">
+									<?php _e('Support Forums', 'event_espresso'); ?>
 								</a></li>
-							<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/" target="_blank">
-									<?php _e('Plugin Support Forums', 'event_espresso'); ?>
-								</a></li>
-							<li><a href="http://eventespresso.com/forums/category/general/features-requests/" target="_blank">
-									<?php _e('Feature Request Forums', 'event_espresso'); ?>
-								</a></li>
-							<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/bug-reports/" target="_blank">
-									<?php _e('Bug Submission Forums', 'event_espresso'); ?>
-								</a></li>
-							<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/news-and-updates/changelogs/" target="_blank">
+							
+							<li><a href="http://eventespresso.com/wiki/change-log/" target="_blank">
 									<?php _e('Changelog', 'event_espresso'); ?>
 								</a></li>
-							<li><a href="http://eventespresso.com/download/plugins-and-addons/">
-									<?php _e('Plugins and Addons', 'event_espresso'); ?>
+							<li><a href="http://eventespresso.com/about/" target="_blank">
+									<?php _e('Meet the Team', 'event_espresso'); ?>
 								</a></li>
+							<li><a href="http://eventespresso.com/rich-features/sponsor-new-features/" target="_blank">
+									<?php _e('Sponsor New Features!', 'event_espresso'); ?>
+								</a></li>
+							<li>
+									<?php echo '<a href="http://eventespresso.com/pricing/" target="_blank">'.__('Plugins', 'event_espresso'). '</a> &amp; <a href="http://eventespresso.com/add-ons/" target="_blank">' .__('Addons', 'event_espresso').'</a>'; ?><br />
+									<br />
+									<ol>
+						<li><a href="http://eventespresso.com/product/espresso-ticketing/" target="_blank">Ticket Scanning</a></li>
+						<li><a href="http://eventespresso.com/product/espresso-multiple/" target="_blank">Multiple Event Registration</a></li>
+						<li><a href="http://eventespresso.com/product/espresso-recurring/" target="_blank">Recurring Events</a></li>
+						<li><a href="http://eventespresso.com/product/espresso-members/" target="_blank">WP User Integration</a></li>
+						<li><a href="http://eventespresso.com/product/espresso-seating/" target="_blank">Seating Chart</a></li>
+					</ol>
+								</li>
 						</ul>
 					</div>
 				</div>
@@ -976,26 +985,34 @@ function event_espresso_get_right_column() {
 	@wp_widget_rss_output('http://eventespresso.com/feed/', array('show_date' => 0, 'items' => 6));
 	$output .= ob_get_contents();
 	ob_end_clean();
-	$output .= '<h4 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h4>';
+	/*$output .= '<h4 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h4>';
 	ob_start();
 	if ($espresso_premium == true){
 		@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-support/feed', array('show_date' => 0, 'items' => 4));
 	}else{
 		@wp_widget_rss_output('http://eventespresso.com/forum/event-espresso-public/feed', array('show_date' => 0, 'items' => 4));
-	}
+	}*/
 		
 	$output .= ob_get_contents();
 	ob_end_clean();
 	$output .= '</div></div></div></div><div id="submitdiv2" class="postbox " >';
 	$output .= '<div title="Click to toggle" class="handlediv"><br /></div><h3 class="hndle">' . __('Helpful Plugin Links', 'event_espresso') . '</h3>';
 	$output .= '<div class="inside"><div class="padding"><ul class="infolinks">';
-	$output .= '<li><a href="http://eventespresso.com/support/installation/" target="_blank">' . __('Installation &amp; Usage Guide', 'event_espresso') . '</a></li>';
-	$output .= '<li><a href="http://eventespresso.com/forums/2010/09/css-classes/" target="_blank">' . __('Customization Forums', 'event_espresso') . '</a></li>';
-	$output .= '<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/" target="_blank">' . __('Plugin Support Forums', 'event_espresso') . '</a></li>';
-	$output .= '<li><a href="http://eventespresso.com/forums/category/general/features-requests/" target="_blank">' . __('Feature Request Forums', 'event_espresso') . '</a></li>';
-	$output .= '<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/bug-reports/" target="_blank">' . __('Bug Submission Forums', 'event_espresso') . '</a></li>';
-	$output .= '<li><a href="http://eventespresso.com/forums/category/premium-plugin-support/news-and-updates/changelogs/" target="_blank">' . __('Changelog', 'event_espresso') . '</a></li>';
-	$output .= '<li><a href="http://eventespresso.com/download/plugins-and-addons/">' . __('Plugins and Addons', 'event_espresso') . '</a></li>';
+	$output .= '<li><a href="http://eventespresso.com/wiki/installation/" target="_blank">' . __('Installation', 'event_espresso') . '</a>  &amp; <a href="http://eventespresso.com/wiki/setting-up-event-espresso/" target="_blank">' . __('Usage Guide').'</a></li>';
+	$output .= '<li><a href="http://eventespresso.com/wiki/put-custom-templates/" target="_blank">' . __('Template Customization', 'event_espresso') . '</a></li>';
+	$output .= '<li><a href="http://eventespresso.com/support/forums/" target="_blank">' . __('Support Forums', 'event_espresso') . '</a></li>';
+	$output .= '<li><a href="http://eventespresso.com/rich-features/sponsor-new-features/" target="_blank">' . __('Sponsor New Features!', 'event_espresso') . '</a></li>';
+	$output .= '<li><a href="http://eventespresso.com/support/forums/" target="_blank">' . __('Bug Submission Forums', 'event_espresso') . '</a></li>';
+	$output .= '<li><a href="http://eventespresso.com/wiki/change-log/" target="_blank">' . __('Changelog', 'event_espresso') . '</a></li>';
+	$output .= '<li><a href="http://eventespresso.com/add-ons/">' . __('Plugins and Addons', 'event_espresso') . '</a>
+					<ol>
+						<li><a href="http://eventespresso.com/product/espresso-ticketing/" target="_blank">Ticket Scanning</a></li>
+						<li><a href="http://eventespresso.com/product/espresso-multiple/" target="_blank">Multiple Event Registration</a></li>
+						<li><a href="http://eventespresso.com/product/espresso-recurring/" target="_blank">Recurring Events</a></li>
+						<li><a href="http://eventespresso.com/product/espresso-members/" target="_blank">WP User Integration</a></li>
+						<li><a href="http://eventespresso.com/product/espresso-seating/" target="_blank">Seating Chart</a></li>
+					</ol>
+				</li>';
 	$output .= '</ul></div></div></div>';
 	global $espresso_premium;
 	if ($espresso_premium != true) {
@@ -1020,7 +1037,7 @@ function event_espresso_custom_email_info() {
 				<p>
 					<?php _e('For customized confirmation emails, the following tags can be placed in the email form and they will pull data from the database to include in the email.', 'event_espresso'); ?>
 				</p>
-				<p>[registration_id], [fname], [lname], [phone], [event], [event_link], [event_url], [ticket_type], [ticket_link], [qr_code], [description], [cost], [company], [co_add1], [co_add2], [co_city],[co_state], [co_zip],[contact], [payment_url], [invoice_link], [start_date], [start_time], [end_date], [end_time], [location], [location_phone], [google_map_link], [venue_title], [venue_address], [venue_url], [venue_image], [venue_phone], [custom_questions]</p>
+				<p>[registration_id], [fname], [lname], [phone], [edit_attendee_link], [event], [event_link], [event_url], [ticket_type], [ticket_link], [qr_code], [description], [cost], [company], [co_add1], [co_add2], [co_city],[co_state], [co_zip],[contact], [payment_url], [invoice_link], [start_date], [start_time], [end_date], [end_time], [location], [location_phone], [google_map_link], [venue_title], [venue_address], [venue_url], [venue_image], [venue_phone], [custom_questions]</p>
 			</div>
 		</div>
 	</div>
@@ -1037,6 +1054,7 @@ function event_espresso_custom_email_info() {
 				<p style="font-size:10px;">[qr_code] (generated by the QR Code addon, if installed)</p>
 				<p style="font-size:10px;">If you have not done so already, please submit your payment in the amount of [cost].</p>
 				<p style="font-size:10px;">Click here to review your payment information [payment_url].</p>
+				<p style="font-size:10px;">[edit_attendee_link].</p>
 				<p style="font-size:10px;">Your questions: [custom_questions].</p>
 			</div>
 		</div>
@@ -1525,4 +1543,139 @@ function espresso_pre_3_4_layout($main_post_content = '', $sidebar_content = '',
 		</div> <!-- post-body -->
 	</div> <!-- poststuff -->
 	<?php
+}
+
+/**
+ * [espresso_get_user_questions]
+ * used to get the questions for a given user_id (and system questions only if indicated)
+ * 
+ * @param  int  $user_id user_id to be retrieved.
+ * @param bool $use_filters if true (default) filters will be run.  If false then no filters are run.
+ * @param bool $num used to indicate that this is being used in the context of retrieving the number of rows (if true).
+ * @return array|bool  returns an array of question objects if there are values and false if none.
+ */
+function espresso_get_user_questions($user_id = null, $question_id = null, $use_filters = true, $num = false, $limit = null ) {
+	global $wpdb;
+
+	//first let's satisfy the query.
+	$sql = "SELECT * FROM " . EVENTS_QUESTION_TABLE . " AS q ";
+	if ( !empty($user_id) ) {
+  		$sql .= $use_filters ? apply_filters('espresso_get_user_questions_where', " WHERE (q.wp_user = '0' OR q.wp_user = '1') ", $user_id, $num) : " WHERE (q.wp_user = '0' OR q.wp_user = '1') ";
+  	}
+
+  	if ( !empty($question_id) ) {
+		$sql .= " WHERE q.id = '" . $question_id . "' ";
+	}
+
+	$sql .= " ORDER BY sequence, id ASC ";
+
+	$questions = $wpdb->get_results( $wpdb->prepare($sql) );
+
+	return ( $use_filters) ? apply_filters('espresso_get_user_questions_questions', $questions, $user_id, $num) : $questions;
+}
+
+function espresso_get_user_questions_for_group( $group_id, $user_id = null, $use_filters = true ) {
+	global $wpdb;
+	$setup_questions = $q_attached = $remaining_questions = array();
+
+	$sql = " SELECT q.id, q.question, qgr.id as rel_id, q.system_name, qg.system_group, qg.id AS group_id ";
+	$sql .= " FROM " . EVENTS_QUESTION_TABLE . " AS q ";
+    $sql .= " JOIN " . EVENTS_QST_GROUP_REL_TABLE . " AS qgr ";
+    $sql .= " on q.id = qgr.question_id ";
+    $sql .= " LEFT JOIN " . EVENTS_QST_GROUP_TABLE . " AS qg ";
+    $sql .= " on qg.id = qgr.group_id ";
+    //$sql .= $use_filters ? apply_filters('espresso_get_user_questions_for_group', " WHERE q.wp_user = '0' OR q.wp_user = '1' ", $group_id, $user_id) : " WHERE q.wp_user = '0' OR q.wp_user = '1' ";
+    $sql .= " WHERE qgr.group_id = " . $group_id;
+    $sql .= " ORDER BY q.sequence, q.id ASC ";
+
+    $questions = $wpdb->get_results($wpdb->prepare($sql) );
+
+    foreach ( $questions as $question ) {
+  		$q_attached[] = $question->id;
+    	if ( $question->group_id == $group_id ) {
+    		$setup_questions['questions_in_group'][] = $question;
+    	} else {
+    		$remaining_questions[] = $question;
+    	}
+    }
+
+    //okay it's possible that we'll have questions not included in this group but we still need to display them.
+	$e_sql_where = $use_filters ? apply_filters('espresso_get_user_questions_for_group_extra_attached', " WHERE ( q.wp_user = '0' OR q.wp_user = '1') ", $group_id, $user_id) :  " AND ( q.wp_user = '0' OR q.wp_user = '1') ";
+	$e_sql_where .= ( !empty($q_attached) ) ? " AND q.id NOT IN (" . implode(',', $q_attached) . ")" : '';
+    $e_sql = "SELECT q.id, q.question, q.system_name FROM " . EVENTS_QUESTION_TABLE . " AS q " . $e_sql_where;
+    $ex_questions = $wpdb->get_results($e_sql);
+    $remaining_questions = array_merge( $remaining_questions, $ex_questions);
+ 
+
+	$setup_questions['remaining_questions'] = $remaining_questions;
+	
+    return $setup_questions;
+}
+
+/**
+ * [espresso_set_default_user_questions_groups]
+ * This function is used when a user doesn't have system questions or groups associated with their id (when there are bugs from previous versions).  This will take care of fixing that by saving system questions/groups for their user_id.  NOTE, if there are no system questions then it means that the system group has not been set up for this user either. 
+ * @param  int $user_id          
+ * @param array $return_type whether we should return the new question groups or the questions
+ * @return array returns the new array of question objects (for the given user
+ */
+function espresso_set_default_user_questions_groups($user_id, $return_type = 'questions') {
+	global $wpdb;
+	$user_id = (int) $user_id;
+
+	//let's check and see if there are any system groups first.
+	
+}
+
+/**
+ * utility function to get user question groups.
+ * @param  int $user_id
+ * @param bool $use_filters if true (default) filters will be run.  If false then no filters are run.
+ * @param bool $num used to indicate that this is being used in the context of retrieving the number of rows (if true).
+ * @return array          array of group objects
+ */
+function espresso_get_user_question_groups($user_id = null, $use_filters = true, $num = false, $group_id = null ) {
+	global $wpdb;
+	$sql = "SELECT * FROM " . EVENTS_QST_GROUP_TABLE . " AS qg ";
+	if ( !empty($user_id) ) {
+  		$sql .= $use_filters ? apply_filters('espresso_get_user_question_groups_where', " WHERE (qg.wp_user = '0' OR qg.wp_user = '1' ) ", $user_id, $num) : " WHERE (qg.wp_user = '0' OR qg.wp_user = '1' ) ";
+  	}
+
+  	if ( !empty($group_id) ) {
+  		$sql .= " WHERE qg.id = '" . $group_id . "' ";
+  	} 
+
+	$sql .= ( empty($group_id) ) ? " ORDER BY id ASC " : " ORDER BY group_order ";
+
+	$groups = $wpdb->get_results( $wpdb->prepare($sql) );
+
+	return $use_filters ? apply_filters('espresso_get_user_groups_groups', $groups, $user_id, $num) : $groups;		
+}
+
+function espresso_get_question_groups_for_event( $existing_question_groups = array(), $limit = null, $use_filters = true, $event ) {
+	global $wpdb;
+	$event_groups = array();
+	$selected = $unselected = array();
+	$sql = "SELECT qg.* FROM " . EVENTS_QST_GROUP_TABLE . " AS qg ";
+	$sql .= $use_filters ? apply_filters('espresso_get_question_groups_for_event_where', " WHERE (qg.wp_user = '0' OR qg.wp_user = '1' ) ", $existing_question_groups, $event ) : " WHERE (qg.wp_user = '0' OR qg.wp_user = '1' ) ";
+	$sql .= " GROUP BY qg.id ORDER BY qg.system_group, qg.group_order "; 
+
+	$question_groups = $wpdb->get_results( $wpdb->prepare($sql) );
+
+	//let's setup data.
+	$count_row = 0;  
+	if ( count($question_groups) > 0 ) {
+		foreach ( $question_groups  as $group ) {
+			if ( $group->system_group == 1 || in_array($group->id, $existing_question_groups) )
+				$selected[] = $group;
+			else
+				$unselected[] = $group;
+			$count_row++;
+		}
+		$event_groups = array_merge($selected, $unselected);
+		$event_groups = empty($limit) ? $event_groups : array_slice( $event_groups, 0 , 2 );
+	}
+
+	return ($use_filters) ? apply_filters('espresso_get_question_groups_for_event_groups', $event_groups, $existing_question_groups, $event) : $event_groups;
+
 }
