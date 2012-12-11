@@ -8,9 +8,9 @@ Tags: event registration, events planner, events calendar, wordpress events, eve
 
 Requires at least: 3.3
 
-Tested up to: 3.4.1
+Tested up to: 3.5
 
-Stable tag: 3.1.28.4.L
+Stable tag: 3.1.29.1.L
 
 Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
 
