@@ -1,5 +1,4 @@
 <?php
-
 //Function to check if an array is empty
 function isEmptyArray($array) {
 	$my_not_empty = create_function('$v', 'return strlen($v) > 0;');
@@ -117,7 +116,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
 
 	function event_espresso_additional_attendees( $event_id = 0, $additional_limit = 2, $available_spaces = 999, $label = '', $show_label = true, $event_meta = '', $qstn_class = '' ) {
 		$event_id = $event_id == 0 ? $_REQUEST['event_id'] : $event_id;
-
+		global $espresso_premium;
 		if ($event_meta == 'admin') {
 			$admin = true;
 			$event_meta = '';
@@ -132,7 +131,7 @@ if (!function_exists('event_espresso_additional_attendees')) {
 
 
 		$i = 0;
-		if (isset($event_meta['additional_attendee_reg_info']) && $event_meta['additional_attendee_reg_info'] == 1) {
+		if ( (isset($event_meta['additional_attendee_reg_info']) && $event_meta['additional_attendee_reg_info'] == 1) || $espresso_premium == FALSE ) {
 		
 			$label = $label == '' ? __('Number of Tickets', 'event_espresso') : $label;
 			$html = '<p class="espresso_additional_limit highlight-bg">';
