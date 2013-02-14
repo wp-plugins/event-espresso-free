@@ -45,7 +45,127 @@ function espresso_getTinyUrl($url) {
 //Text formatting function.
 //This should fix all of the formatting issues of text output from the database.
 function espresso_format_content($content = '') {
-	return wpautop(stripslashes_deep(html_entity_decode(do_shortcode($content), ENT_QUOTES, "UTF-8")));
+	$allowed_tags = '
+<!-->
+<a>
+<abbr>
+<acronym>
+<address>
+<applet>
+<area>
+<article>
+<aside>
+<audio>
+<b>
+<base>
+<basefont>
+<bdi>
+<bdo>
+<big>
+<blockquote>
+<body>
+<br>
+<button>
+<canvas>
+<caption>
+<center>
+<cite>
+<code>
+<col>
+<colgroup>
+<command>
+<datalist>
+<dd>
+<del>
+<details>
+<dfn>
+<dir>
+<div>
+<dl>
+<dt>
+<em>
+<embed>
+<fieldset>
+<figcaption>
+<figure>
+<font>
+<footer>
+<form>
+<frame>
+<frameset>
+<head>
+<header>
+<hgroup>
+<h1>
+<h2>
+<h3>
+<h4>
+<h5>
+<h6>
+<hr>
+<html>
+<i>
+<iframe>
+<img>
+<input>
+<ins>
+<kbd>
+<keygen>
+<label>
+<legend>
+<li>
+<link>
+<map>
+<mark>
+<menu>
+<meta>
+<meter>
+<nav>
+<noframes>
+<object>
+<ol>
+<optgroup>
+<option>
+<output>
+<p>
+<param>
+<pre>
+<progress>
+<q>
+<rp>
+<rt>
+<ruby>
+<s>
+<samp>
+<section>
+<select>
+<small>
+<source>
+<span>
+<strike>
+<strong>
+<style>
+<sub>
+<summary>
+<sup>
+<table>
+<tbody>
+<td>
+<textarea>
+<tfoot>
+<th>
+<thead>
+<time>
+<title>
+<tr>
+<track>
+<tt>
+<u>
+<ul>
+<var>
+<video>
+<wbr>';
+	return strip_tags(wpautop(stripslashes_deep(html_entity_decode(do_shortcode($content), ENT_QUOTES, "UTF-8"))),$allowed_tags);
 }
 
 //This function pulls HTML entities back into HTML format first then strips it.
@@ -116,8 +236,9 @@ function espresso_reg_sessionid($registration_id) {
 if (!function_exists('event_espresso_additional_attendees')) {
 
 	function event_espresso_additional_attendees( $event_id = 0, $additional_limit = 2, $available_spaces = 999, $label = '', $show_label = true, $event_meta = '', $qstn_class = '' ) {
-		$event_id = $event_id == 0 ? $_REQUEST['event_id'] : $event_id;
 		global $espresso_premium;
+		$event_id = $event_id == 0 ? $_REQUEST['event_id'] : $event_id;
+
 		if ($event_meta == 'admin') {
 			$admin = true;
 			$event_meta = '';
@@ -856,6 +977,7 @@ if (!function_exists('espresso_google_map_link')) {
 		$type = isset($type) ? "{$type}" : "";
 		$map_w = isset($map_w) ? "{$map_w}" : 400;
 		$map_h = isset($map_h) ? "{$map_h}" : 400;
+		$map_image_class = isset($map_image_class) ? "{$map_image_class}" : '';
 
 		$gaddress = ($address != '' ? $address : '') . ($city != '' ? ',' . $city : '') . ($state != '' ? ',' . $state : '') . ($zip != '' ? ',' . $zip : '') . ($country != '' ? ',' . $country : '');
 
@@ -1178,7 +1300,7 @@ function espresso_get_primary_attendee_id($registration_id) {
 	}
 }
 
-function espresso_ticket_links($registration_id, $attendee_id) {
+function espresso_ticket_links($registration_id, $attendee_id, $email = FALSE) {
 	global $wpdb;
 	$sql = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE;
 	if (espresso_is_primary_attendee($attendee_id) != true) {
@@ -1190,18 +1312,28 @@ function espresso_ticket_links($registration_id, $attendee_id) {
 	$attendees = $wpdb->get_results($sql);
 	$ticket_link = '';
 	if ($wpdb->num_rows > 0) {
-		$group = $wpdb->num_rows > 1 ? '<strong>' . sprintf(__('Tickets Purchased (%s):', 'event_espresso'), $wpdb->num_rows) . '</strong><br />' : '';
+		
 		$break = '<br />';
+		$group = $wpdb->num_rows > 1 ? sprintf(__('Tickets Purchased (%s):', 'event_espresso'), $wpdb->num_rows).$break : __('Download/Print Ticket:', 'event_espresso').$break;
+		
 		foreach ($attendees as $attendee) {
 			$ticket_url = get_option('siteurl') . "/?download_ticket=true&amp;id=" . $attendee->id . "&amp;r_id=" . $attendee->registration_id;
 			if (function_exists('espresso_ticket_launch')) {
 				$ticket_url = espresso_ticket_url($attendee->id, $attendee->registration_id);
 			}
-			$ticket_link .= '<a href="' . $ticket_url . '">' . __('Download/Print Ticket') . ' (' . $attendee->fname . ' ' . $attendee->lname . ')' . '</a>' . $break;
+			$ticket_link .= '<a href="' . $ticket_url . '" target="_blank">' . $attendee->fname . ' ' . $attendee->lname . '</a>' . $break;
 		}
-		return '<p>' . $group . $ticket_link . '</p>';
+		
+		if ($email == TRUE){
+			$text = '<p>' . $group . $ticket_link .'</p>';
+		}else{
+			$text = $ticket_link;
+		}
+		
+		return $text;
 	}
 }
+
 
 /**
  * Function espresso_get_attendee_coupon_discount

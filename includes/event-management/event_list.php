@@ -134,7 +134,7 @@ function event_espresso_edit_list() {
 			
 			//Month filter
 			if ( $month_range !== FALSE ) {
-				$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-31')) . "' ";
+				$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-' .date('t', strtotime($month_range )))) . "' ";
 			}
 			
 			//Todays events filter
@@ -197,8 +197,8 @@ function event_espresso_edit_list() {
 	$sql .= $category_id !== FALSE ? " AND c.id = '" . $category_id . "' " : '';
 	
 	//Month filter
-	if ($_POST['month_range'] != '') {
-		$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-31')) . "' ";
+	if (isset($_POST['month_range']) && !empty($_POST['month_range']) ? $_POST['month_range'] : '') {
+		$sql .= " AND e.start_date BETWEEN '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-01')) . "' AND '" . date('Y-m-d', strtotime($year_r . '-' . $month_r . '-' .date('t', strtotime($month_range )))) . "' ";
 	}
 	
 	//Todays events filter
@@ -238,7 +238,7 @@ function event_espresso_edit_list() {
 			<input name="start_rec" value="<?php echo $start_rec ?>" class="textfield" type="hidden">
 			<?php
 				if ( $start_rec > 0 && $max_rows < 100000 ) {
-					$prev_rows = $start_rec > $max_rows ? ( $start_rec - $max_rows - 1 ) : 0;
+					$prev_rows = $start_rec > $max_rows ? ( $start_rec - $max_rows ) : 0;
 					$prev_rows_url = add_query_arg( array( 'max_rows' => $max_rows, 'start_rec' => $prev_rows ), EVT_ADMIN_URL ); 
 			?>
 			<a id="event-admin-load-prev-rows-btn" href="<?php echo $prev_rows_url; ?>" title="load prev rows" class="button-secondary">
@@ -247,13 +247,27 @@ function event_espresso_edit_list() {
 			<?php } ?>
 			<?php 			
 				if ( $total_events >= $max_rows && $max_rows < 100000 ) {
-					$next_rows = $start_rec + $max_rows + 1;
+					$next_rows = $start_rec + $max_rows;
 					$next_rows_url = add_query_arg( array( 'max_rows' => $max_rows, 'start_rec' => $next_rows ), EVT_ADMIN_URL ); 
 			?>
 			<a id="event-admin-load-next-rows-btn" href="<?php echo $next_rows_url; ?>" title="load next rows" class="button-secondary">
 			<?php echo __('Next', 'event_espresso') . ' ' . $max_rows  . ' ' .  __('rows', 'event_espresso'); ?>
 			</a> 
 			<?php } ?>
+			<?php 
+				if (isset($_POST['month_range'])){
+					echo '<input name="month_range" type="hidden" value="'.$_POST['month_range'].'" />';
+				}
+				if (isset($_POST['category_id'])){
+					echo '<input name="category_id" type="hidden" value="'.$_POST['category_id'].'" />';
+				}
+				if (isset($_POST['payment_status'])){
+					echo '<input name="payment_status" type="hidden" value="'.$_POST['payment_status'].'" />';
+				}
+				if (isset($_POST['event_status'])){
+					echo '<input name="event_status" type="hidden" value="'.$_POST['event_status'].'" />';
+				}
+			?>
 		</div>
 	</form>
 

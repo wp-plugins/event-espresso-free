@@ -102,9 +102,11 @@ function events_payment_page( $attendee_id = FALSE, $notifications = array() ) {
 	$conf_mail = isset( $event->conf_mail ) ? $event->conf_mail : '';
 
  	$final_price = (float)$final_price;
-    $event_price_x_attendees = number_format( $final_price * $num_people, 2, '.', '' );
+    //$event_price_x_attendees = number_format( $final_price * $num_people, 2, '.', '' );
     $event_original_cost = $orig_price;
 	
+	// update total cost for primary attendee
+	$total_cost = (float)$final_price * (int)$num_people;
 
 	// Added for seating chart addon
 	// This code block overrides the cost using seating chart add-on price
@@ -116,18 +118,16 @@ function events_payment_page( $attendee_id = FALSE, $notifications = array() ) {
 		$SQL .= "WHERE ea.registration_id = %s";  
 		
         if ( $seat = $wpdb->get_row( $wpdb->prepare( $SQL, $registration_id ))) {
-            $final_price = number_format( $seat->purchase_price, 2, '.', '' );
-            $event_price_x_attendees = (float)$final_price;
+            $total_cost = number_format( $seat->purchase_price, 2, '.', '' );
+            //$event_price_x_attendees = (float)$final_price;
         } 
 	 
 	} 
 
-	$final_price = (float)$final_price;
-
-	if ( $final_price == 0 ) {
+	if ( $total_cost == 0 ) {
 		$payment_status = __('Completed', 'event_espresso');
 		$today = date(get_option('date_format'));
-		$data = array('amount_pd' => $final_price, 'payment_status' => $payment_status, 'payment_date' => $today);
+		$data = array('amount_pd' => 0.00, 'payment_status' => $payment_status, 'payment_date' => $today);
 		$format = array('%f', '%s', '%s');
 		$update_id = array('id' => $attendee_id);
 		$wpdb->update(EVENTS_ATTENDEE_TABLE, $data, $update_id, $format, array('%d'));
@@ -135,11 +135,7 @@ function events_payment_page( $attendee_id = FALSE, $notifications = array() ) {
 		if (espresso_count_attendees_for_registration($attendee_id) > 1) {
 			$wpdb->query("UPDATE " . EVENTS_ATTENDEE_TABLE . " SET payment_status = '$payment_status' WHERE registration_id ='" . $registration_id . "'");
 		}
-	}
-
-	// update total cost for primary attendee
-	$total_cost = $final_price * (int)$num_people;
-
+	}	
 
 	if ( function_exists( 'espresso_update_attendee_coupon_info' ) && $attendee_id && ! empty( $attendee->coupon_code )) {
 		espresso_update_attendee_coupon_info( $attendee_id, $attendee->coupon_code  );
@@ -364,8 +360,10 @@ function espresso_confirm_registration() {
 //This is the alternate PayPal button used for the email
 function event_espresso_pay() {
 
+	ob_start();
+	
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');		
-	global $wpdb, $org_options;
+	global $wpdb, $org_options, $espresso_content;
 
 	$payment_data= array( 'attendee_id' => '' );
 
@@ -436,5 +434,11 @@ function event_espresso_pay() {
 	$_REQUEST['page_id'] = $org_options['return_url'];
 	unset( $_SESSION['espresso_session']['id'] );
 	ee_init_session();
+	
+	$espresso_content = ob_get_contents();
+	ob_end_clean();
+	add_shortcode('ESPRESSO_PAYMENTS', 'espresso_return_espresso_content');
+	return $espresso_content;
+	
 }
 
