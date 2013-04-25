@@ -1142,6 +1142,13 @@ function espresso_email_message($id) {
 	return $email_data;
 }
 
+/**
+ * Echoes out the HTML for the even category dropdown. 
+ * Returns true if its outputted, false if we decdied not to output it.
+ * @global type $wpdb
+ * @param type $current_value
+ * @return boolean
+ */
 function espresso_category_dropdown($current_value = '') {
 	global $wpdb;
 
@@ -1163,8 +1170,9 @@ function espresso_category_dropdown($current_value = '') {
 			echo '>' . stripslashes_deep($row["category_name"]) . '</option>' . "\n";
 		}
 		echo "</select>";
+		return true;
 	} else {
-		return;
+		return false;
 	}
 }
 
@@ -1324,7 +1332,7 @@ if (!function_exists('espresso_event_list_attendee_title')) {
 function espresso_payment_reports($atts) {
 	global $wpdb;
 	extract($atts);
-	$sql = "SELECT SUM(a.amount_pd) quantity FROM " . EVENTS_ATTENDEE_TABLE . " a WHERE a.quantity >= 1 AND a.payment_status='Completed' AND a.event_id = '" . $event_id . "' ";
+	$sql = "SELECT SUM(a.amount_pd) quantity FROM " . EVENTS_ATTENDEE_TABLE . " a WHERE a.quantity >= 1 AND (a.payment_status='Completed' OR a.payment_status='Refund') AND a.event_id = '" . $event_id . "' ";
 	$payments = $wpdb->get_results($sql, ARRAY_A);
 	$total = 0;
 	if ($wpdb->num_rows > 0 && $wpdb->last_result[0]->quantity != NULL) {

@@ -7,12 +7,12 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 3.1.30.7L
+  Version: 3.1.31.3.L
 
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
 
-  Copyright (c) 2008-2012 Event Espresso  All Rights Reserved.
+  Copyright (c) 2008-2013 Event Espresso  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 //Define the version of the plugin
 function espresso_version() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	return '3.1.30.7L';
+	return '3.1.31.3.L';
 }
 
 //This tells the system to check for updates to the paid version
@@ -535,6 +535,7 @@ if (is_admin()) {
 	do_action('action_hook_espresso_recurring_update_api');
 	do_action('action_hook_espresso_ticketing_update_api');
 	do_action('action_hook_espresso_mailchimp_update_api');
+	do_action('action_hook_espresso_json_update_api');
 	
 	//New form builder
 	require_once("includes/form-builder/index.php");
@@ -737,6 +738,7 @@ if (!function_exists('espresso_load_jquery')) {
 				wp_enqueue_script('ee_ajax_request', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/espresso_cart_functions.js', array('jquery'));
 				$EEGlobals = array('ajaxurl' => admin_url('admin-ajax.php'), 'plugin_url' => EVENT_ESPRESSO_PLUGINFULLURL, 'event_page_id' => $org_options['event_page_id']);
 				wp_localize_script('ee_ajax_request', 'EEGlobals',$EEGlobals );
+				wp_enqueue_script('jquery-migrate', 'http://code.jquery.com/jquery-migrate-1.1.1.min.js', array('jquery'));
 			}
 		}
 		
@@ -815,7 +817,7 @@ function add_espresso_themeroller_stylesheet() {
 
 			//Load the themeroller base style sheet
 			//If the themeroller-base.css is in the uploads folder, then we will use it instead of the one in the core
-			if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . $themeroller_style_path . 'themeroller-base.css')) {
+			if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'themeroller/themeroller-base.css')) {
 				wp_register_style('espresso_themeroller_base', $themeroller_style_path . 'themeroller-base.css');
 			} else {
 				wp_register_style('espresso_themeroller_base', EVENT_ESPRESSO_PLUGINFULLURL . 'templates/css/themeroller/themeroller-base.css');
@@ -889,9 +891,20 @@ if (!function_exists('event_espresso_run')) {
 
 		// Get action type
 		$regevent_action = isset($_REQUEST['regevent_action']) ? $_REQUEST['regevent_action'] : '';
-
-		if (isset($_REQUEST['ee'])) {
+		
+		if (isset($_REQUEST['event_id']) && !empty($_REQUEST['event_id'])) {
+			$_REQUEST['event_id'] = wp_strip_all_tags( absint($_REQUEST['event_id']) );
+		}
+		
+		if (isset($_REQUEST['form_action']) && !empty($_REQUEST['form_action'])) {
+			if (isset($_REQUEST['form_action']) && !$_REQUEST['form_action'] == 'edit_attendee' ) {
+				$_REQUEST['primary'] = wp_strip_all_tags( absint($_REQUEST['primary']) );
+			}
+		}
+		
+		if (isset($_REQUEST['ee']) && !empty($_REQUEST['ee'])) {
 			$regevent_action = "register";
+			$_REQUEST['ee'] = wp_strip_all_tags( absint($_REQUEST['ee']) );
 			$_REQUEST['event_id'] = $_REQUEST['ee'];
 		}
 
@@ -990,7 +1003,7 @@ if (is_admin()) {
 	add_action('admin_init', 'espresso_check_data_tables' );
 	
 	//Check to make sure there are no empty registration id fields in the database.
-	if (event_espresso_verify_attendee_data() == true && $_POST['action'] != 'event_espresso_update_attendee_data') {
+	if (event_espresso_verify_attendee_data() == true && isset($_POST['action']) && $_POST['action'] != 'event_espresso_update_attendee_data') {
 		add_action('admin_notices', 'event_espresso_registration_id_notice');
 	}
 
@@ -1073,9 +1086,17 @@ function espresso_check_data_tables() {
 
 	// check if db has been updated, cuz autoupdates don't trigger database install script
 	$espresso_db_update = get_option( 'espresso_db_update' );
+	// chech that option is an array
 	if( ! is_array( $espresso_db_update )) {
-		$espresso_db_update = array( $espresso_db_update );
-		update_option( 'espresso_db_update', $espresso_db_update );
+		// if option is FALSE, then it never existed
+		if ( $espresso_db_update === FALSE ) {
+			// create coption with autoload OFF
+			add_option( 'espresso_db_update', array(), '', 'no' );
+		} else {
+			// option is NOT FALSE but also is NOT an array, so make it an array and save it
+			$espresso_db_update =  array( $espresso_db_update );
+			update_option( 'espresso_db_update', $espresso_db_update );
+		}
 	}
 	
 	// if current EE version is NOT in list of db updates, then update the db
@@ -1090,6 +1111,8 @@ function espresso_check_data_tables() {
 		// and set WP option
 		add_option( 'espresso_data_migrations', array(), '', 'no' );
 	}
+	// assume everything is good
+	$existing_migrations_error = FALSE;
 	
 	// check separately if data migration from pre 3.1.28 versions to 3.1.28 has already been performed
 	// because this data migration didn't use the new system for tracking migrations
@@ -1098,7 +1121,7 @@ function espresso_check_data_tables() {
 		$existing_data_migrations[ $attendee_cost_table_fix_3_1_28 ][] = 'espresso_copy_data_from_attendee_cost_table';
 		// the delete the old tracking method
 		delete_option( 'espresso_data_migrated' );
-	}	
+	}
 
 	// array of all previous data migrations to date
 	// using the name of the callback function for the value
@@ -1109,15 +1132,37 @@ function espresso_check_data_tables() {
 	
 	// temp array to track scripts we need to run 
 	$scripts_to_run = array();
+	// for tracking script errors
+	$previous_script = '';
 	// if we don't need them, don't load them
 	$load_data_migration_scripts = FALSE;
-	
-	if ( ! empty( $existing_data_migrations )) {
-	
+	// have we already performed some data migrations ?
+	if ( ! empty( $existing_data_migrations )) {	
 		// loop through all previous migrations
 		foreach ( $existing_data_migrations as $ver => $migrations ) {
+			// ensure that migrations is an array, then loop thru it
 			$migrations = is_array( $migrations ) ? $migrations : array( $migrations );
-			foreach ( $migrations as $migration_func ) {
+			foreach ( $migrations as $key => $value ) {
+				// check format of $key
+				if ( is_numeric( $key )) {
+					// $existing_migrations array might be corrupted
+					$existing_migrations_error = TRUE;
+					unset( $existing_data_migrations[ $ver ][ $key ] );
+					$existing_data_migrations[ $ver ][ $value ] = array();
+					// track script
+					if ( $value != $previous_script ) {
+						$previous_script = $value;
+						// numeric key means that it is NOT the callback function
+						// therefore the callback function is the value
+						$migration_func = $value;
+						$errors_array = array();
+					} 
+
+				} else {
+					// callback function is the key
+					$migration_func = $key;
+					$errors_array = $value;
+				}
 				// make sure they have been executed
 				if ( ! in_array( $migration_func, $espresso_data_migrations )) {		
 					// ok NOW load the scripts
@@ -1131,13 +1176,20 @@ function espresso_check_data_tables() {
 		$load_data_migration_scripts = TRUE;
 		$scripts_to_run = $espresso_data_migrations;
 	}
-	
 
-	if ( $load_data_migration_scripts ) {
+	// Houston... we might have a problem ?!?!
+	if ( $existing_migrations_error ) {
+		delete_option( 'espresso_data_migrated' );
+		add_option( 'espresso_data_migrations', $existing_data_migrations, '', 'no' );
+	}
+
+	if ( $load_data_migration_scripts && ! empty( $scripts_to_run )) {
 		require_once( 'includes/functions/data_migration_scripts.php' );		
 		// run the appropriate migration script
 		foreach( $scripts_to_run as $migration_func ) {
-			call_user_func( $migration_func );		
+			if ( function_exists( $migration_func )) {
+				call_user_func( $migration_func );
+			}		
 		}
 	}
 

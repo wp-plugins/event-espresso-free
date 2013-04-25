@@ -459,6 +459,7 @@ function events_data_tables_install() {
 			  meta_key varchar(255) DEFAULT NULL,
 			  meta_value longtext,
 			  date_added datetime DEFAULT NULL,
+			  date_updated datetime DEFAULT NULL,
   			  PRIMARY KEY  (ameta_id),
 			  KEY attendee_id (attendee_id)";
 	event_espresso_run_install($table_name, $table_version, $sql);
@@ -767,6 +768,13 @@ function events_data_tables_install() {
 	espresso_added_by_admin_session_id_fix();
 	espresso_add_cancel_shortcode();
 	
-	add_option( 'espresso_db_update', EVENT_ESPRESSO_VERSION, '', 'no' );
+	// grab espresso_db_update option
+	$espresso_db_update = get_option( 'espresso_db_update', array() );
+	// make sure it's an array
+	$espresso_db_update = is_array( $espresso_db_update ) ? $espresso_db_update : array( $espresso_db_update );
+	// add current EE version to list
+	$espresso_db_update[] = EVENT_ESPRESSO_VERSION;
+	// resave
+	update_option( 'espresso_db_update', $espresso_db_update );
 
 }

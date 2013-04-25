@@ -1,34 +1,36 @@
-<?php
-function event_list_attendees() {
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }	
 
-    global $wpdb, $org_options, $ticketing_installed, $espresso_premium;
+function event_list_attendees() {
 	
-	define( 'EVT_ADMIN_URL', admin_url( 'admin.php?page=events' ));
+   global $wpdb, $org_options, $ticketing_installed, $espresso_premium;
+    require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/event-management/queries.php');
+	if ( ! defined( 'EVT_ADMIN_URL' )) {
+		define( 'EVT_ADMIN_URL', admin_url( 'admin.php?page=events' ));		
+	}
+ 
 	$EVT_ID = isset( $_REQUEST['event_id'] ) && $_REQUEST['event_id'] != '' ? absint( $_REQUEST['event_id'] ) : FALSE;
 
 	if ( $EVT_ID ){
 		echo '<h1>'.espresso_event_list_attendee_title( $EVT_ID ).'</h1>'; 
 	}	
 
-	$max_rows = isset( $_REQUEST['max_rows'] ) & ! empty( $_REQUEST['max_rows'] ) ? absint( $_REQUEST['max_rows'] ) : 50;
-	$start_rec = isset( $_REQUEST['start_rec'] ) && ! empty($_REQUEST['start_rec']) ? absint( $_REQUEST['start_rec'] ) : 0;
-	$records_to_show = " LIMIT $max_rows OFFSET $start_rec ";
-	
-	//Dates
-	$curdate = date('Y-m-d');
-	$this_year_r = date('Y');
-	$this_month_r = date('m');
-	$days_this_month = date( 't', time() );
-
+	//Delete the attendee(s)
     if ( isset( $_POST['delete_customer'] ) && ! empty( $_POST['delete_customer'] )) {
         if ( is_array( $_POST['checkbox'] )) {
             while ( list( $att_id, $value ) = each( $_POST['checkbox'] )) {
+
+            	//hook for before delete
+            	do_action( 'action_hook_espresso_before_delete_attendee_event_list', $att_id, $EVT_ID );
+
                 $SQL = "DELETE FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = '%d'";
                 $wpdb->query( $wpdb->prepare( $SQL, $att_id ));
 				$SQL = "DELETE FROM " . EVENTS_ATTENDEE_META_TABLE . " WHERE attendee_id = '%d'";
 				$wpdb->query( $wpdb->prepare( $SQL, $att_id ));
 				$SQL = "DELETE FROM " . EVENTS_ANSWER_TABLE . " WHERE attendee_id = '%d'";
-				$wpdb->query( $wpdb->prepare( $SQL, $att_id ));				
+				$wpdb->query( $wpdb->prepare( $SQL, $att_id ));	
+
+				//hook for after delete
+				do_action('action_hook_espresso_after_delete_attendee_event_list', $att_id, $EVT_ID);			
 			}
         }
 		?>
@@ -45,12 +47,17 @@ function event_list_attendees() {
         if ( is_array($_POST['checkbox'])) {
             while (list($att_id, $value) = each($_POST['checkbox'])) {
 				// on / off value for attended status checkbox
-				$checker = $value == "on" && $_POST['attended_customer'] ? 1 : 0;
+				$check_in_or_out = $value == "on" && array_key_exists('attended_customer',$_POST) ? 1 : 0;
 				
-				$SQL = "SELECT checked_in_quantity FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = %d ";                
-                $ticket_scanned = $wpdb->get_var( $wpdb->prepare( $SQL, $att_id ));
+				$SQL = "SELECT * FROM " . EVENTS_ATTENDEE_TABLE . " WHERE id = %d ";                
+                $attendee = $wpdb->get_row( $wpdb->prepare( $SQL, $att_id ));
+				$ticket_quantity_scanned=$attendee->checked_in_quantity;
+				$tickets_for_attendee=$attendee->quantity;
+				$updated_ticket_quantity=$check_in_or_out?$tickets_for_attendee:0;
 				
-                if ( $ticket_scanned >= 1 ) {
+                if ( ($ticket_quantity_scanned >= 1 && true == $check_in_or_out) 
+						|| 
+						($ticket_quantity_scanned<=0 && false == $check_in_or_out)) {
                     ?>
 					<div id="message" class="error fade">
 						<p>
@@ -59,8 +66,7 @@ function event_list_attendees() {
 					</div>
 					<?php
 				} else {
-					
-					if ( $wpdb->update( EVENTS_ATTENDEE_TABLE, array( 'checked_in' => $checker ), array( 'id' => $att_id ), array( '%d' ),  array( '%d' ))) {
+					if ( $wpdb->update( EVENTS_ATTENDEE_TABLE, array( 'checked_in' => $check_in_or_out ,'checked_in_quantity'=>$updated_ticket_quantity), array( 'id' => $att_id ), array( '%d' ,'%d'),  array( '%d' ))) {
 					?>
 					<div id="message" class="updated fade">
 					  <p><strong>
@@ -74,11 +80,18 @@ function event_list_attendees() {
         }
     }
 	
-    require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/event-management/queries.php');
+	// get SQL for query
+	$SQL = espresso_generate_events_page_list_table_sql( FALSE, TRUE );
+	$attendees = $wpdb->get_results( $SQL, OBJECT_K );
+	$total_attendees = $wpdb->num_rows;
+//	echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//	printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 
 	if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/admin_reports_filters.php')) {
         require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/admin-files/admin_reports_filters.php');
-    } else {
+	 	espresso_display_admin_reports_filters( $total_events );
+	} else {
 		?>
 		<p>
 			<strong><?php _e('Advanced filters are available in the premium versions.', 'event_espresso');?></strong> 
@@ -91,10 +104,10 @@ function event_list_attendees() {
 
 	
 	
-	$sql_clause = " WHERE ";
-    $sql_a = "(";
+//	$sql_clause = " WHERE ";
+//    $sql_a = "(";
 	
-    if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_group_admin') {
+/*    if (function_exists('espresso_member_data') && espresso_member_data('role') == 'espresso_group_admin') {
 	
         $group = get_user_meta(espresso_member_data('id'), "espresso_group", true);
         $group = implode(",", $group);
@@ -141,7 +154,7 @@ function event_list_attendees() {
             $sql_clause = " AND ";
         }
         $sql_a .= $group != '' ? $sql_clause . "  l.locale_id IN (" . $group . ") " : '';
-		$sql_a .= " AND e.event_status != 'D' ";
+		$sql_a .= $event_status ? " AND e.event_status = '" . $event_status . "' " : " AND e.event_status != 'D' ";
         $sql_a .= ") UNION (";
 		
     }
@@ -190,50 +203,19 @@ function event_list_attendees() {
     if (function_exists('espresso_member_data') && ( espresso_member_data('role') == 'espresso_event_manager' || espresso_member_data('role') == 'espresso_group_admin')) {
         $sql_a .= $sql_clause . " e.wp_user = '" . espresso_member_data('id') . "' ";
     }
-	$sql_a .= " $sql_clause e.event_status != 'D' ";
+	$sql_a .= $event_status ? " AND e.event_status = '" . $event_status . "' " : " AND e.event_status != 'D' ";
     $sql_a .= ") ORDER BY date DESC, id ASC ";
     $sql_a .= $records_to_show;
 	
     $attendees = $wpdb->get_results($sql_a);
-    $total_attendees = $wpdb->num_rows;
+	//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+    $total_attendees = $wpdb->num_rows;*/
 
-	$quantity =0;
-
+	$updated_ticket_quantity =0;
 	$att_table_form_url = add_query_arg( array( 'event_admin_reports' => 'list_attendee_payments', 'event_id' => $EVT_ID ), EVT_ADMIN_URL );
+
+	
 ?>
-<form id="attendee-admin-list-page-select-frm" name="attendee_admin_list_page_select_frm" method="post" action="<?php echo $att_table_form_url; ?>">
-	<div id="attendee-admin-list-page-select-dv" class="admin-list-page-select-dv">
-		<input name="navig" value="<?php _e('Retrieve', 'event_espresso'); ?>" type="submit" class="button-secondary">
-		<?php //_e('a max total of', 'event_espresso'); ?>
-		<?php $rows = array( 50 => 50, 100 => 100, 250 => 250, 500 => 500, 100000 => 'all' ); ?>
-		<select name="max_rows" size="1">
-			<?php foreach ( $rows as $key => $value ) { ?>
-			<?php $selected = $key == $max_rows ? ' selected="selected"' : ''; ?>
-			<option value="<?php echo $key ?>"<?php echo $selected ?>><?php echo $value ?>&nbsp;&nbsp;</option>
-			<?php } ?>
-		</select>		
-		<?php _e('rows from the db at a time', 'event_espresso'); ?>
-		<input name="start_rec" value="<?php echo $start_rec ?>" class="textfield" type="hidden">
-		<?php
-			if ( $start_rec > 0 && $max_rows < 100000 ) {
-				$prev_rows = $start_rec > $max_rows ? ( $start_rec - $max_rows ) : 0;
-				$prev_rows_url = add_query_arg( array( 'event_admin_reports' => 'list_attendee_payments', 'event_id' => $EVT_ID, 'max_rows' => $max_rows, 'start_rec' => $prev_rows ), EVT_ADMIN_URL ); 
-		?>
-		<a id="attendee-admin-load-prev-rows-btn" href="<?php echo $prev_rows_url; ?>" title="load prev rows" class="button-secondary">
-			<?php echo __('Previous', 'event_espresso') . ' ' . $max_rows  . ' ' .  __('rows', 'event_espresso'); ?>
-		</a>
-		<?php } ?>
-		<?php 			
-			if ( $total_attendees >= $max_rows && $max_rows < 100000 ) {
-				$next_rows = $start_rec + $max_rows;
-				$next_rows_url = add_query_arg( array( 'event_admin_reports' => 'list_attendee_payments', 'event_id' => $EVT_ID, 'max_rows' => $max_rows, 'start_rec' => $next_rows ), EVT_ADMIN_URL ); 
-		?>
-		<a id="attendee-admin-load-next-rows-btn" href="<?php echo $next_rows_url; ?>" title="load next rows" class="button-secondary">
-		<?php echo __('Next', 'event_espresso') . ' ' . $max_rows  . ' ' .  __('rows', 'event_espresso'); ?>
-		</a> 
-		<?php } ?>
-	</div>
-</form>
 	
 <form id="form1" name="form1" method="post" action="<?php echo $att_table_form_url; ?>">
 	<table id="table" class="widefat fixed" width="100%">
@@ -260,11 +242,9 @@ function event_list_attendees() {
 				<th class="manage-column column-title" id="event-time" scope="col" title="Click to Sort" style="width: 8%;"> 
 					<span><?php _e('Event Time', 'event_espresso'); ?></span> <span class="sorting-indicator"></span> 
 				</th>
-				<?php if ($ticketing_installed == true) { ?>
 				<th class="manage-column column-title" id="attended" scope="col" title="Click to Sort" style="width: 8%;">
-				 	<span><?php _e('Attended', 'event_espresso'); ?></span> <span class="sorting-indicator"></span> 
+				 	<span><?php echo $ticketing_installed == true ? __('Attended', 'event_espresso') : __('Quantity', 'event_espresso') ?></span> <span class="sorting-indicator"></span> 
 				</th>
-				<?php } ?>
 				<th class="manage-column column-title" id="ticket-option" scope="col" title="Click to Sort" style="width: 13%;">
 				 	<span><?php _e('Option', 'event_espresso'); ?></span> <span class="sorting-indicator"></span> 
 				</th>
@@ -290,7 +270,6 @@ function event_list_attendees() {
 	
     if ($total_attendees > 0) {
 		foreach ($attendees as $attendee) {
-
 			$id = $attendee->id;
 			$registration_id = $attendee->registration_id;
 			$lname = htmlspecialchars( stripslashes( $attendee->lname ), ENT_QUOTES, 'UTF-8' );
@@ -301,10 +280,14 @@ function event_list_attendees() {
 			$zip = $attendee->zip;
 			$email = '<span style="visibility:hidden">' . $attendee->email . '</span>';
 			$phone = $attendee->phone;
-			$quantity = $attendee->quantity > 1 ? '<br />(' . __('Total Attendees', 'event_espresso') . ': ' . $attendee->quantity . ')' : '';
-
+			$ticket_quantity_scanned = $attendee->checked_in_quantity;
+			//$updated_ticket_quantity = $attendee->quantity > 1 ? '<div class="row-actions">(' . __('Qty', 'event_espresso') . ': ' . $attendee->quantity . ')</div>' : '';
+			if ($ticketing_installed == TRUE){
+				$qty_scanned = $ticket_quantity_scanned.' / '.$attendee->quantity;
+			}else{
+				$qty_scanned = $attendee->quantity;
+			}
 			$attended = $attendee->checked_in;
-			$ticket_scanned = $attendee->checked_in_quantity;
 			$amount_pd = $attendee->amount_pd;
 			$payment_status = $attendee->payment_status;
 			$payment_date = $attendee->payment_date;
@@ -329,13 +312,13 @@ function event_list_attendees() {
 					<?php echo $attendee->id; ?>
 				</td>
 				
-	            <td class="row-title"  nowrap="nowrap">
-					<a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;id=<?php echo $id ?>" title="<?php echo 'ID#:'.$id.' [ REG#: ' . $registration_id.' ] Email: '.$attendee->email; ?>">
+	            <td class="row-title" nowrap="nowrap" title="<?php echo 'ID#:'.$id.' [ REG#: ' . $registration_id.' ] Email: '.$attendee->email; ?>">
+					<a href="admin.php?page=events&amp;event_admin_reports=edit_attendee_record&amp;event_id=<?php echo $event_id; ?>&amp;registration_id=<?php echo $registration_id; ?>&amp;form_action=edit_attendee&amp;id=<?php echo $id ?>">
 						<?php echo $fname ?> <?php echo $lname ?> <?php echo $email ?>
 	              </a>
 				 </td>
 				
-	            <td nowrap="nowrap">
+	            <td nowrap="nowrap" title="<?php echo $registration_id ?>">
 					<?php echo $registration_id ?>
 				</td>
 				
@@ -353,15 +336,13 @@ function event_list_attendees() {
 					<?php echo event_date_display($event_time, get_option('time_format')) ?>
 				</td>
 				
-	            <?php if ($ticketing_installed == true) { ?>
-	            <td nowrap="nowrap">
+	            <td nowrap="nowrap" title="<?php echo $qty_scanned; ?>">
 					<p style="padding-left:15px">
-						<?php echo ($attended == 1 || $ticket_scanned >= 1) ? event_espresso_paid_status_icon('Checkedin') : event_espresso_paid_status_icon('NotCheckedin'); ?>
+						<?php echo $qty_scanned; ?>
 					</p>
 				</td>
-	            <?php } ?>
 				
-	            <td nowrap="nowrap">
+	            <td nowrap="nowrap" title="<?php echo $price_option ?>">
 					<?php echo $price_option ?>
 				</td>
 				
@@ -501,7 +482,7 @@ function event_list_attendees() {
 
 
 $hide = $EVT_ID ? '1,5' : '1,3';
-$hide .= $ticketing_installed ? ',11,12' : ',10,11'; 
+$hide .= ',11,12'; 
 
 ?>
 <script>
@@ -517,12 +498,12 @@ $hide .= $ticketing_installed ? ',11,12' : ',10,11';
 			"aoColumns": [
 				{ "bSortable": false },
 				null,
-				<?php echo $ticketing_installed == true ? 'null,' : '' ?>
 				null,
 				null,
 				null,
 				null,
 				null,
+				null,//Qty/Attended
 				null,
 				null,
 				null,
