@@ -62,7 +62,7 @@ function enter_attendee_payments() {
 					$total_owing = isset($_POST[ 'total_owing' ]) ? (float)number_format( sanitize_text_field( $_POST[ 'total_owing' ] ), 2, '.', '' ) : 0.00;
 					$amount_pd = isset($_POST[ 'amount_pd' ]) ? (float)number_format( sanitize_text_field( $_POST[ 'amount_pd' ] ), 2, '.', '' ) : 0.00;
 					$new_payment = isset($_POST[ 'new_payment' ]) && $_POST[ 'new_payment' ] != '' ? (float)number_format( sanitize_text_field( $_POST[ 'new_payment' ] ), 2, '.', '' ) : 0.00;
-					$upd_payment_status = isset($_POST[ 'payment_status' ]) ? $_POST[ 'payment_status' ] : __('Pending','event_espresso');
+					$upd_payment_status = isset($_POST[ 'payment_status' ]) ? $_POST[ 'payment_status' ] : 'Pending';
 					
 					// if making a payment, we are going to require the txn type and txn id
 					if ( $new_payment != 0.00  ) {						
@@ -87,12 +87,12 @@ function enter_attendee_payments() {
 
 					// compare new total_cost with amount_pd
 					if ( $new_payment == $total_owing ) {
-						$upd_payment_status = __('Completed','event_espresso');
+						$upd_payment_status = 'Completed';
 					} elseif ( $new_payment < $total_owing ) {
-						$upd_payment_status = __('Pending','event_espresso');
+						$upd_payment_status = isset($_POST[ 'payment_status' ]) && $_POST[ 'payment_status' ] == 'Incomplete' ? 'Incomplete' : 'Pending';
 					} elseif ( $new_payment > $total_owing ) {
-						$upd_payment_status = __('Refund','event_espresso');
-					} 						
+						$upd_payment_status = 'Refund';
+					}
 					
 					//Update payment status information for primary attendee
 					$set_cols_and_values = array( 
@@ -112,7 +112,11 @@ function enter_attendee_payments() {
 					if ( $upd_success === FALSE ) {
 						$notifications['error'][] = __('An error occured. The attendee payment details could not be updated.', 'event_espresso'); 
 					} else {
-
+						
+						$attendee_data = array('attendee_id'=> $primary_att->id, 'payment_status'=>$upd_payment_status, 'registration_id'=> $registration_id, 'total_cost'=>$upd_total, 'txn_type'=>__('Manual Website Payment', 'event_espresso'), 'txn_id'=>$txn_id);
+				
+						do_action('action_hook_espresso_update_attendee_payment_status', $attendee_data);
+				
 						if ( count($registration_ids) > 0 ) {
 						
 							foreach($registration_ids as $reg_id) {
@@ -437,9 +441,10 @@ function enter_attendee_payments() {
 										</label>
 										<?php 
 											$amount_owing = number_format( $total_cost - $amount_pd, 2, '.', '' );
+
 											if ( $amount_owing == 0.00 ) {
 												$amnt_class = ' full-payment';
-											} elseif ( $amount_owing < $total_cost ) {
+											} elseif ( $amount_owing < $total_cost || $amount_owing > $total_cost ) {
 												$amnt_class = ' part-payment';
 											} elseif ( $amount_owing == $total_cost ) {
 												$amnt_class = ' no-payment';

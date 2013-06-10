@@ -45,10 +45,6 @@ function espresso_display_finalize_payment_header($data) {
 global $gateway_formal_names;
 $gateway_formal_names = array();
 
-$active_gateways = get_option('event_espresso_active_gateways', array());
-foreach ($active_gateways as $gateway => $path) {
-	event_espresso_require_gateway($gateway . "/init.php");
-}
 $gateway_formal_names = apply_filters( 'action_hook_espresso_gateway_formal_name', $gateway_formal_names );
 
 $data['fname'] = $fname;
@@ -61,6 +57,8 @@ if (empty($attendee_email)) {
 $data['address'] = isset($address) && !empty($address) ? $address : '';
 $data['city'] = isset($city) && !empty($city) ? $city : '';
 $data['state'] = isset($state) && !empty($state) ? $state : '';
+$data['country'] = isset($country) && !empty($country) ? $country : '';
+$data['country'] = isset($country_id) && !empty($country_id)  && $data['country'] == '' ? $country_id : '';
 $data['zip'] = isset($zip) && !empty($zip) ? $zip : '';
 if (empty($event_cost)) {
 	$data['event_cost'] = $total_cost;

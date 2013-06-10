@@ -7,7 +7,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 3.1.31.3.3.L
+  Version: 3.1.33.L
 
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
@@ -33,7 +33,7 @@
 //Define the version of the plugin
 function espresso_version() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	return '3.1.31.3.3.L';
+	return '3.1.33.L';
 }
 
 //This tells the system to check for updates to the paid version
@@ -94,7 +94,6 @@ global $org_options, $wpdb, $this_is_a_reg_page, $espresso_content;
 $espresso_content = '';
 
 $org_options = get_option('events_organization_settings');
-	
 if (empty($org_options['event_page_id'])) {
 	$org_options['event_page_id'] = '';
 	$org_options['return_url'] = '';
@@ -536,6 +535,9 @@ if (is_admin()) {
 	do_action('action_hook_espresso_ticketing_update_api');
 	do_action('action_hook_espresso_mailchimp_update_api');
 	do_action('action_hook_espresso_json_update_api');
+	do_action('action_hook_espresso_epm_update_api');
+	do_action('action_hook_espresso_infusionsoft_update_api');
+	do_action('action_hook_espresso_attendee_mover_update_api');
 	
 	//New form builder
 	require_once("includes/form-builder/index.php");
@@ -729,7 +731,7 @@ if (!function_exists('espresso_load_EEGlobals_jquery')) {
 //Used for the event cart
 if (!function_exists('espresso_load_jquery')) {
 	function espresso_load_jquery() {
-	
+		global $wp_version;
 		do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 		if (!is_admin() ) {
 			global $org_options;
@@ -738,7 +740,12 @@ if (!function_exists('espresso_load_jquery')) {
 				wp_enqueue_script('ee_ajax_request', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/espresso_cart_functions.js', array('jquery'));
 				$EEGlobals = array('ajaxurl' => admin_url('admin-ajax.php'), 'plugin_url' => EVENT_ESPRESSO_PLUGINFULLURL, 'event_page_id' => $org_options['event_page_id']);
 				wp_localize_script('ee_ajax_request', 'EEGlobals',$EEGlobals );
-				wp_enqueue_script('jquery-migrate', 'http://code.jquery.com/jquery-migrate-1.1.1.min.js', array('jquery'));
+				
+				//Load the jQuery migrate scripts if WP is older than 3.6
+				if ( !version_compare($wp_version, '3.6', '>=' ) ) {
+					wp_register_script('jquery-migrate', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery-migrate-1.1.1.min.js', array('jquery'));
+				}
+				wp_enqueue_script('jquery-migrate');
 			}
 		}
 		
@@ -980,6 +987,12 @@ add_shortcode('ESPRESSO_CANCELLED', 'espresso_cancelled');
 
 
 
+//load active gateways (on all page loads), in case they want to hook into anything (used to only 
+//load on certain shortcode executions, but that sometimes didn't work, as
+//in the case of the google checkout gateway
+//this COULD be done only on the ee critical pages (events, transactions, thank you)
+add_action('plugins_loaded','event_espresso_init_active_gateways');
+
 /*
  * These actions need to be loaded a the bottom of this script to prevent errors when post/get requests are received.
  */
@@ -1021,7 +1034,7 @@ if (is_admin()) {
 	}
 	//Check to make sure all of the main pages are setup properly, if not show an admin message.
 	if (((!isset($_REQUEST['event_page_id']) || $_REQUEST['event_page_id'] == NULL) && ($org_options['event_page_id'] == ('0' || ''))) || $org_options['return_url'] == ('0' || '') || $org_options['notify_url'] == ('0' || '')) {
-		add_action('admin_notices', 'event_espresso_activation_notice');
+		add_action('admin_notices', 'event_espresso_activation_notice', 5);
 	}
 }
 
@@ -1030,7 +1043,7 @@ function espresso_export_ticket() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
 	//Version 2.0
 	if (isset($_REQUEST['ticket_launch']) && $_REQUEST['ticket_launch'] == 'true') {
-		echo espresso_ticket_launch($_REQUEST['id'], $_REQUEST['r_id']);
+		echo espresso_ticket_launch( ee_sanitize_value( absint($_REQUEST['id'])), ee_sanitize_value($_REQUEST['r_id']) );
 	}
 	//End Version 2.0
 	

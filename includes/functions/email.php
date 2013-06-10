@@ -101,15 +101,16 @@ function replace_shortcodes($message, $data) {
 			$data->event->venue_phone,
 			$data->google_map_link,
 			$data->table_open . $data->table_heading . $data->event_table . $data->table_close,
-			$data->email_questions,
+			isset($data->email_questions) && !empty($data->email_questions) ? $data->email_questions : '',
 			$data->qr_code,
 			$data->seatingchart_tag,
 			$data->edit_attendee,
-			apply_filters('filter_hook_espresso_display_ical', array(//Add to calendar link
+			//Add to calendar link
+			apply_filters('filter_hook_espresso_display_ical', array(
 					'event_id' => $data->attendee->event_id,
 					'registration_id' => $data->attendee->registration_id,
 					'event_name' => $data->event->event_name,
-					'event_desc' => wp_kses($data->event->event_desc, ''),
+					'event_desc' => wp_kses($data->event->event_desc,array()),
 					'contact_email' => empty($data->event->alt_email) ? $org_options['contact_email'] : $data->event->alt_email,
 					'start_time' => empty($event->start_time) ? '' : $event->start_time,
 					'start_date' => event_date_display($data->attendee->start_date, get_option('date_format')),

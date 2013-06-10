@@ -1601,7 +1601,7 @@ function espresso_get_user_question_groups($user_id = null, $use_filters = true,
   		$sql .= " WHERE qg.id = '" . $group_id . "' ";
   	} 
 
-	$sql .= ( empty($group_id) ) ? " ORDER BY id ASC " : " ORDER BY group_order ";
+	$sql .= ( empty($group_id) ) ? " ORDER BY group_order " : " ORDER BY id ASC ";
 
 	$groups = $wpdb->get_results( $wpdb->prepare($sql, NULL) );
 
@@ -1634,4 +1634,13 @@ function espresso_get_question_groups_for_event( $existing_question_groups = arr
 
 	return ($use_filters) ? apply_filters('espresso_get_question_groups_for_event_groups', $event_groups, $existing_question_groups, $event) : $event_groups;
 
+}
+
+function espresso_check_ssl() {
+	$home = str_replace("http://", "https://", home_url());
+	@$handle = fopen($home, "r");
+	if(empty($handle)){ 
+		return FALSE;
+	}
+	return TRUE;
 }

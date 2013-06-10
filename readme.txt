@@ -10,7 +10,7 @@ Requires at least: 3.5
 
 Tested up to: 3.5.1
 
-Stable tag: 3.1.31.3.7L
+Stable tag: 3.1.33.L
 
 Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
 
