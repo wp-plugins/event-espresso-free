@@ -23,7 +23,7 @@ function event_espresso_test_drive() {
                   <div class="inside">
                     <p>If you would like to test drive Event Espresso with the <a
 href="http://eventespresso.com/download/plugins-and-addons/recurring-events-manager/">Recurring Events</a> add-on and <a
-href="http://eventespresso.com/download/plugins-and-addons/calendar/">calendar</a> installed, please complete the application below. If approved, you will be granted access to our test drive site where you can demo Event Espresso for yourself. You will also receive a code to get $10 off the price of the plugin. </p>
+href="http://eventespresso.com/download/plugins-and-addons/calendar/">calendar</a> installed, please complete the application below. If approved, you will be granted access to our test drive site where you can demo Event Espresso for yourself. You will also receive a code to get $10 off the price of the support license. </p>
                     <p>If you have questions, please see our <a
 href="http://eventespresso.com/forums/category/premium-plugin-support/pre-sales-questions/">Pre-sales Forum</a>.</p>
                     <div
