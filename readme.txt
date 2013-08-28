@@ -18,7 +18,7 @@ Manage your events from your WordPress dashboard. Reduce your admin, reduce your
 
 Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
 
-Event Espresso is a [WordPress event manager](http://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=free_plugin) which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.
+Event Espresso is a [WordPress event manager](http://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=WordPress+event+manager)(http://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=free_plugin) which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.
 
 [youtube http://www.youtube.com/watch?v=K_yVwWnTjL8]
 
