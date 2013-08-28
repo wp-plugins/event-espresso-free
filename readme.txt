@@ -27,7 +27,7 @@ Event Espresso is a [WordPress event manager](http://eventespresso.com/?utm_sour
 You shouldn't need convinced about how awesome online event management is, but in case you do:
 
 * save yourself countless hours of boring admin
-* create green, paperless [event registration](http://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign= plugin_description_tab&utm_content=event+registration)
+* create green, paperless [event registration](http://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=event+registration)
 * reduce costs
 * process sign-ups 24/7
 
@@ -46,14 +46,14 @@ But just in case you want some **advanced features**, you can grab a copy of our
 
 = Event Espresso Premium =
 
-* [JSON API] (http://eventespresso.com/product/espresso-json-api/?utm_source=wordpress_org&utm_medium=link&utm_campaign= plugin_description_tab&utm_content=JSON+API)
-* [Manual Registration] (http://eventespresso.com/features/manual-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign= plugin_description_tab&utm_content=Manual+Registration)
-* [Additional Payment Gateways] (http://eventespresso.com/features/payment-options/?utm_source=wordpress_org&utm_campaign= plugin_description_tab&utm_content=Additional+Payment+Gateways) (including Authorize.net, IDEAL, Firstdata and PayPal Pro)
-* [Multiple Pricing Options] (http://eventespresso.com/features/multiple-ticket-pricing-options/?utm_source=wordpress_org&utm_campaign= plugin_description_tab&utm_content=Multiple+Pricing Options)
-* [Promotion Codes] (http://eventespresso.com/features/promotion-codes/?utm_source=wordpress_org&utm_medium=link&utm_campaign= plugin_description_tab&utm_content=Promotion+Codes)
+* [JSON API] (http://eventespresso.com/product/espresso-json-api/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=JSON+API)
+* [Manual Registration] (http://eventespresso.com/features/manual-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Manual+Registration)
+* [Additional Payment Gateways] (http://eventespresso.com/features/payment-options/?utm_source=wordpress_org&utm_campaign=plugin_description_tab&utm_content=Additional+Payment+Gateways) (including Authorize.net, IDEAL, Firstdata and PayPal Pro)
+* [Multiple Pricing Options] (http://eventespresso.com/features/multiple-ticket-pricing-options/?utm_source=wordpress_org&utm_campaign=plugin_description_tab&utm_content=Multiple+Pricing Options)
+* [Promotion Codes] (http://eventespresso.com/features/promotion-codes/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Promotion+Codes)
 * [Custom Post Type Support] (http://eventespresso.com/features/custom-post-types/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Custom+Post+Type+Support)
 * [Reusable Email Templates] (http://eventespresso.com/features/confirmation-emails/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Reusable+Email Templates)
-* [Event Calendar] (http://eventespresso.com/product/espresso-calendar/?utm_source=wordpress_org&utm_medium=link&utm_campaign= plugin_description_tab&utm_content=Event+Calendar)
+* [Event Calendar] (http://eventespresso.com/product/espresso-calendar/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Event+Calendar)
 * [MailChimp Integration](http://eventespresso.com/product/espresso-mailchimp/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=MailChimp+Integration) (personal & developer)
 * [Recurring Events](http://eventespresso.com/product/espresso-recurring/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Recurring+Events) (personal & developer)
 * [WP User Integration](http://eventespresso.com/product/espresso-members/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=WP+User+Integration) (personal & developer)
@@ -153,4 +153,4 @@ This plugin is provided "as is" and without any warranty or expectation of funct
 
 Backup your database before installing any updates. I recommend using a plugin like [WP DB Backup](http://wordpress.org/extend/plugins/wp-db-backup/).
 
-The changelog for the premium version [can be found here](http://eventespresso.com/wiki/change-log/?utm_source=wordpress_org&utm_medium=link&utm_content= changelog&utm_campaign=plugin_changelog_tab).
+The changelog for the premium version [can be found here](http://eventespresso.com/wiki/change-log/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=plugin_changelog_tab).
