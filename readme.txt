@@ -18,7 +18,7 @@ Manage your events from your WordPress dashboard. Reduce your admin, reduce your
 
 Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
 
-Event Espresso is a [WordPress event manager](http://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=free_plugin) which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.
+Event Espresso is a [WordPress event manager](http://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=WordPress+event+manager)(http://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=free_plugin) which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.
 
 [youtube http://www.youtube.com/watch?v=K_yVwWnTjL8]
 
@@ -47,19 +47,19 @@ But just in case you want some **advanced features**, you can grab a copy of our
 = Event Espresso Premium =
 
 * [JSON API](http://eventespresso.com/product/espresso-json-api/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=JSON+API)
-* [Manual Registration](http://eventespresso.com/features/manual-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Manual+Registration)
+* [Event Calendar](http://eventespresso.com/product/espresso-calendar/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Event+Calendar)
 * [Additional Payment Gateways](http://eventespresso.com/features/payment-options/?utm_source=wordpress_org&utm_campaign=plugin_description_tab&utm_content=Additional+Payment+Gateways) (including Authorize.net, IDEAL, Firstdata and PayPal Pro)
 * [Multiple Pricing Options](http://eventespresso.com/features/multiple-ticket-pricing-options/?utm_source=wordpress_org&utm_campaign=plugin_description_tab&utm_content=Multiple+Pricing+Options)
+* [Multiple Event Registration](http://eventespresso.com/product/espresso-multiple/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Multiple+Event+Registration) (personal & developer)
+* [Manual Registration](http://eventespresso.com/features/manual-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Manual+Registration)
 * [Promotion Codes](http://eventespresso.com/features/promotion-codes/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Promotion+Codes)
 * [Custom Post Type Support](http://eventespresso.com/features/custom-post-types/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Custom+Post+Type+Support)
 * [Reusable Email Templates](http://eventespresso.com/features/confirmation-emails/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Reusable+Email+Templates)
-* [Event Calendar](http://eventespresso.com/product/espresso-calendar/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Event+Calendar)
 * [MailChimp Integration](http://eventespresso.com/product/espresso-mailchimp/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=MailChimp+Integration) (personal & developer)
 * [Recurring Events](http://eventespresso.com/product/espresso-recurring/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Recurring+Events) (personal & developer)
 * [WP User Integration](http://eventespresso.com/product/espresso-members/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=WP+User+Integration) (personal & developer)
 * [Social Coupon Integration](http://eventespresso.com/product/espresso-groupon/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Social+Coupon+Integration) (personal & developer)
 * [Custom Files Add-on](http://eventespresso.com/product/espresso-custom-files/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Custom+Files+Add-on) (personal & developer)
-* [Multiple Event Registration](http://eventespresso.com/product/espresso-multiple/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=Multiple+Event+Registration) (personal & developer)
 
 That's not all! If you want to turbo-charge your event management, we've made it possible for you to process event registrations using your very own smartphones to scan QR codes!
 
