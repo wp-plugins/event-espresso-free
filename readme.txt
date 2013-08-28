@@ -18,7 +18,7 @@ Manage your events from your WordPress dashboard. Reduce your admin, reduce your
 
 Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
 
-Event Espresso is a [WordPress event manager](http://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=WordPress+event+manager)(http://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=free_plugin) which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.
+Event Espresso is a [WordPress event manager](http://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=WordPress+event+manager) which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.
 
 [youtube http://www.youtube.com/watch?v=K_yVwWnTjL8]
 
@@ -64,7 +64,7 @@ But just in case you want some **advanced features**, you can grab a copy of our
 That's not all! If you want to turbo-charge your event management, we've made it possible for you to process event registrations using your very own smartphones to scan QR codes!
 
 = Support =
-We monitor the WordPress.org support forums, but for faster support you can visit our [forum](http://eventespresso.com/support/forums/?utm_source=wordpress_org&utm_medium=link&utm_content=forum&utm_campaign=plugin_description_tab). You can also visit the Help/Support menu from the Event Espresso admin. Please visit the forums  or visit the "Help/Support" menu within the Event Espresso admin.
+We monitor the WordPress.org support forums, but for faster support you can visit our own [support forums](http://eventespresso.com/support/forums/?utm_source=wordpress_org&utm_medium=link&utm_content=support+forum&utm_campaign=plugin_description_tab). You can also visit the Help/Support menu from the Event Espresso admin. Please visit the forums  or visit the "Help/Support" menu within the Event Espresso admin.
 
 If your support issue is urgent, we also offer [priority event management support](http://eventespresso.com/product/premium-support-token/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=priority+event+management+support) (support tokens).
 
