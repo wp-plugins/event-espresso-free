@@ -21,11 +21,11 @@ function event_espresso_test_drive() {
                   </div>
                   <h3>Get $10 off when you test drive Event Espresso!</h3>
                   <div class="inside">
-                    <p>If you would like to test drive Event Espresso with the <a
-href="http://eventespresso.com/download/plugins-and-addons/recurring-events-manager/">Recurring Events</a> add-on and <a
-href="http://eventespresso.com/download/plugins-and-addons/calendar/">calendar</a> installed, please complete the application below. If approved, you will be granted access to our test drive site where you can demo Event Espresso for yourself. You will also receive a code to get $10 off the price of the plugin. </p>
+                    <p>If you would like to test drive Event Espresso with the JSON API, <a
+href="http://eventespresso.com/product/espresso-recurring/?utm_source=lite_version_plugin&utm_medium=link&utm_content=Test+Drive+the+Full+Version+of+Espresso&utm_campaign=test_drive_tab">Recurring Events Manager</a>, and the <a
+href="http://eventespresso.com/product/espresso-calendar/?utm_source=lite_version_plugin&utm_medium=link&utm_content=Calendar&utm_campaign=test_drive_tab">Calendar</a> installed, please complete the application below. If approved, you will be granted access to our test drive site where you can demo Event Espresso for yourself. You will also receive a code to get $10 off the price of the support license. </p>
                     <p>If you have questions, please see our <a
-href="http://eventespresso.com/forums/category/premium-plugin-support/pre-sales-questions/">Pre-sales Forum</a>.</p>
+href="http://eventespresso.com/forum/pre-sales/?utm_source=lite_version_plugin&utm_medium=link&utm_content=Pre+sales+Forum&utm_campaign=test_drive_tab">Pre-sales Forum</a>.</p>
                     <div
 class="gform_wrapper" id="gform_wrapper_14" >
                       <form
