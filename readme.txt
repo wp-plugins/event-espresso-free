@@ -90,7 +90,7 @@ Check out the advanced [installation](http://eventespresso.com/wiki/installing-e
 
 6. Note: if you are upgrading from a previous version please backup your data prior to upgrade.
 
-Check out the advanced [installation](http://eventespresso.com/wiki/installing-event-espresso/?utm_source=wordpress_org&utm_medium=link&utm_content=installation&utm_campaign=plugin_ installation_tab) and [setup instructions](http://eventespresso.com/wiki/the-basic-settings/?utm_source=wordpress_org&utm_medium=link&utm_content=setup+instructions&utm_campaign=plugin_ installation_tab) on our website.
+Check out the advanced [installation](http://eventespresso.com/wiki/installing-event-espresso/?utm_source=wordpress_org&utm_medium=link&utm_content=installation&utm_campaign=plugin_ installation_tab) and [setup instructions](http://eventespresso.com/wiki/the-basic-settings/?utm_source=wordpress_org&utm_medium=link&utm_content=setup+instructions&utm_campaign=plugin_installation_tab) on our website.
 
 == Frequently Asked Questions ==
 
