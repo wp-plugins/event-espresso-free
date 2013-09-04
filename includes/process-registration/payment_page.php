@@ -83,7 +83,10 @@ function events_payment_page( $attendee_id = FALSE, $notifications = array() ) {
 	}
 	
 	// get # of attendees
-	$SQL = "SELECT COUNT(quantity) FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id =%s";
+	$SQL = "SELECT COUNT(quantity) FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id =%s ";
+	
+	$SQL .= apply_filters('filter_hook_espresso_payment_page_count_attendees_sql_where', '');
+	
 	$num_people = $wpdb->get_var( $wpdb->prepare( $SQL, $registration_id ));
 
 	//If we are using the number of attendees dropdown
@@ -206,7 +209,8 @@ function espresso_confirm_registration() {
 	} else {
 		wp_die(__('An error has occured. The registration ID could not be found.', 'event_espresso'));
 	}
-
+	
+	do_action('action_hook_espresso_confirmation_page_before',$registration_id);
 
 	//Get the questions for the attendee
 	$SQL = "SELECT ea.answer, eq.question FROM " . EVENTS_ANSWER_TABLE . " ea ";
@@ -288,15 +292,15 @@ function espresso_confirm_registration() {
 	}
 
 	$attendee_id = $attendee->id;
-	$attendee_email = $attendee->email;
-	$lname = htmlspecialchars( stripslashes( $attendee->lname ), ENT_QUOTES, 'UTF-8' );
-	$fname = htmlspecialchars( stripslashes( $attendee->fname ), ENT_QUOTES, 'UTF-8' );
-	$address = htmlspecialchars( stripslashes( $attendee->address ), ENT_QUOTES, 'UTF-8' );
-	$address2 = htmlspecialchars( stripslashes( $attendee->address2 ), ENT_QUOTES, 'UTF-8' );
-	$city = htmlspecialchars( stripslashes( $attendee->city ), ENT_QUOTES, 'UTF-8' );
-	$state = htmlspecialchars( stripslashes( $attendee->state ), ENT_QUOTES, 'UTF-8' );
-	$country = htmlspecialchars( stripslashes( $attendee->country ), ENT_QUOTES, 'UTF-8' );
-	$zip = $attendee->zip;
+	$attendee_email = isset( $attendee->email ) ? $attendee->email : '';
+	$lname = isset( $attendee->lname ) ? htmlspecialchars( stripslashes( $attendee->lname ), ENT_QUOTES, 'UTF-8' ) : '';
+	$fname = isset( $attendee->fname ) ? htmlspecialchars( stripslashes( $attendee->fname ), ENT_QUOTES, 'UTF-8' ) : '';
+	$address = isset( $attendee->address ) ? htmlspecialchars( stripslashes( $attendee->address ), ENT_QUOTES, 'UTF-8' ) : '';
+	$address2 = isset( $attendee->address2 ) ? htmlspecialchars( stripslashes( $attendee->address2 ), ENT_QUOTES, 'UTF-8' ) : '';
+	$city = isset( $attendee->city ) ? htmlspecialchars( stripslashes( $attendee->city ), ENT_QUOTES, 'UTF-8' ) : '';
+	$state = isset( $attendee->state ) ? htmlspecialchars( stripslashes( $attendee->state ), ENT_QUOTES, 'UTF-8' ) : '';
+	$country = isset( $attendee->country ) ? htmlspecialchars( stripslashes( $attendee->country ), ENT_QUOTES, 'UTF-8' ) : '';
+	$zip =  isset( $attendee->zip ) ? $attendee->zip : '';
 	$payment_status = $attendee->payment_status;
 	$txn_type = $attendee->txn_type;
 	$amount_pd = (float)$attendee->amount_pd;
@@ -372,7 +376,8 @@ function event_espresso_pay() {
 	$REG_ID = espresso_return_reg_id();
 	
 	if ( $REG_ID != false && empty($payment_data['attendee_id'] )) {
-	
+		//we're assuming there is NO payment data in this request, so we'll just 
+		//prepare the $payment_data for display only. No processing of payment etc.
 		$SQL = "SELECT id FROM " . EVENTS_ATTENDEE_TABLE . " WHERE registration_id='" . $REG_ID . "' ORDER BY id LIMIT 1";
 		$payment_data['attendee_id'] = $wpdb->get_var( $wpdb->prepare( $SQL, NULL ));
 				
@@ -390,7 +395,7 @@ function event_espresso_pay() {
 			wp_die(__('There was a problem finding your Registration ID', 'event_espresso'));
 		}
 			
-		if ( $payment_data['payment_status'] != 'Completed' || $payment_data['payment_status'] != 'Refund' ) {
+		if ( $payment_data['payment_status'] != 'Completed' && $payment_data['payment_status'] != 'Refund' ) {
 		
 			
 			$payment_data = apply_filters('filter_hook_espresso_thank_you_get_payment_data', $payment_data);

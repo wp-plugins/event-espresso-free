@@ -7,7 +7,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 3.1.33.L
+  Version: 3.1.34.1.L
 
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
@@ -33,8 +33,11 @@
 //Define the version of the plugin
 function espresso_version() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	return '3.1.33.L';
+	return '3.1.34.1.L';
 }
+
+define("EVENT_ESPRESSO_VERSION", espresso_version());
+define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
 
 //This tells the system to check for updates to the paid version
 global $espresso_check_for_updates;
@@ -92,6 +95,8 @@ add_action('wp_head', 'espresso_info_header');
 //Globals
 global $org_options, $wpdb, $this_is_a_reg_page, $espresso_content;
 $espresso_content = '';
+$this_is_a_reg_page = FALSE;
+
 
 $org_options = get_option('events_organization_settings');
 if (empty($org_options['event_page_id'])) {
@@ -100,18 +105,6 @@ if (empty($org_options['event_page_id'])) {
 	$org_options['cancel_return'] = '';
 	$org_options['notify_url'] = '';
 }
-
-//Registration page check
-//From Brent C. http://events.codebasehq.com/projects/event-espresso/tickets/99
-$this_is_a_reg_page = FALSE;
-$espresso_events = TRUE;
-
-//$reg_page_ids = array(
-//		'event_page_id' => $org_options['event_page_id'],
-//		'return_url' => $org_options['return_url'],
-//		'cancel_return' => $org_options['cancel_return'],
-//		'notify_url' => $org_options['notify_url']
-//);
 
 
 if (is_ssl()) {
@@ -139,6 +132,10 @@ function espresso_shortcode_pages( $page_id ) {
 				break;
 			case 'return_url' :
 					$this_is_a_reg_page = TRUE;
+					//Various attendee functions
+					require_once("includes/functions/attendee_functions.php");
+					//Payment/Registration Processing - Used to display the payment options and the payment link in the email. Used with the [ESPRESSO_PAYMENTS] tag
+					require_once("includes/process-registration/payment_page.php"); 
 					add_action( 'init', 'event_espresso_pay', 100 );
 				break;
 			case 'notify_url' :
@@ -198,8 +195,6 @@ if (is_ssl()) {
 	$wp_content_url = str_replace('http://', 'https://', WP_CONTENT_URL);
 }
 
-define("EVENT_ESPRESSO_VERSION", espresso_version());
-define('EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION);
 //Define the plugin directory and path
 define("EVENT_ESPRESSO_PLUGINPATH", "/" . plugin_basename(dirname(__FILE__)) . "/");
 define("EVENT_ESPRESSO_PLUGINFULLPATH", WP_PLUGIN_DIR . EVENT_ESPRESSO_PLUGINPATH);
@@ -459,26 +454,11 @@ if ($this_is_a_reg_page == TRUE) {
 	
 	//Process email confirmations
 	require_once("includes/functions/email.php");
-
-	//Various attendee functions
-	require_once("includes/functions/attendee_functions.php");
-
-
-	//Payment/Registration Processing - Used to display the payment options and the payment link in the email. Used with the [ESPRESSO_PAYMENTS] tag
-	require_once("includes/process-registration/payment_page.php");
-
-	//Add attendees to the database
-	require_once("includes/process-registration/add_attendees_to_db.php");
-
 	//Payment processing - Used for onsite payment processing. Used with the [ESPRESSO_TXN_PAGE] shortcode
 	event_espresso_require_gateway('process_payments.php');
 	event_espresso_require_gateway('PaymentGateway.php');
 
-
-	/*
-	 * AJAX functions
-	 */
-
+	// AJAX functions
 	add_action('wp_ajax_event_espresso_add_item', 'event_espresso_add_item_to_session');
 	add_action('wp_ajax_nopriv_event_espresso_add_item', 'event_espresso_add_item_to_session');
 
@@ -544,8 +524,7 @@ if (is_admin()) {
 	require_once("includes/form-builder/groups/index.php");
 
 	//Install/Update Tables when plugin is activated
-	require_once("includes/functions/database_install.php");
-	register_activation_hook(__FILE__, 'events_data_tables_install');
+	register_activation_hook(__FILE__, 'espresso_check_data_tables'); 
 	register_activation_hook(__FILE__, 'espresso_update_active_gateways');
 
 	
@@ -690,19 +669,19 @@ if (!function_exists('espresso_load_javascript_files')) {
 		
 		if (!$load_espresso_scripts)
 			return;
-		wp_register_script('reCopy', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/reCopy.js"), false, '1.1.0');
+		wp_register_script('reCopy', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/reCopy.js"), array('jquery'), '1.1.0');
 		wp_print_scripts('reCopy');
 
-		wp_register_script('jquery.validate.js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js"), false, '1.8.1');
+		wp_register_script('jquery.validate.js', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.validate.min.js"), array('jquery'), '1.8.1');
 		wp_print_scripts('jquery.validate.js');
 
-		wp_register_script('validation', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/validation.js"), false, EVENT_ESPRESSO_VERSION);
+		wp_register_script('validation', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/validation.js"), array('jquery'), EVENT_ESPRESSO_VERSION);
 		wp_print_scripts('validation');
         
-        wp_register_script('ee_pagination_plugin', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.pajinate.min.js"), false, EVENT_ESPRESSO_VERSION);
+        wp_register_script('ee_pagination_plugin', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/jquery.pajinate.min.js"), array('jquery'), EVENT_ESPRESSO_VERSION);
 		wp_print_scripts('ee_pagination_plugin');
         
-        wp_register_script('ee_pagination', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/pagination.js"), false, EVENT_ESPRESSO_VERSION);
+        wp_register_script('ee_pagination', (EVENT_ESPRESSO_PLUGINFULLURL . "scripts/pagination.js"), array('jquery'), EVENT_ESPRESSO_VERSION);
         $data = array( 'ajaxurl' => admin_url( 'admin-ajax.php'  ));
         wp_localize_script( 'ee_pagination', 'ee_pagination', $data );
 		wp_print_scripts('ee_pagination');
@@ -926,6 +905,12 @@ if (!function_exists('event_espresso_run')) {
 				break;
 				
 			case "post_attendee":
+				//Various attendee functions
+				require_once("includes/functions/attendee_functions.php");
+				//Add attendees to the database
+				require_once("includes/process-registration/add_attendees_to_db.php");
+				//Payment/Registration Processing - Used to display the payment options and the payment link in the email. Used with the [ESPRESSO_PAYMENTS] tag
+				require_once("includes/process-registration/payment_page.php");
 				event_espresso_add_attendees_to_db( NULL, NULL, FALSE );
 				break;
 
@@ -945,15 +930,27 @@ if (!function_exists('event_espresso_run')) {
 				
 			case "post_multi_attendee":
 				// MER ONLY
+				//Various attendee functions
+				require_once("includes/functions/attendee_functions.php");
+				//Add attendees to the database
+				require_once("includes/process-registration/add_attendees_to_db.php");
 				event_espresso_update_item_in_session('attendees');
 				event_espresso_add_attendees_to_db_multi();
 				break;
 				
 			case "confirm_registration":
+				//Various attendee functions
+				require_once("includes/functions/attendee_functions.php");
+				//Payment/Registration Processing - Used to display the payment options and the payment link in the email. Used with the [ESPRESSO_PAYMENTS] tag
+				require_once("includes/process-registration/payment_page.php");
 				espresso_confirm_registration();
 				break;
 				
 			case "edit_attendee":
+				//Various attendee functions
+				require_once("includes/functions/attendee_functions.php");
+				//Payment/Registration Processing - Used to display the payment options and the payment link in the email. Used with the [ESPRESSO_PAYMENTS] tag
+				require_once("includes/process-registration/payment_page.php");
 				require_once(EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/process-registration/attendee_edit_record.php');
 				attendee_edit_record();
 				break;
@@ -1103,8 +1100,9 @@ function espresso_check_data_tables() {
 	if( ! is_array( $espresso_db_update )) {
 		// if option is FALSE, then it never existed
 		if ( $espresso_db_update === FALSE ) {
-			// create coption with autoload OFF
-			add_option( 'espresso_db_update', array(), '', 'no' );
+			// make $espresso_db_update an array and save option with autoload OFF
+			$espresso_db_update =  array();
+			add_option( 'espresso_db_update', $espresso_db_update, '', 'no' );
 		} else {
 			// option is NOT FALSE but also is NOT an array, so make it an array and save it
 			$espresso_db_update =  array( $espresso_db_update );
@@ -1114,6 +1112,7 @@ function espresso_check_data_tables() {
 	
 	// if current EE version is NOT in list of db updates, then update the db
 	if ( ! in_array( EVENT_ESPRESSO_VERSION, $espresso_db_update )) {
+		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/database_install.php' ); 
 		events_data_tables_install();
 	}	
 	
@@ -1208,3 +1207,21 @@ function espresso_check_data_tables() {
 
 
 }
+
+ 		
+ 		
+ 		
+ 		
+
+/**
+ *         captures plugin activation errors for debugging
+ *
+ *         @access public
+ *         @return void
+ */
+function espresso_plugin_activation_errors() {
+    if ( WP_DEBUG === TRUE ) {
+        file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR. 'logs/espresso_plugin_activation_errors.html', ob_get_contents() );
+    }    
+}
+add_action('activated_plugin', 'espresso_plugin_activation_errors'); 

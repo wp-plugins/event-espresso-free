@@ -29,18 +29,7 @@ function espresso_display_offline_payment_footer() {
 //	echo '</div><!-- / #off_line_payment_container -->';
 }
 
-function espresso_display_finalize_payment_header($data) {
-	global $org_options;
-	?>
-	<div class="event_espresso_attention event-messages ui-state-highlight">
-		<span class="ui-icon ui-icon-alert"></span>
-		<p><strong><?php _e('Attention!', 'event_espresso'); ?></strong><br />
-	<?php _e('If using one of the offline payment options, please make note of the information below, then', 'event_espresso'); ?>
-			<a href="<?php echo home_url() . '/?page_id=' . $org_options['return_url']; ?>&amp;payment_type=cash_check&amp;id=<?php echo $data['attendee_id'] . '&r_id=' . $data['registration_id'] ?>" class="inline-link" title="<?php _e('Finalize your registration', 'event_espresso'); ?>"><?php _e('click here to finalize your registration', 'event_espresso'); ?></a>
-		</p>
-	</div>
-	<?php
-}
+
 
 global $gateway_formal_names;
 $gateway_formal_names = array();
@@ -70,6 +59,8 @@ $data['event_id'] = $event_id;
 $data['event_name'] = isset($event_name) && !empty($event_name) ? $event_name : '';
 $data['registration_id'] = $registration_id;
 $data['phone'] = isset($phone) && !empty($phone) ? $phone : '';
+$data['event_meta'] = event_espresso_get_event_meta($event_id);
+
 //This file builds the gateways that are available
 echo '<div id="payment-options-dv" class="event-display-boxes ui-widget">';
 echo '<h2 class="section-heading ui-widget-header ui-corner-top">' . __('Please choose a payment option', 'event_espresso') . '</h2>';
@@ -85,7 +76,6 @@ do_action('action_hook_espresso_display_offsite_payment_footer');
 
 do_action('action_hook_espresso_display_offline_payment_header');
 do_action('action_hook_espresso_display_offline_payment_gateway', $data);
-do_action('action_hook_espresso_display_finalize_payment_header', $data);
 do_action('action_hook_espresso_display_offline_payment_gateway_2', $data);
 do_action('action_hook_espresso_display_offline_payment_footer');
 

@@ -105,7 +105,7 @@ if (!class_exists('Espresso_PaymentGateway')) {
             foreach ($this->fields as $name => $value) {
                 echo "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
             }
-            echo '<input id="' . $gateway . '-payment-option-lnk" class="payment-option-lnk" type="image" alt="Pay using ' . $gateway_name . '" src="' . $button_url . '" />';
+            echo '<input id="' . $gateway . '-payment-option-lnk" class="payment-option-lnk allow-leave-page" type="image" alt="Pay using ' . $gateway_name . '" src="' . $button_url . '" />';
             echo '
 		 	</form>
 		</div>';
@@ -134,6 +134,7 @@ if (!class_exists('Espresso_PaymentGateway')) {
                 echo "<input type=\"hidden\" name=\"$name\" value=\"$value\"/>\n";
                 //echo 'Field name: ' . $name . ' Field value : ' . $value . '<br>';
             }
+            echo "<input type=\"hidden\" id=\"bypass_payment_page\" name=\"bypass_payment_page\" value=\"true\"/>\n";
             echo "<p style=\"text-align:center;\"><br/><br/>If you are not automatically redirected to ";
             echo "the payment website within 5 seconds...<br/><br/>\n";
             echo "<input type=\"submit\" value=\"Click Here\"></p>\n";

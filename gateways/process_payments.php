@@ -23,12 +23,13 @@ function espresso_prepare_payment_data_for_gateways( $payment_data ) {
 	$SQL = "SELECT ea.email, ea.event_id, ea.registration_id, ea.txn_type, ed.start_date,";
 	$SQL .= " ea.attendee_session, ed.event_name, ea.lname, ea.fname, ea.total_cost,";
 	$SQL .= " ea.payment_status, ea.payment_date, ea.address, ea.city, ea.txn_id,";
-	$SQL .= " ea.zip, ea.state, ea.phone FROM " . EVENTS_ATTENDEE_TABLE . " ea";
+	$SQL .= " ea.zip, ea.state, ea.phone, ed.event_meta FROM " . EVENTS_ATTENDEE_TABLE . " ea";
 	$SQL .= " JOIN " . EVENTS_DETAIL_TABLE . " ed ON ed.id=ea.event_id";
 	$SQL .= " WHERE ea.id = %d";
 	$temp_data = $wpdb->get_row( $wpdb->prepare( $SQL, $payment_data['attendee_id'] ), ARRAY_A );
 	$payment_data = array_merge( $payment_data, $temp_data );
 	$payment_data['contact'] = $org_options['contact_email'];
+	$payment_data['event_meta'] = unserialize($temp_data['event_meta']);
 	return $payment_data;
 }
 
@@ -190,13 +191,15 @@ function event_espresso_txn() {
 		if( espresso_return_reg_id() == false || $payment_data['registration_id'] != espresso_return_reg_id()) {
 			wp_die(__('There was a problem finding your Registration ID', 'event_espresso'));
 		}
-		$payment_data = apply_filters('filter_hook_espresso_transactions_get_payment_data', $payment_data);
-		espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => 'Payment for: '. $payment_data['lname'] . ', ' . $payment_data['fname'] . '|| registration id: ' . $payment_data['registration_id'] . '|| transaction details: ' . $payment_data['txn_details']));
-		
-		$payment_data = apply_filters('filter_hook_espresso_update_attendee_payment_data_in_db', $payment_data);
-		//add and then immediately do action, so developers can modify this behavior on 'after_payment'
-		add_action('action_hook_espresso_email_after_payment','espresso_email_after_payment');
-		do_action('action_hook_espresso_email_after_payment', $payment_data);
+		if ( $payment_data['payment_status'] != 'Completed' && $payment_data['payment_status'] != 'Refund' ) {
+			$payment_data = apply_filters('filter_hook_espresso_transactions_get_payment_data', $payment_data);
+			espresso_log::singleton()->log(array('file' => __FILE__, 'function' => __FUNCTION__, 'status' => 'Payment for: '. $payment_data['lname'] . ', ' . $payment_data['fname'] . '|| registration id: ' . $payment_data['registration_id'] . '|| transaction details: ' . (isset($payment_data['txn_details']) ? $payment_data['txn_details'] : '')));
+
+			$payment_data = apply_filters('filter_hook_espresso_update_attendee_payment_data_in_db', $payment_data);
+			//add and then immediately do action, so developers can modify this behavior on 'after_payment'
+			add_action('action_hook_espresso_email_after_payment','espresso_email_after_payment');
+			do_action('action_hook_espresso_email_after_payment', $payment_data);
+		}
 		extract($payment_data);
 
 		if (file_exists(EVENT_ESPRESSO_TEMPLATE_DIR . "payment_overview.php")) {

@@ -16,7 +16,7 @@ function espresso_generate_events_page_list_table_sql( $count = FALSE, $attendee
 		$member_id = FALSE;
 	}
 
-	$max_rows = isset($_REQUEST['max_rows']) & !empty($_REQUEST['max_rows']) ? absint($_REQUEST['max_rows']) : 50000;//Do not change in Lite Version
+	$max_rows = isset($_REQUEST['max_rows']) & !empty($_REQUEST['max_rows']) ? absint($_REQUEST['max_rows']) : 50;
 	$max_rows = min( $max_rows, 100000 );
 	$start_rec = isset($_REQUEST['start_rec']) && !empty($_REQUEST['start_rec']) ? absint($_REQUEST['start_rec']) : 0;
 	$records_to_show = ' LIMIT ' . $max_rows .' OFFSET ' . $start_rec;

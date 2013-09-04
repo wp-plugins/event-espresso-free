@@ -108,6 +108,8 @@ function organization_config_mnu() {
 				break;
 			case 'VEN' : $org_options['currency_symbol'] = 'BsF'; //venezuelan bolivar, although technically its symbol should be VEF
 				break;
+			case 'LVA' : $org_options['currency_symbol'] = 'LVL'; //Latvian
+				break;
 			case 'AUT' : case 'BEL' : case 'CYP' : case 'EST' : case 'FIN' : case 'FRA' : case 'DEU' : case 'GRC' : case 'IRL' : case 'ITA' : case 'LUX' : case 'MLT' : case 'NLD' : case 'PRT' : case 'SVK' : case 'SVN' : case 'ESP' : case 'AND' : case 'MCO' : case 'SMR' : case 'VAT' | 'MYT' : case 'MNE' : case 'XKV' : case 'SPM' : $org_options['currency_symbol'] = 'EUR'; // use the Euro for all eurozone countries
 				break;
 			default: $org_options['currency_symbol'] = '$';
@@ -544,7 +546,7 @@ function organization_config_mnu() {
 									</h3>
 									<div class="inside">
 										<div class="padding">
-											<p><?php echo __('Please purchase a', 'event_espresso') ?> <a href="http://eventespresso.com/download/" target="_blank"><?php echo __('support license', 'event_espresso') ?></a> <?php echo __('to gain access to these features.', 'event_espresso') ?></p>
+											<p><?php echo __('Please purchase a', 'event_espresso') ?> <a href="http://eventespresso.com/pricing/?utm_source=ee_plugin_admin&utm_medium=link&utm_content=purchase+a+support+license<?php echo '+ee_version_'.EVENT_ESPRESSO_VERSION; ?>&utm_campaign=organization_config_tab" target="_blank"><?php echo __('support license', 'event_espresso') ?></a> <?php echo __('to gain access to these features.', 'event_espresso') ?></p>
 											<p>
 													<?php _e('Additional features include:', 'event_espresso'); ?>
 											</p>
@@ -586,7 +588,7 @@ function organization_config_mnu() {
 									</h3>
 									<div class="inside">
 										<div class="padding">
-											<p><?php echo __('Please purchase a', 'event_espresso') ?> <a href="http://eventespresso.com/download/" target="_blank"><?php echo __('support license', 'event_espresso') ?></a> <?php echo __('to gain access to this feature.', 'event_espresso') ?></p>
+											<p><?php echo __('Please purchase a', 'event_espresso') ?> <a href="http://eventespresso.com/pricing/?utm_source=ee_plugin_admin&utm_medium=link&utm_content=purchase+a+support+license<?php echo '+ee_version_'.EVENT_ESPRESSO_VERSION; ?>&utm_campaign=organization_config_tab" target="_blank"><?php echo __('support license', 'event_espresso') ?></a> <?php echo __('to gain access to this feature.', 'event_espresso') ?></p>
 											<p> <?php echo sprintf(__('reCAPTCHA helps prevent automated abuse of your site (such as comment spam or bogus registrations) by using a %s to ensure that only humans perform certain actions.', 'event_espresso'), '<a href="http://recaptcha.net/captcha.html">CAPTCHA</a>'); ?> </p>
 										</div>
 									</div>
