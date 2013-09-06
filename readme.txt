@@ -72,8 +72,6 @@ Check out the advanced [installation](http://eventespresso.com/wiki/installing-e
 
 == Screenshots ==
 
-[View Sample Screens Here](http://eventespresso.com/features/?utm_source=wordpress_org&utm_medium=link&utm_content=View+Sample+Screens+Here&utm_campaign=plugin_screenshots_tab)
-
 1. Event listings page
 2. Registration page
 3. Payment page
