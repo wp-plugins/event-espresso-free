@@ -72,7 +72,7 @@ Check out the advanced [installation](http://eventespresso.com/wiki/installing-e
 
 == Screenshots ==
 
-[View Sample Screens Here](http://eventespresso.com/features/?utm_source=wordpress_org&utm_medium=link&utm_content=View+Sample+Screens+Here&utm_campaign=plugin_screenshots_tab)
+[View Sample Screens Here](http://eventespresso.com/event-espresso-lite-preview/?utm_source=wordpress_org&utm_medium=link&utm_content=View+Sample+Screens+Here&utm_campaign=plugin_screenshots_tab) OR [Compare Features] (http://eventespresso.com/rich-features/compare-support-license-features/?utm_source=wordpress_org&utm_medium=link&utm_content=Compare+Features&utm_campaign=plugin_screenshots_tab)
 
 
 **[Buy a Premium Support License](http://eventespresso.com/pricing/?utm_source=wordpress_org&utm_medium=link&utm_content=Buy+a+Premium+Support+License&utm_campaign=plugin_dscreenshots_tab) to get access to more features (including [recurring events](http://eventespresso.com/product/espresso-multiple/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_screenshots_tab&utm_content=Multiple+Event+Registration), [Social Coupon Integration](http://eventespresso.com/product/espresso-groupon/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_screenshots_tab&utm_content=Social+Coupon+Integration), [WP User Integration](http://eventespresso.com/product/espresso-members/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_screenshots_tab&utm_content=WP+User+Integration), [Custom Files Add-on](http://eventespresso.com/product/espresso-custom-files/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_screenshots_tab&utm_content=Custom+Files+Add-on), etc.) and additional payment options for your WordPress events.**
