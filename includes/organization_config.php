@@ -598,7 +598,7 @@ function organization_config_mnu() {
 						<?php
 					}
 
-					if ($espresso_check_for_updates == true && $espresso_premium == true) {
+					if ($espresso_check_for_updates == true) {
 						?>
 
 						<li><a name="license_key" id="license_key"></a>
@@ -617,6 +617,7 @@ function organization_config_mnu() {
 		<?php _e('Site License Key:', 'event_espresso'); ?>
 													</label>
 													<input type="text" name="site_license_key" size="45" value="<?php echo isset( $org_options['site_license_key'] ) ? stripslashes_deep($org_options['site_license_key']) : ''; ?>" />
+													<?php //echo $site_license_key_verified; ?>
 												</li>
 
 											</ul>

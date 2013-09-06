@@ -1,11 +1,11 @@
 <?php $version = espresso_version();?>
 <div class="metabox-holder">
         <div class="postbox">
-<h3>Premium Feature</h3>
+<h3>Premium Features</h3>
           <div class="inside">
           <div class="padding">
-            <h2 style="color:#F00; text-align:center;">This feature is included in the premium version of Event Espresso. </h2>
-            <h4 style=" text-align:center;">Upgrade Now!</h4>
+            <h2 style="color:#F00; text-align:center;">The following features are included in the <a href="http://eventespresso.com/?utm_source=ee_plugin_admin&utm_medium=link&utm_content=Event+Espresso<?php echo '+ee_version_'.EVENT_ESPRESSO_VERSION; ?>&utm_campaign=pricing_table">Event Espresso</a> support licenses. </h2>
+        
  <style> 
    
   
@@ -13,7 +13,7 @@
     #pricing-table {
         margin: 20px auto 20px auto;
         text-align: center;
-        width: 760px; /* total computed width = 222 x 3 + 226 */
+        width: 892px; /* total computed width = 222 x 3 + 226 */
     }
 
     #pricing-table .plan {
@@ -23,7 +23,7 @@
         border: 1px solid #ddd;
         color: #333;
         padding: 20px;
-        width: 190px; /* plan width = 180 + 20 + 20 + 1 + 1 = 222px */      
+        width: 180px; /* plan width = 180 + 20 + 20 + 1 + 1 = 222px */      
         float: left;
         position: relative;
     }
