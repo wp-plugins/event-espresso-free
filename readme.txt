@@ -16,8 +16,8 @@ Manage your events from your WordPress dashboard. Reduce your admin, reduce your
 
 == Description ==
 
-= Deprecated Version Alert!! =
-This version of Event Espresso (EE3) is being replaced by [Event Espresso 4](http://wordpress.org/plugins/event-espresso-decaf/) (EE4). We strongly encourage you to please use [EE4](http://wordpress.org/plugins/event-espresso-decaf/), unless there is something in EE3 you can’t live without.
+= Try Event Espresso 4! =
+Our next generation plugin for WordPress events, [Event Espresso 4](http://wordpress.org/plugins/event-espresso-decaf/) (EE4) is here! We strongly encourage you to please install [EE4](http://wordpress.org/plugins/event-espresso-decaf/), before installing EE3, as this current version (EE3) will be deprecated over time.
 
 Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
 
