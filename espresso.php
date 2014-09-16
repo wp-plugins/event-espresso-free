@@ -1,7 +1,7 @@
 <?php
 
 /*
-  Plugin Name: Event Espresso Lite - Event Registration and Management
+  Plugin Name: Event Espresso 3 Lite - Event Registration and Management
   Plugin URI: http://eventespresso.com/
   Description: Out-of-the-box Events Registration integrated with PayPal IPN for your WordPress blog/website. <a href="admin.php?page=support" >Support</a>
 

@@ -1,4 +1,4 @@
-=== Event Espresso Lite - Event Management and Registration System ===
+=== Event Espresso Lite 3 - Event Management and Registration System ===
 
 Contributors: sethshoultes,eventespresso
 
