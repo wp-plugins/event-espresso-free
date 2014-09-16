@@ -16,7 +16,7 @@ Manage your events from your WordPress dashboard. Reduce your admin, reduce your
 
 == Description ==
 
-= Try Event Espresso 4! =
+= [Try Event Espresso 4!](http://wordpress.org/plugins/event-espresso-decaf/) =
 Our next generation plugin for WordPress events, [Event Espresso 4](http://wordpress.org/plugins/event-espresso-decaf/) (EE4) is here! We strongly encourage you to please install [EE4](http://wordpress.org/plugins/event-espresso-decaf/), before installing EE3, as this current version (EE3) will be deprecated over time.
 
 Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
