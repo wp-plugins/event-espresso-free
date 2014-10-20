@@ -8,7 +8,7 @@ Tags: event registration, events planner, events calendar, wordpress events, eve
 
 Requires at least: 3.5
 
-Tested up to: 3.8.1
+Tested up to: 4.0
 
 Stable tag: 3.1.36.5.L
 
