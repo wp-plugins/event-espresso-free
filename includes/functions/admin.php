@@ -921,13 +921,16 @@ function event_espresso_display_right_column() {
 				?>
 				<div id="submitdiv2" class="postbox " >
 					<h3>
-						<?php _e('Sponsors', 'event_espresso'); ?>
+						<?php _e('Upgrade to Pro', 'event_espresso'); ?>
 					</h3>
 					<div class="inside">
 						<div class="padding">
+						<h4>Need more features?</h4>
+						<p>Get access to over 30 <a href="http://eventespresso.com/features/?utm_source=ee_plugin_admin&utm_medium=link&utm_content=additional+features<?php echo '+ee_version_'.EVENT_ESPRESSO_VERSION; ?>&utm_campaign=admin_sidebar_upgrade_to_pro" target="_blank">additional features</a>, and a wide range of <a href="http://eventespresso.com/add-ons/?utm_source=ee_plugin_admin&utm_medium=link&utm_content=additional+add-ons<?php echo '+ee_version_'.EVENT_ESPRESSO_VERSION; ?>&utm_campaign=admin_sidebar_upgrade_to_pro" target="_blank">additional add-ons</a>.</p> <p><strong><a href="http://eventespresso.com/pricing/?utm_source=ee_plugin_admin&utm_medium=link&utm_content=Support+Licenses<?php echo '+ee_version_'.EVENT_ESPRESSO_VERSION; ?>&utm_campaign=admin_sidebar_upgrade_to_pro" target="_blank">Support licenses</a></strong> starting at only $89.95.</p>
+						<p align="center"><a href="http://eventespresso.com/pricing/?utm_source=ee_plugin_admin&utm_medium=link&utm_content=Buy+Now+Button<?php echo '+ee_version_'.EVENT_ESPRESSO_VERSION; ?>&utm_campaign=admin_sidebar_upgrade_to_pro" target="_blank"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>images/buy-now.jpg" width="147" height="74" /></a></p>
 							<?php
-							$event_regis_sponsors = wp_remote_retrieve_body(wp_remote_get('http://ee-updates.s3.amazonaws.com/plugin-sponsors.html'));
-							echo $event_regis_sponsors;
+							//$event_regis_sponsors = wp_remote_retrieve_body(wp_remote_get('http://ee-updates.s3.amazonaws.com/plugin-sponsors.html'));
+							//echo $event_regis_sponsors;
 							?>
 						</div>
 					</div>
