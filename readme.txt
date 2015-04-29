@@ -6,9 +6,9 @@ Donate link: http://eventespresso.com
 
 Tags: event registration, events planner, events calendar, wordpress events, event ticketing, class registration, conference registration, online registration, event management, buddypress, tickets, ticketing, ticket, registration, wordcamp, event manager, training, sports, booking
 
-Requires at least: 3.5
+Requires at least: 4.2.1
 
-Tested up to: 4.0
+Tested up to: 4.2.1
 
 Stable tag: 3.1.36.5.L
 
@@ -16,15 +16,15 @@ Manage your events from your WordPress dashboard. Reduce your admin, reduce your
 
 == Description ==
 
-= Deprecated Version Alert!! =
-This version of Event Espresso (EE3) is being replaced by [Event Espresso 4](http://wordpress.org/plugins/event-espresso-decaf/) (EE4). We strongly encourage you to please use [EE4](http://wordpress.org/plugins/event-espresso-decaf/), unless there is something in EE3 you can’t live without.
+= New Version Available!! =
+This version of Event Espresso (EE3) will eventually be replaced by [Event Espresso 4](http://wordpress.org/plugins/event-espresso-decaf/) (EE4). We strongly encourage you to please checkout [EE4](http://wordpress.org/plugins/event-espresso-decaf/), before testing this version.
+
 
 Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
 
 Event Espresso is a [WordPress event manager](http://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=plugin_description_tab&utm_content=WordPress+event+manager) which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.
 
 [youtube http://www.youtube.com/watch?v=K_yVwWnTjL8]
-
 
 = Why Online Event Management? =
 You shouldn't need convinced about how awesome online event management is, but in case you do:
