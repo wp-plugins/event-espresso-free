@@ -7,7 +7,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 3.1.36.5.L
+  Version: 3.1.37.L
 
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
@@ -33,7 +33,7 @@
 //Define the version of the plugin
 function espresso_version() {
 	do_action('action_hook_espresso_log', __FILE__, __FUNCTION__, '');
-	return '3.1.36.5.L';
+	return '3.1.37.L';
 }
 
 define("EVENT_ESPRESSO_VERSION", espresso_version());
@@ -558,6 +558,16 @@ if (is_admin()) {
 	do_action('action_hook_espresso_infusionsoft_update_api');
 	do_action('action_hook_espresso_attendee_mover_update_api');
 	
+	//Custom templates addon
+	do_action('action_hook_espresso_custom_templates_update_api');
+	do_action('action_hook_espresso_template_calendar_table_update_api');
+	do_action('action_hook_espresso_template_category_accordion_update_api');
+	do_action('action_hook_espresso_template_date_range_update_api');
+	do_action('action_hook_espresso_template_grid_update_api');
+	do_action('action_hook_espresso_template_masonry_grid_update_api');
+	do_action('action_hook_espresso_template_recurring_dropdown_update_api');
+	do_action('action_hook_espresso_template_vector_map_update_api');
+	
 	//New form builder
 	require_once("includes/form-builder/index.php");
 	require_once("includes/form-builder/groups/index.php");
@@ -565,6 +575,7 @@ if (is_admin()) {
 	//Install/Update Tables when plugin is activated
 	register_activation_hook(__FILE__, 'espresso_check_data_tables'); 
 	register_activation_hook(__FILE__, 'espresso_update_active_gateways');
+	register_activation_hook(__FILE__, 'espresso_migrate_atos_gateway');
 	
 	//Premium funtions. If this is a paid version, then we need to include these files.
 	//Premium upgrade options if the piad plugin is not installed
@@ -1044,24 +1055,6 @@ add_shortcode('ESPRESSO_CANCELLED', 'espresso_cancelled');
 //this COULD be done only on the ee critical pages (events, transactions, thank you)
 add_action('plugins_loaded','event_espresso_init_active_gateways');
 
-/*
- * These actions need to be loaded a the bottom of this script to prevent errors when post/get requests are received.
- */
-
-// Export iCal file
-if (!empty($_REQUEST['iCal'])) {
-	espresso_ical();
-}
-
-//Export PDF invoice
-if (isset($_REQUEST['download_invoice']) && $_REQUEST['download_invoice'] == 'true') {
-	if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/invoice/template.php")) {
-		require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/invoice/template.php");
-	} else {
-		require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/template.php");
-	}
-}
-
 if (is_admin()) {
 
 	add_action('admin_init', 'espresso_check_data_tables' );
@@ -1087,12 +1080,36 @@ if (is_admin()) {
 	if (((!isset($_REQUEST['event_page_id']) || $_REQUEST['event_page_id'] == NULL) && ($org_options['event_page_id'] == ('0' || ''))) || $org_options['return_url'] == ('0' || '') || $org_options['notify_url'] == ('0' || '')) {
 		add_action('admin_notices', 'event_espresso_activation_notice', 5);
 	}
-
+	//Check for the Atos gateway migration
+	if ( get_option( 'espresso_atos_migration' ) != true ) {
+		add_action('admin_notices', 'espresso_migrate_atos_admin_notice');
+	}
 
 	//The purpose of this action is to display information about Event Espresso 4.
 	if ($espresso_premium != true)
 	add_action('admin_notices', 'espresso_ee4_admin_notice');
 }
+
+/*
+ * These actions need to be loaded a the bottom of this script to prevent errors when post/get requests are received.
+ */
+
+// Export iCal file
+if (!empty($_REQUEST['iCal'])) {
+	espresso_ical();
+}
+
+//Export PDF invoice
+function espresso_export_invoice() {
+	if (isset($_REQUEST['download_invoice']) && $_REQUEST['download_invoice'] == 'true') {
+		if (file_exists(EVENT_ESPRESSO_GATEWAY_DIR . "/invoice/template.php")) {
+			require_once(EVENT_ESPRESSO_GATEWAY_DIR . "/invoice/template.php");
+		} else {
+			require_once(EVENT_ESPRESSO_PLUGINFULLPATH . "gateways/invoice/template.php");
+		}
+	}
+}
+add_action('init', 'espresso_export_invoice', 30);
 
 //Export PDF Ticket (new)
 function espresso_export_ticket() {
@@ -1122,7 +1139,7 @@ function espresso_export_ticket() {
 	}
 	//End Deprecated version 1.0
 }
-add_action('plugins_loaded', 'espresso_export_ticket', 40);
+add_action('init', 'espresso_export_ticket', 40);
 
 
 
@@ -1132,7 +1149,7 @@ function espresso_export_certificate() {
 		echo espresso_certificate_launch($_REQUEST['id'], $_REQUEST['r_id']);
 	}
 }
-add_action('plugins_loaded', 'espresso_export_certificate', 30);
+add_action('init', 'espresso_export_certificate', 30);
 
 
 
@@ -1170,7 +1187,7 @@ function espresso_check_data_tables() {
 		}
 	}
 	
-	
+
 	// if current EE version is NOT in list of db updates, then update the db
 	if (( ! in_array( EVENT_ESPRESSO_VERSION, $espresso_db_update ))) {	
 		require_once( EVENT_ESPRESSO_PLUGINFULLPATH . 'includes/functions/database_install.php' );

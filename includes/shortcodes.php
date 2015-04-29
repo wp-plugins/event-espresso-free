@@ -303,7 +303,7 @@ if (!function_exists('espresso_category_name_sc')) {
 		global $wpdb, $org_options;
 		extract(shortcode_atts(array('event_id' => '0'), $atts));
 		$event_id = "{$event_id}";
-		$category_name = espresso_event_category_data($event_id);
+		$category_name = espresso_event_category_data($event_id, TRUE);
 		return $category_name['category_name'];
 	}
 
@@ -415,7 +415,7 @@ function ee_create_autocomplete_search(){
 	<div id="espresso-search-form-dv" class="ui-widget">
 		<form name="form" method="post" action="<?php echo $url ?>">
 			<input id="ee_autocomplete" name="ee_name" class="ui-autocomplete-input ui-corner-all" />
-			<input id="ee_search_submit" name="ee_search_submit" class="ui-button ui-button-big ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" type="submit" value="Search" />
+			<input id="ee_search_submit" name="ee_search_submit" class="ui-button ui-button-big ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" type="submit" value="<?php _e( 'Search', 'event_espresso' ); ?>" />
 			<input id="event_id" name="event_id" type="hidden">
 		</form>
 	</div>
